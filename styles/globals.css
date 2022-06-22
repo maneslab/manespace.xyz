@@ -1,0 +1,661 @@
+@import "rc-switch/assets/index.css";
+@import "rc-slider/assets/index.css";
+@import "rc-dropdown/assets/index.css";
+@import "rc-dialog/assets/index.css";
+@import 'rc-datepicker/lib/style.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+@font-face{
+    font-family: 'ubuntu'; 
+    src: url('/font/ubuntu/Ubuntu-Bold.ttf');
+    font-weight:700;
+}
+
+@font-face{
+    font-family: 'ubuntu'; 
+    src: url('/font/ubuntu/Ubuntu-Light.ttf');
+    font-weight:300;
+}
+
+
+@font-face{
+    font-family: 'ubuntu'; 
+    src: url('/font/ubuntu/Ubuntu-Regular.ttf');
+    font-weight:400;
+}
+
+@font-face{
+     font-family: 'pixel'; 
+     src: url('/font/pixel/ixpx-31p.ttf');
+}
+
+@font-face{
+     font-family: 'mono'; 
+     src: url('/font/mono/MonoMedium.woff2');
+     font-weight:bold;
+}
+
+@font-face{
+     font-family: 'mono'; 
+     src: url('/font/mono/MonoRegular.woff2');
+     font-weight:normal;
+}
+
+
+@font-face{
+     font-family: 'mb'; 
+     src: url('/font/black/MSBee-Black.woff2');
+     font-weight:bold;
+}
+
+@font-face{
+     font-family: 'mb'; 
+     src: url('/font/black/MSBee-Thin.woff2');
+     font-weight:light;
+}
+
+
+@font-face{
+     font-family: 'mb'; 
+     src: url('/font/black/MSBee-Regular.woff2');
+     font-weight:normal;
+}
+
+
+
+@keyframes fadeIn {
+    0% {opacity:0;}
+    to {opacity:1;}
+}
+
+@keyframes fadeOut {
+    0% {opacity: 1}
+    to {opacity: 0}
+}
+
+@keyframes fadeInModal {
+    0% {opacity:0; transform: translate3d(-50%, -30%, 0px)}
+    to {opacity:1; transform: translate3d(-50%, -50%, 0px)}
+}
+@keyframes fadeOutModal {
+    0% {opacity:1; transform: translate3d(-50%, -50%, 0px)}
+    to {opacity:0; transform: translate3d(-50%, -30%, 0px)}
+}
+
+
+body {
+    color :#000;
+}
+
+.icon-xs {
+    @apply w-4 h-4;
+}
+.icon-sm {
+    @apply w-6 h-6;
+}
+.icon-base {
+    @apply w-8 h-8;
+}
+.icon-lg {
+    @apply w-12 h-12;
+}
+
+.h1 {
+    @apply font-bold text-4xl font-bold capitalize;
+}
+.h2 {
+    @apply font-bold text-2xl font-bold capitalize;
+}
+.label {
+    @apply px-0;
+}
+.label-text {
+    @apply font-bold text-base;
+}
+
+/*message*/
+.rc-notification {
+    @apply fixed w-screen;
+    z-index: 1100;
+    pointer-events:none;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 15px;
+}
+.rc-notification-notice {
+    @apply flex items-center justify-center my-1 ;
+}
+.rc-notification-notice-content {
+    @apply bg-white px-4 py-2 my-1 mx-auto rounded-lg text-sm shadow-2xl dark:shadow-dark z-50 relative border border-gray-100 dark:bg-gray-700 dark:border-gray-800;
+}
+.block-notification {
+    @apply flex justify-between items-center dark:text-white;
+    min-width: 240px;
+}
+
+
+.block-message > div {
+    @apply flex justify-center flex-col w-full;
+}
+.block-message .rc-notification-notice-content {
+    @apply p-0 border-0; 
+}
+.alert {
+    @apply py-2 px-4 rounded-none;
+}
+.alert.alert-error {
+    @apply bg-[#FCE2E2] text-[#F53535];
+}
+.alert.alert-success {
+    @apply bg-[#D9F9D4] text-[#28D30D];
+}
+.alert.alert-warning {
+    @apply bg-[#DAE5FC] text-[#5387F6];
+}
+
+
+.loading-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 5px;
+    width: 80px;
+    border-radius: 3px;
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+  }
+  
+  .loading-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    opacity: 0.1;
+  }
+  
+  .loading-container::after {
+    content: '';
+    height: 100%;
+    width: 100%;
+    border-radius: 3px;
+    animation: raceBy 1.4s ease-in-out infinite;
+    transform: translateX(-100%);
+    background-color: black;
+  }
+  
+  @keyframes raceBy {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  
+
+.fadeIn {
+  -webkit-animation: fadeIn 0.2s 0.2s forwards;
+  animation: fadeIn 0.2s 0.2s forwards; 
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  
+}
+
+.fadeOut {
+  -webkit-animation: fadeOut 0.2s 0.2s forwards;
+  animation: fadeOut 0.2s 0.2s forwards; 
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+
+.fadeInModal {
+  -webkit-animation: fadeInModal 0.2s 0.2s forwards;
+  animation: fadeInModal 0.2s 0.2s forwards; 
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  
+}
+
+.fadeOutModal {
+  -webkit-animation: fadeOutModal 0.2s 0.2s forwards;
+  animation: fadeOutModal 0.2s 0.2s forwards; 
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+
+.rc-notification-fade-appear,.rc-notification-fade-enter {
+    opacity: 0;
+    animation-duration: .3s;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(.55,0,.55,.2);
+    animation-play-state: paused
+}
+
+.rc-notification-fade-leave {
+    animation-duration: .3s;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(.55,0,.55,.2);
+    animation-play-state: paused
+}
+
+.rc-notification-fade-appear.rc-notification-fade-appear-active,.rc-notification-fade-enter.rc-notification-fade-enter-active {
+    animation-name: fadeIn;
+    animation-play-state: running
+}
+
+.rc-notification-fade-leave.rc-notification-fade-leave-active {
+    animation-name: fadeOut;
+    animation-play-state: running
+}
+
+.tooltip-arrow, .tooltip-arrow:before {
+    background: inherit;
+    height: 8px;
+    position: absolute;
+    width: 8px;
+    bottom: -2px;
+    left: 0px;
+    transform: translate(20px, 0px);
+}
+.tooltip-arrow:before {
+    content: "";
+    transform: rotate(45deg);
+    visibility: visible;
+}
+
+.drop-shadow-dark {
+    --tw-drop-shadow :  drop-shadow(0 1px 1px rgb(0 0 0 / 0.5));
+    filter: var(--tw-filter);
+}
+
+.mask-bg {
+    @apply fixed bg-white top-0 left-0 right-0 bottom-0 w-full h-full opacity-10;
+}
+
+.animate-forwards {
+    animation-fill-mode : forwards;
+}
+.a {
+    @apply text-blue-500 dark:text-blue-300 underline hover:text-blue-700; 
+}
+.rc-switch:focus {
+    box-shadow:none;
+}
+.rc-switch-checked {
+    @apply bg-blue-500 border-blue-500;
+}
+
+
+.input-with-prefix {
+    @apply font-ubuntu flex items-center text-sm text-gray-800 border focus:ring-2 border-2 border-black text-gray-800 bg-white dark:border-gray-600 dark:text-white dark:bg-gray-800 focus:ring-yellow-100 dark:focus:ring-gray-500 ;
+}
+.input-with-prefix .input-inner {
+    @apply ml-2 bg-transparent flex-grow px-2 py-2 ;
+}
+.input-with-prefix .prefix {
+    @apply text-gray-500 px-4 py-2 bg-black text-white;
+}
+.input-with-prefix.has-error {
+    @apply border-red-500;
+}
+
+.select-li {
+    @apply flex justify-start items-center p-2 text-sm capitalize font-ubuntu;  
+}
+.select-li .icon {
+    @apply mr-2;
+}
+.block-menu {
+    @apply overflow-hidden bg-white shadow-xl border border-gray-300 ;  
+}
+.block-menu ul {
+    @apply bg-white;
+}
+.block-menu li .select-li {
+    @apply bg-white text-black cursor-pointer hover:bg-gray-100  px-4;
+}
+.preview-wapper {
+    height: calc(100vh - theme('height.48'));
+    overflow-y: auto;
+}
+.preview-width {
+    width: calc(100vw - theme('height.8'));
+}
+
+.jd-border {
+    @apply border border-gray-300 shadow-xl rounded-lg overflow-hidden;
+}
+
+.square {
+    aspect-ratio: 1/1;
+}
+
+.press-down {
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2); 
+}
+
+.btn {
+    @apply min-h-8 h-10;
+}
+.btn-primary,
+.btn-secondary,
+.btn-secondary:hover,
+.btn-primary:hover {
+    @apply border-2 border-black;
+}
+
+.btn-outline {
+    @apply border-2;
+}
+
+.select-box {
+    @apply input-base p-0 flex justify-between items-center pl-2 pr-6 cursor-pointer max-w-full;
+}
+.select-arrow {
+    @apply appearance-none bg-no-repeat;
+    background-image: linear-gradient(
+45deg,transparent 50%,currentColor 0),linear-gradient(
+135deg,currentColor 50%,transparent 0);
+    background-position: calc(100% - 20px) calc(1px + 50%),calc(100% - 16px) calc(1px + 50%);
+    background-size: 4px 4px,4px 4px;
+}
+
+.default-holder {
+    @apply flex justify-start items-center p-2 text-sm capitalize font-ubuntu text-gray-700;  
+}
+.font-mono  {
+    font-family: "mono",monospace,Helvetica Neue,Helvetica,Arial,sans;
+}
+
+.font-black {
+    font-family: "mb",Helvetica Neue,Helvetica,Arial,sans;
+}
+
+.font-ubuntu {
+    font-family: "ubuntu",Helvetica Neue,Helvetica,Arial,sans;
+}
+
+input{outline:none;}
+
+.text-shadow-black {
+    text-shadow: 0 2px 0 #333;
+}
+
+/*dialog*/
+.rc-dialog {
+    max-width: 90%;
+    margin: 40px auto;
+}
+.rc-dialog-header {
+    @apply bg-white dark:bg-black border-white dark:border-gray-700 rounded-t-lg py-3;
+}
+.rc-dialog-title {
+    @apply text-black font-ubuntu text-base font-bold text-base dark:text-white;
+}
+.rc-dialog-close {
+    @apply opacity-100  dark:text-white right-8 top-9;
+}
+.rc-dialog-content {
+    @apply rounded-none bg-white dark:bg-black;
+}
+.z-100 {
+    z-index: 100;
+}
+
+
+/*main*/
+.logo {
+    @apply font-black text-xl mr-4 text-black flex items-center;
+}
+.main-menu {
+    @apply flex justify-start items-center space-x-4;
+}
+.main-menu .menu-one {
+    @apply flex justify-start  items-center;
+}
+.main-menu .menu-one  .icon{
+    @apply w-6;
+}
+
+.input-base {
+    @apply border-black border-2;
+}
+.form-block-base {
+    @apply border-black border-2;
+}
+
+
+.input-box {
+    @apply font-ubuntu px-4 py-2 text-sm w-full border focus:ring-2 text-black input-base;
+}
+.input-box.yellow {
+    @apply bg-yellow-200 border border-yellow-300 text-black dark:bg-yellow-900 dark:border-yellow-700 text-black dark:text-white; 
+}
+.input-box.yellow::placeholder,
+.input-box.yellow.placeholder{
+    @apply text-yellow-400 dark:text-yellow-200;
+}
+.input-box.yellow.input-error {
+    @apply border-red-500;
+}
+.input-box.input-error {
+    @apply border-red-500;
+}
+
+.input-error-msg {
+    @apply text-red-500 text-sm px-0 py-1;
+}
+
+
+.project-type-select {
+    @apply grid grid-cols-2 gap-4;
+}
+.project-type-select .select-one {
+    @apply border-2 border-black cursor-pointer;
+}
+.project-type-select .select-one h3 {
+    @apply bg-white text-black px-4 py-2 text-base border-b-2 border-black flex justify-between;
+}
+.project-type-select .select-one h3 .icon {
+    @apply w-5;
+}
+
+.project-type-select .select-one.active {
+    @apply border-2 border-[#ff494a];
+}
+.project-type-select .select-one.active h3{
+    @apply border-[#ff494a] bg-[#ff494a] text-white;
+}
+
+.form-control {
+    @apply mb-2;
+}
+
+.rc-dialog-body {
+    @apply p-8;
+}
+.rc-dialog-body .modal-title {
+    @apply font-bold text-xl text-left mb-4 capitalize;
+}
+
+.block-wapper-one {
+    @apply grid grid-cols-3 gap-16;
+}
+.block-wapper-one .l {
+    @apply col-span-2 ;
+}
+
+.block-intro {
+    @apply text-black;
+}
+.block-intro h3 {
+    @apply capitalize font-bold text-lg mb-2;
+}
+.block-intro .ct {
+    @apply opacity-70;
+}
+.block-intro p {
+    @apply mb-2;
+}
+
+.block-title {
+    @apply font-bold text-2xl mb-2 text-black;
+}
+
+.form-box-one {
+    @apply bg-[#fff] p-8 text-white;
+}
+.form-box-one .label-text {
+    @apply text-gray-700;
+}
+
+.block-menu2 {
+    @apply border-2 border-black;
+}
+
+/*bf*/
+.bf-link {
+    @apply text-blue-500 hover:underline;
+}
+
+.gallery-image-one {
+    @apply  bg-[#fff] z-10 form-block-base relative;
+}
+.gallery-image-one .tools {
+    @apply hidden items-center w-full h-full absolute left-0 top-0 items-center justify-center;
+}
+.gallery-image-one .hover-bg {
+    @apply hidden w-full h-full absolute left-0 top-0 bg-black opacity-25;
+}
+.gallery-image-one:hover .hover-bg {
+    @apply block;
+}
+.gallery-image-one:hover .tools {
+    @apply flex;
+}
+
+
+.club-header-menu a {
+    @apply py-2;
+}
+.club-header-menu .active{
+    @apply border-b-2 border-primary;
+}
+
+.probability_wapper .prefix{
+    @apply w-32 overflow-hidden;
+}
+.probability_wapper .prefix.end{
+    @apply w-auto;
+}
+.probability_wapper .input-inner{
+    @apply w-16
+}
+
+.trait-image .dropdown {
+    @apply hidden;
+}
+.trait-image:hover .dropdown {
+    @apply block;
+}
+
+.trait-name .edit-icon{
+    @apply hidden;
+}
+.trait-name:hover .edit-icon{
+    @apply block;
+}
+
+.block-steps {
+    @apply flex justify-start items-center;
+}
+.block-step-one {
+    @apply flex justify-start items-center text-[#999] font-bold mr-8 capitalize;
+}
+
+.block-step-one .step-no {
+    @apply bg-[#ccc] text-white font-bold h-8 w-8 flex justify-center items-center mr-4;
+}
+.block-step-one.active,
+.block-step-one.done {
+    @apply text-black;
+}
+.block-step-one.active .step-no,
+.block-step-one.done .step-no {
+    @apply bg-primary;
+}
+.block-step-one .step-line {
+    @apply w-8 border-t border-gray-300 border-dashed ml-4;
+}
+.block-step-one.done .step-line {
+    @apply border-primary;
+}
+.block-step-one:last-child .step-line{
+    @apply hidden;
+}
+
+.alert span {
+    @apply text-sm;
+}
+.inline-form .form-control {
+    @apply mb-0;
+}
+
+.asset-bg {
+    background-image: linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%), linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 8px 8px;
+}
+.club-nav-tabs {
+    @apply border-b-2 border-gray-200 space-x-8;
+}
+.club-nav-tabs .tab{
+    @apply font-bold text-base h-10 px-0;
+}
+.club-nav-tabs .tab-active {
+    @apply border-primary border-b-2 px-0 relative;
+    bottom:-2px;  
+}
+
+.header-bg {
+    @apply bg-white;
+}
+.fullpage-container.blue {
+    @apply bg-[#2e2c9b];
+}
+.fullpage-container.blue .header-bg{
+    @apply bg-[#2e2c9b] text-white;
+}
+.fullpage-container.blue .btn-outline
+{
+    @apply border-white text-white;
+}
+.fullpage-container.blue .logo {
+    @apply text-white;
+}
+.fullpage-container.blue .ju367vfd {
+    @apply text-white;
+}
+.landingpage {
+    @apply h-full;
+    background: url('/img/landingpage/banner2.png') no-repeat;
+    background-position: bottom -240px right -240px;
+    background-size: 80% 80%;
+}
+
+.carousel-root .carousel .thumbs-wrapper {
+    @apply m-0 mt-4;
+}
+.box-one {
+    @apply p-4;
+}
+.box-one .ma {
+    @apply text-2xl font-bold font-black;
+}
