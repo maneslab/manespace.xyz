@@ -19,11 +19,6 @@ const roadmapSchema =  new schema.Entity('roadmap',{
 },{ idAttribute: 'id' });
 const roadmapListSchema =  new schema.Array(roadmapSchema);
 
-const clubSchema =  new schema.Entity('club',{
-    'roadmaps'  :   roadmapListSchema
-},{ idAttribute: 'id' });
-const clubListSchema =  new schema.Array(clubSchema);
-
 
 const imgSchema =  new schema.Entity('img',{
 },{ idAttribute: 'img_id' });
@@ -47,27 +42,46 @@ const clubSocialSchema =  new schema.Entity('club_social',{
 const clubSocialListSchema =  new schema.Array(clubSocialSchema);
 
 
-const imageGroupSchema =  new schema.Entity('image_group',{
-    club :clubSchema
-},{ idAttribute: 'id' });
-const imageGroupListSchema =  new schema.Array(imageGroupSchema);
+// const imageGroupSchema =  new schema.Entity('image_group',{
+//     club :clubSchema
+// },{ idAttribute: 'id' });
+// const imageGroupListSchema =  new schema.Array(imageGroupSchema);
 
 
-const imageLayerSchema =  new schema.Entity('image_layer',{
-    group : imageGroupSchema
-},{ idAttribute: 'id' });
-const imageLayerListSchema =  new schema.Array(imageLayerSchema);
+// const imageLayerSchema =  new schema.Entity('image_layer',{
+//     group : imageGroupSchema
+// },{ idAttribute: 'id' });
+// const imageLayerListSchema =  new schema.Array(imageLayerSchema);
 
 
-const imageTraitSchema =  new schema.Entity('image_trait',{
-    layer : imageLayerSchema
-},{ idAttribute: 'id' });
-const imageTraitListSchema =  new schema.Array(imageTraitSchema);
+// const imageTraitSchema =  new schema.Entity('image_trait',{
+//     layer : imageLayerSchema
+// },{ idAttribute: 'id' });
+// const imageTraitListSchema =  new schema.Array(imageTraitSchema);
 
 
 const imageSpecialSchema =  new schema.Entity('image_special',{
 },{ idAttribute: 'id' });
 const imageSpecialListSchema =  new schema.Array(imageSpecialSchema);
+
+
+const contractRefundSchema =  new schema.Entity('contract_refund',{
+},{ idAttribute: 'id' });
+const contractRefundListSchema =  new schema.Array(contractRefundSchema);
+
+const contractSchema =  new schema.Entity('contract',{
+    refund : contractRefundListSchema,
+},{ idAttribute: 'id' });
+
+
+const clubSchema =  new schema.Entity('club',{
+    'roadmaps'  :   roadmapListSchema,
+    'gallery'   :   galleryListSchema,
+    'creator'   :   creatorListSchema,
+    'contract'  :   contractSchema
+},{ idAttribute: 'id' });
+const clubListSchema =  new schema.Array(clubSchema);
+
 
 module.exports = {
     
@@ -95,16 +109,18 @@ module.exports = {
     clubSocialSchema,
     clubSocialListSchema,
 
-    imageGroupSchema,
-    imageGroupListSchema,
+    // imageGroupSchema,
+    // imageGroupListSchema,
 
-    imageLayerSchema,
-    imageLayerListSchema,
+    // imageLayerSchema,
+    // imageLayerListSchema,
 
-    imageTraitSchema,
-    imageTraitListSchema,
+    // imageTraitSchema,
+    // imageTraitListSchema,
 
     imageSpecialSchema,
-    imageSpecialListSchema
+    imageSpecialListSchema,
+
+    contractSchema
 
 }

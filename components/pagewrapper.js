@@ -64,7 +64,7 @@ class PageWrapper extends React.Component {
 
 
         return (
-            <div className={classNames("fullpage-container",{"blue":(theme == 'blue')})}>
+            <div className={classNames("fullpage-container pt-16",{"blue":(theme == 'blue')})}>
                 <Head>
                     <title>{config.get('NAME')}</title>
                     <link href="/img/favicon.png" rel="icon" type="image/x-icon" />
@@ -73,37 +73,37 @@ class PageWrapper extends React.Component {
 
                     <div className="h-screen w-screen overflow-y-scroll flex flex-col justify-between">
 
-                        <div className='header-bg text-black mb-8'>
-                        <div className="flex justify-between h-16 w-full max-w-screen-xl mx-auto ">
+                        <div className='header-bg text-black mb-8 fixed w-full top-0'>
+                            <div className="flex justify-between h-16 w-full max-w-screen-xl mx-auto">
 
-                            <div className='flex justify-start'>
+                                <div className='flex justify-start'>
 
-                                <Link href="/">
-                                    <a className="logo">
-                                        Mane<span className="text-primary">SPACE</span>
-                                    </a>
-                                </Link>
+                                    <Link href="/">
+                                        <a className="logo">
+                                            Mane<span className="text-primary">SPACE</span>
+                                        </a>
+                                    </Link>
 
-                                <div className='main-menu ml-4'>
-                                    <Link href="/project/list"><a className='font-bold capitalize ml-2'>{t('projects')}</a></Link>
+                                    <div className='main-menu ml-4'>
+                                        <Link href="/project/list"><a className='font-bold capitalize ml-2'>{t('projects')}</a></Link>
+                                    </div>
+
+                                    
+
                                 </div>
-
                                 
 
+                                <div className='flex justify-end items-center'>
+
+                                    <LanguageBtn />
+
+                                    <ConnectWalletButton />
+                                </div>
+
                             </div>
-                            
-
-                            <div className='flex justify-end items-center'>
-
-                                <LanguageBtn />
-
-                                <ConnectWalletButton />
-                            </div>
-
-                        </div>
                         </div>
 
-                        <div className={(wapperClassName) ? wapperClassName : "flex-grow"}>
+                        <div className={(wapperClassName) ? wapperClassName : "flex-grow py-4"}>
                             {this.props.children}
                         </div>
                             

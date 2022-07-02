@@ -41,24 +41,13 @@ class Home extends React.Component {
         });
         console.log('msgstr',msgstr);
 
-        return <PageWrapper wapperClassName="landingpage">
+        return <PageWrapper>
             <Head>
                 <title>ManeStudio</title>
             </Head>
             <MustLoginWrapper>
             <div className="">
 
-                <div className='max-w-screen-xl mx-auto text-white'>
-
-                    <div className='mt-48 mb-12'>
-                        <Logo className="h-12" />
-                    </div>
-                    <div className="max-w-prose mb-12" >{t('landing-page-intro')}</div>
-                    <div>
-                        <button className="btn btn-secondary mr-2 capitalize text-base">{t('learn more')}</button>
-                        <button className='btn btn-primary capitalize text-base'>{t('launch app')}</button>
-                    </div>
-                </div>
 
             </div>
             </MustLoginWrapper>

@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { denormalize } from 'normalizr';
 import { userSchema,clubSchema } from 'redux/schema/index'
-import { loadClub,updateClub } from 'redux/reducer/club'
+import { loadClubDetail,updateClub } from 'redux/reducer/club'
 import Loading from 'components/common/loading'
 
 export default function withClubView(WrappedComponent) {
@@ -17,19 +17,23 @@ export default function withClubView(WrappedComponent) {
 
         componentDidMount() {
             if (this.props.club_id) {
-                this.load({id:this.props.club_id})
+                this.load({
+                    id:this.props.club_id,
+                    address : this.props.address
+                })
             }else if (this.props.club_name) {
-                this.load({name:this.props.club_name})
+                this.load({
+                    name:this.props.club_name,
+                    address : this.props.address
+                })
             }
         }
 
         load(cond) {
-            if (typeof this.props.loadClub !== 'function') {
-                console.error('使用withPageView时候发现load方法不正确,得到的是:',typeof this.props.loadClub)
+            if (typeof this.props.loadClubDetail !== 'function') {
+                console.error('使用withPageView时候发现load方法不正确,得到的是:',typeof this.props.loadClubDetail)
             }
-
-            // console.log('dd,this.props.load',this.props.load)
-            this.props.loadClub(cond);
+            this.props.loadClubDetail(cond);
         }
 
         componentWillUpdate(nextProps,nextState) {
@@ -59,8 +63,8 @@ export default function withClubView(WrappedComponent) {
 
     const mapDispatchToProps = (dispatch) => {
         return {
-            loadClub : (cond) => {
-               return dispatch(loadClub(cond))
+            loadClubDetail : (cond) => {
+               return dispatch(loadClubDetail(cond))
             },
             updateClub : (id,data) => {
                return dispatch(updateClub(id,data))

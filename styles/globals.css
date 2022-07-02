@@ -91,6 +91,9 @@
 body {
     color :#000;
 }
+html,body {
+    overflow: hidden;
+}
 
 .icon-xs {
     @apply w-4 h-4;
@@ -506,7 +509,7 @@ input{outline:none;}
 }
 
 .block-title {
-    @apply font-bold text-2xl mb-2 text-black;
+    @apply font-bold text-2xl mt-2 mb-4 text-black;
 }
 
 .form-box-one {
