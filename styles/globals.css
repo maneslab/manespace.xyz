@@ -109,10 +109,13 @@ html,body {
 }
 
 .h1 {
-    @apply font-bold text-4xl font-bold capitalize;
+    @apply font-bold text-3xl font-bold capitalize;
 }
 .h2 {
     @apply font-bold text-2xl font-bold capitalize;
+}
+.h3 {
+    @apply font-bold text-base font-bold capitalize;
 }
 .label {
     @apply px-0;
@@ -332,6 +335,10 @@ html,body {
     width: calc(100vw - theme('height.8'));
 }
 
+.height-without-header {
+    height: calc(100vh - 2.5rem);
+}
+
 .jd-border {
     @apply border border-gray-300 shadow-xl rounded-lg overflow-hidden;
 }
@@ -344,15 +351,7 @@ html,body {
     box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2); 
 }
 
-.btn {
-    @apply min-h-8 h-10;
-}
-.btn-primary,
-.btn-secondary,
-.btn-secondary:hover,
-.btn-primary:hover {
-    @apply border-2 border-black;
-}
+
 
 .btn-outline {
     @apply border-2;
@@ -509,7 +508,7 @@ input{outline:none;}
 }
 
 .block-title {
-    @apply font-bold text-2xl mt-2 mb-4 text-black;
+    @apply font-bold text-xl mt-0 mb-4 text-black capitalize;
 }
 
 .form-box-one {
@@ -657,8 +656,32 @@ input{outline:none;}
     @apply m-0 mt-4;
 }
 .box-one {
-    @apply p-4;
+    @apply mb-4;
+}
+.box-one .lb {
+    @apply text-gray-500 mb-2;
 }
 .box-one .ma {
-    @apply text-2xl font-bold font-black;
+    @apply text-xl font-bold;
+}
+.flex-item-center {
+    @apply flex items-center;
+}
+
+.info-table {
+    @apply mb-8;
+}
+.info-table th {
+    @apply font-bold text-left capitalize text-lg py-2 
+}
+.info-table .lttd {
+    @apply text-black pr-6 capitalize w-48; 
+}
+.info-table .rctd {
+    @apply flex justify-start items-center text-gray-500;
+}
+
+.btn-inline-form {
+    min-height: 40px;
+    height: 40px;
 }

@@ -13,11 +13,11 @@ export default function SortableItem({creator,club,id}) {
     let is_empty = (!creator['name'] && !creator['title']);
 
     return (
-        <div className={classNames('border border-black bg-[#fff] text-black z-10')}  >
-            <div className='flex justify-between cursor-pointer'>
+        <div className={classNames('bg-[#fff] text-black z-10')}  >
+            <div className='flex justify-between'>
 
-                <div className='border-r border-black'>
-                    <div className='w-64'>
+                <div className=''>
+                    <div className='w-48'>
                         {
                             (!creator.getIn(['img','image_urls','url'])) 
                             ? <div className='aspect-square bg-gray-200'>
@@ -26,11 +26,11 @@ export default function SortableItem({creator,club,id}) {
                             : <img src={creator.getIn(['img','image_urls','url'])} className="w-full"/>
                         }
                     </div>
-                    <div className='p-4 border-b border-t border-black'>
+                    <div className='px-0 py-4'>
                         <div className='text-base mb-0'>{creator.get('title')}</div>
                         <div className='text-2xl font-bold'>{creator.get('name')}</div>
                     </div>
-                    <div className='flex justify-start items-center space-x-4 p-4'>
+                    <div className='flex justify-start items-center space-x-4 px-0 py-2'>
                         {
                             (creator.get('twitter_id'))
                             ? <a href={"https://twitter.com/"+creator.get('twitter_id')} target="_blank"><TwitterIcon className="w-5" /></a>
@@ -49,7 +49,7 @@ export default function SortableItem({creator,club,id}) {
                         
                     </div>
                 </div>
-                <div className='text-left flex-grow p-4'>
+                <div className='text-left flex-grow p-4 text-gray-500'>
                     {creator.get('bio')}
                 </div>
             </div>

@@ -16,20 +16,27 @@ import CreatorOne from 'components/creator/one'
 import Cal from 'components/time/cal'
 
 import withClubView from 'hocs/clubview'
+import WhitelistCheck from 'components/whitelist/check'
+import WhitelistCheckAuto from 'components/whitelist/check_auto'
 
 import { StatusOnlineIcon } from '@heroicons/react/outline';
 
-import { atcb_action } from 'add-to-calendar-button'
-import 'add-to-calendar-button/assets/css/atcb.min.css';
-import { BellIcon } from '@heroicons/react/outline';
+// import { atcb_action } from 'add-to-calendar-button'
+// import 'add-to-calendar-button/assets/css/atcb.min.css';
+// import { BellIcon } from '@heroicons/react/outline';
 import Countdown from 'react-countdown';
 import config from 'helper/config'
 
 import {autoDecimal,percentDecimal} from 'helper/number'
 import Showtime from 'components/time/showtime'
+import { getUnixtime } from 'helper/time';
+
+import {t} from 'helper/translate'
+import withWallet from 'hocs/wallet';
 
 @withTranslate
 @withClubView
+@withWallet
 class ClubView extends React.Component {
 
     constructor(props) {
@@ -98,9 +105,9 @@ class ClubView extends React.Component {
     }
 
     render() {
-        const {t} = this.props.i18n;
+        // const {t} = this.props.i18n;
         const {is_public} = this.state;
-        const {club,club_id} = this.props;
+        const {club,club_id,wallet} = this.props;
 
 
         if (!club) {
@@ -117,8 +124,10 @@ class ClubView extends React.Component {
         }
 
         let mint_url = this.getMintUrl();
-
         let contract = club.get('contract');
+        let now_unixtime = getUnixtime();
+
+        console.log('wl_start_time',contract.get('wl_start_time'))
 
         return <PageWrapper>
             <Head>
@@ -132,27 +141,26 @@ class ClubView extends React.Component {
                     </div>
                     
             
-                    <div className='p-6 bg-white mb-8 flex justify-start'>
+                    <div className='p-6 bg-white mb-8 flex justify-start border-4 border-black'>
                         <div className='w-96 h-96 overflow-hidden mr-6'>
                             <GalleryView gallery={club.get('gallery')} club_id={club_id} />
                         </div>
                         <div className='flex-grow'>
-                            <div className='border border-black'>
-                                <div className='p-4 border-b border-black'>
-                                    <div>collection</div>
+                            <div className=''>
+                                <div className='mb-4 py-4 border-b border-gray-100'>
                                     <div className='h1'>{club.get('name')}</div>
                                 </div>
                                 {
                                     (contract && contract.get('wl_enable'))
-                                    ?   <div className='flex justify-between border-b border-black'>
-                                        <div className='w-1/2 box-one border-r border-black'>
-                                            <div className='lb'>Whitelist presale starts in</div>
+                                    ?   <div className='flex justify-between '>
+                                        <div className='w-1/2 box-one '>
+                                            <div className='lb'>{t('whitelist presale starts in')}</div>
                                             <div className='ma flex justify-start items-center'>
                                                 {
                                                     (contract.get('wl_start_time'))
                                                     ? <>
-                                                    <Countdown date={contract.get('wl_start_time')} />
-                                                    <span className='ml-4'>
+                                                    <Countdown date={contract.get('wl_start_time')*1000} />
+                                                    <span className='ml-4 flex-item-center'>
                                                         <Cal begin_time={contract.get('wl_start_time')} 
                                                             text={this.getCalendarTitle('whitelist')} 
                                                             details={'url:'+mint_url} />
@@ -163,7 +171,7 @@ class ClubView extends React.Component {
                                             </div>
                                         </div>
                                         <div className='w-1/2 box-one'>
-                                            <div className='lb'>Mint price</div>
+                                            <div className='lb'>{t('whitelist presale price')}</div>
                                             <div className='ma'>
                                                 {
                                                     (contract.get('wl_price'))
@@ -178,28 +186,49 @@ class ClubView extends React.Component {
                                     </div>
                                     : null
                                 }
+                                <div className='flex justify-between '>
+                                    <div className='w-1/2 box-one '>
+                                        <div className='lb'>{t('minted / whitelist supply')}</div>
+                                        <div className='ma flex justify-start items-center'>
+                                            0 / {contract.get('wl_max_supply')}
+                                        </div>
+                                    </div>
+                                    <div className='w-1/2 box-one '>
+                                        <div className='lb'>{t('total supply')}</div>
+                                        <div className='ma flex justify-start items-center'>
+                                            {contract.get('max_supply')}
+                                        </div>
+                                    </div>
+                                </div>
                                 {
                                     (contract && contract.get('pb_enable'))
-                                    ?   <div className='flex justify-between border-b border-black'>
-                                        <div className='w-1/2 box-one border-r border-black'>
+                                    ?   <div className='flex justify-between '>
+                                        <div className='w-1/2 box-one '>
                                             <div className='lb'>{t('public sale starts in')}</div>
                                             <div className='ma flex justify-start items-center'>
                                                 {
-                                                    (contract.get('pb_start_time'))
+                                                    (contract.get('pb_start_time') > 0)
                                                     ? <>
-                                                        <Countdown date={contract.get('pb_start_time')} />
-                                                        <span className='ml-4'>
-                                                            <Cal begin_time={contract.get('wl_start_time')} 
-                                                                text={this.getCalendarTitle('whitelist')} 
-                                                                details={'url:'+mint_url} />
-                                                        </span>
+                                                        {
+                                                            (contract.get('pb_enable') && now_unixtime > Number(contract.get('wl_start_time')))
+                                                            ? <Countdown date={contract.get('pb_start_time')*1000} />
+                                                            : <>
+
+                                                                <Showtime unixtime={contract.get('pb_start_time')} cale={true} />
+                                                                <span className='ml-4 flex-item-center'>
+                                                                    <Cal begin_time={contract.get('pb_start_time')} 
+                                                                        text={this.getCalendarTitle('public')} 
+                                                                        details={'url:'+mint_url} />
+                                                                </span>
+                                                            </>
+                                                        }
                                                     </>
                                                     : 'not set yet'
                                                 }
                                             </div>
                                         </div>
                                         <div className='w-1/2 box-one'>
-                                            <div className='lb'>{t('mint price')}</div>
+                                            <div className='lb'>{t('public sale price')}</div>
                                             <div className='ma'>
                                                 {
                                                     (contract.get('pb_price'))
@@ -212,8 +241,8 @@ class ClubView extends React.Component {
                                             </div>
                                         </div>
                                     </div>
-                                    : <div className='flex justify-between border-b border-black'>
-                                        <div className='w-1/2 box-one border-r border-black'>
+                                    : <div className='flex justify-between '>
+                                        <div className='w-1/2 box-one '>
                                             <div className='lb'>{t('public sale starts in')}</div>
                                             <div className='ma'>
                                                 {t('not set yet')}
@@ -229,133 +258,158 @@ class ClubView extends React.Component {
                                 }
                                 
 
-                                <div className='flex justify-between items-center p-4'>
-                                    <button className='btn btn-primary btn-block'>MINT</button>
+                                <div className='flex justify-between items-center py-4 border-t border-gray-100'>
+                                    <button className='btn btn-primary btn-wide capitalize'>mint</button>
                                 </div>
 
                             </div>
                         </div>
                     </div>
-
+                    <div className='mb-8 w-full p-6 bg-white'>
+                        <div className='block-title'>{t('whitelist check')}</div>
+                        <div className='grid grid-cols-2 gap-8'>
+                            <WhitelistCheckAuto club_id={club_id} wallet={wallet}/>
+                            <WhitelistCheck club_id={club_id}/>
+                        </div>
+                    </div>
                     <div className='mb-8 w-full p-6 bg-white'>
                         <div className='block-title'>{t('about')}</div>
 
                         <div className='grid grid-cols-12 gap-8'>
-                            <div className="col-span-6">
-                                <div className='border border-black border-b-0'>
-
-                                    <div className='border-b border-black flex justify-between'>
-                                        <div className="w-1/2 box-one border-r border-black">
-                                            <div className='lb'>collection size</div>
-                                            <div className='ma'>
+                            <div className="col-span-6 border-r border-gray-100">
+                                <table className='info-table'>
+                                    <thead>
+                                        <tr>
+                                            <th colspan={2}>
+                                                {t('basic')}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td className='lttd'>
+                                                {t('collection size')}
+                                            </td>
+                                            <td className='rctd'>
                                                 {contract.get('max_supply')}
-                                            </div>
-                                        </div>
-                                        <div className="w-1/2 box-one">
-                                            <div className='lb'>1/1</div>
-                                            <div className='ma'>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className='lttd'>
+                                                1/1 NFT
+                                            </td>
+                                            <td className='rctd'>
                                                 {contract.get('special_supply')}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='border-b border-black'>
-                                        <div className="box-one">
-                                            <div className='lb'>blockchain</div>
-                                            <div className='ma'>
-                                            Ethereum
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {
-                                        (contract.get('wl_enable'))
-                                        ? <div className='border-b border-black flex justify-between'>
-                                            <div className="w-1/2 box-one border-r border-black">
-                                                <div className='lb'>{t('whitelist spot')}</div>
-                                                <div className='ma'>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className='lttd'>
+                                                blockchain
+                                            </td>
+                                            <td className='rctd'>
+                                                Ethereum
+                                            </td>
+                                        </tr>
+                                    
+                                        {
+                                            (Number(contract.get('reveal_time')) > 0)
+                                            ? <tr>
+                                                <td className='lttd'>
+                                                    {t('reveal in')}
+                                                </td>
+                                                <td className='rctd'>
+                                                    <Showtime unixtime={contract.get('reveal_time')} cale={true} />
+                                                </td>
+                                            </tr>
+                                            : null
+                                        }
+
+                                    </tbody>
+                                </table>
+                                {
+                                    (contract.get('wl_enable'))
+                                    ? <><table className='info-table'>
+                                        <thead>
+                                            <tr>
+                                                <th colspan={2}>
+                                                    {t('whitelist')}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td className='lttd'>
+                                                    {t('whitelist spot')}
+                                                </td>
+                                                <td className='rctd'>
                                                     {contract.get('wl_max_supply')}
-                                                </div>
-                                            </div>
-                                            <div className="w-1/2 box-one">
-                                                <div className='lb'>{t('presale price')}</div>
-                                                <div className='ma'>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td className='lttd'>
+                                                    {t('whitelist presale price')}
+                                                </td>
+                                                <td className='rctd'>
                                                     {autoDecimal(contract.get('wl_price'))}
                                                     <span className='ml-2 text-base'>ETH</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        : null
-                                    }
-                                    {
-                                        (contract.get('pb_enable'))
-                                        ? <div className='border-b border-black flex justify-between'>
-                                            <div className="w-1/2 box-one border-r border-black">
-                                                <div className='lb'>{t('public sale supply')}</div>
-                                                <div className='ma'>
-                                                    {
-                                                        Number(contract.get('max_supply'))
-                                                        -
-                                                        Number(contract.get('wl_max_supply'))
-                                                    }
-                                                </div>
-                                            </div>
-                                            <div className="w-1/2 box-one">
-                                                <div className='lb'>{t('public sale price')}</div>
-                                                <div className='ma'>
-                                                    {autoDecimal(contract.get('pb_price'))}
-                                                    <span className='ml-2 text-base'>ETH</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        : null
-                                    }
-                                    {
-                                        (contract.get('wl_enable') && Number(contract.get('wl_start_time')) > 0)
-                                        ? <div className='border-b border-black flex justify-between'>
-                                            <div className="box-one w-full">
-                                                <div className='lb'>{t('whitelist presale starts')}</div>
-                                                <div className='ma flex justify-start items-center'>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td className='lttd'>
+                                                    {t('whitelist mint time')}
+                                                </td>
+                                                <td className='rctd'>
                                                     <Showtime unixtime={contract.get('wl_start_time')} cale={true} />
-                                                    <span className='ml-4'>
+                                                    <span className='ml-4 flex-item-center'>
                                                         <Cal begin_time={contract.get('wl_start_time')} 
                                                             text={this.getCalendarTitle('whitelist')} 
                                                             details={'url:'+mint_url} />
                                                     </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        : null
-                                    }
-                                    {
-                                        (contract.get('pb_enable')  && Number(contract.get('pb_start_time')) > 0)
-                                        ? <div className='border-b border-black flex justify-between'>
-                                            <div className="box-one w-full">
-                                                <div className='lb'>{t('public sale starts')}</div>
-                                                <div className='ma flex justify-start items-center'>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    </>
+                                    : null
+                                }
+                                {
+                                    (contract.get('pb_enable'))
+                                    ? <><table className='info-table'>
+                                        <thead>
+                                            <tr>
+                                                <th colspan={2}>
+                                                    {t('public sale')}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td className='lttd'>
+                                                    {t('public sale price')}
+                                                </td>
+                                                <td className='rctd'>
+                                                    {autoDecimal(contract.get('pb_price'))}
+                                                    <span className='ml-2 text-base'>ETH</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td className='lttd'>
+                                                    {t('public mint time')}
+                                                </td>
+                                                <td className='rctd'>
                                                     <Showtime unixtime={contract.get('pb_start_time')} cale={true} />
-                                                    <span className='ml-4'>
-                                                        <Cal begin_time={contract.get('wl_start_time')} 
+                                                    <span className='ml-4 flex-item-center'>
+                                                        <Cal begin_time={contract.get('pb_start_time')} 
                                                             text={this.getCalendarTitle('public')} 
                                                             details={'url:'+mint_url} />
                                                     </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        : null
-                                    }
-                                    {
-                                        (Number(contract.get('reveal_time')) > 0)
-                                        ? <div className='border-b border-black flex justify-between'>
-                                            <div className="box-one w-full">
-                                                <div className='lb'>{t('reveal in')}</div>
-                                                <div className='ma'>
-                                                    <Showtime unixtime={contract.get('reveal_time')} cale={true} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        : null
-                                    }
-
-                                </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    </>
+                                    : null
+                                }
 
                             </div>
                             <div className="col-span-6">
@@ -367,7 +421,7 @@ class ClubView extends React.Component {
 
                     <div className='p-6 pt-4 bg-white mb-8'>
                         <div className='block-title'>{t('creator')}</div>
-                        <div className='grid grid-cols-2 gap-5'>
+                        <div className='grid grid-cols-2 gap-16'>
                             {club.get('creator').map((one,index) => <CreatorOne 
                                 key={one.id} 
                                 id={index}
@@ -397,21 +451,43 @@ class ClubView extends React.Component {
                         ?   <div className='p-6 pt-4 bg-white mb-8'>
                             <div className='block-title'>{t('refund')}</div>
 
-                            <div>
+                            <div className='grid grid-cols-2 gap-8'>
                                 
+                                <div>
                                 {contract.get('refund').map((one,index) => {
                                     console.log('one',one.toJS(),index);
-                                    return <div className='flex justify-start border border-black'>
-                                        <div className='p-4 border-r border-black'>
+                                    return <div className='flex justify-start'>
+                                        <div className='py-4 pr-8'>
                                             <label>{t('locked ends in')}</label>
+                                            <div className='text-xl font-bold'>
                                             <Showtime unixtime={one.get('end_time')} cale={true} />
+                                            </div>
                                         </div>
-                                        <div className='p-4'>
+                                        <div className='py-4'>
                                             <label>{t('refundable rate')}</label>
-                                            <div>{percentDecimal(one.get('refund_rate'))}%</div>
+                                            <div className='text-xl font-bold'>
+                                                {percentDecimal(one.get('refund_rate'))}%
+                                            </div>
                                         </div>
                                     </div>
                                 })}
+                                </div>
+                                <div>
+                                    <h3 className='h3 mb-2'>
+                                        {t('refund introduction')}
+                                    </h3>
+                                    <div className='text-gray-500'>
+                                        <p>
+                                            小幽灵是一个NFT项目，起源于最早的一个素描头像的构思，后来决定于发型在ETH上的NFT中，慢慢的我们对这个项目开始了更长时间的设计，规划。
+                                        </p>
+                                        <p>
+                                            从一开始我们就希望做一个高质量的NFT项目，吸取国产项目的教训，并用真正的设计和实力来Build一个足够好的项目。
+                                        </p>
+                                        <p>
+                                            在这里描述中，我们就需要更长的字数来介绍了，但是我是在不知道写了点什么就多一些一些，希望是可以个可以的啊打算啊苏丹啊苏丹。描述的中东。
+                                        </p>
+                                    </div>
+                                </div>
 
                             </div>
 
