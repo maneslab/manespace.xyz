@@ -91,16 +91,16 @@ class PageWrapper extends React.Component {
 
                             <div className='flex justify-end items-center'>
 
+                            <div className='mr-2'>
+                                <DarkmodeSwitch />
+                            </div>
+
                             <GasButton />
 
                             <LanguageBtn />
 
                             <ConnectWalletButton />
 
-                            <div className='ml-2'>
-                                <DarkmodeSwitch />
-                            </div>
-                            
                             </div>
                         </div>
                     </div>
