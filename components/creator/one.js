@@ -13,7 +13,7 @@ export default function SortableItem({creator,club,id}) {
     let is_empty = (!creator['name'] && !creator['title']);
 
     return (
-        <div className={classNames('bg-[#fff] text-black z-10')}  >
+        <div className={classNames('z-10')}  >
             <div className='flex justify-between'>
 
                 <div className=''>
@@ -27,7 +27,7 @@ export default function SortableItem({creator,club,id}) {
                         }
                     </div>
                     <div className='px-0 py-4'>
-                        <div className='text-base mb-0'>{creator.get('title')}</div>
+                        <div className='text-base mb-0 dark:text-gray-400'>{creator.get('title')}</div>
                         <div className='text-2xl font-bold'>{creator.get('name')}</div>
                     </div>
                     <div className='flex justify-start items-center space-x-4 px-0 py-2'>

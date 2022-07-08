@@ -86,11 +86,52 @@
     0% {opacity:1; transform: translate3d(-50%, -50%, 0px)}
     to {opacity:0; transform: translate3d(-50%, -30%, 0px)}
 }
+/*scrollbar*/
+::-webkit-scrollbar {
+    @apply dark:bg-[#333];
+}
+::-webkit-scrollbar-thumb  {
+    @apply dark:bg-[#444] rounded-full;
+
+}
+::-webkit-scrollbar-track  
+{  
+    @apply dark:bg-[#333];
+}  
+
+
+/*darkmode*/
+.d-border-c-1 {
+    @apply border-gray-300 dark:border-[#31343a];
+}
+.d-border-c-2 {
+    @apply border-gray-200 dark:border-[#31343a];
+}
+.d-border-c-3 {
+    @apply border-gray-100 dark:border-[#31343a];
+}
+
+.d-bg-c-1 {
+    @apply bg-white dark:bg-[#22252b];
+}
+.d-bg-c-2 {
+    @apply bg-gray-100 dark:bg-[#22252b];
+}
+.d-bg-c-3 {
+    @apply bg-gray-100 dark:bg-[#4e5155];
+}
+
+.divider::before,
+.divider::after {
+    @apply dark:bg-[#31343a]
+}
 
 
 body {
     color :#000;
+    @apply dark:bg-[#121518] dark:text-white;
 }
+
 html,body {
     overflow: hidden;
 }
@@ -352,7 +393,9 @@ html,body {
 }
 
 
-
+.btn-disabled, .btn-disabled:hover, .btn[disabled], .btn[disabled]:hover {
+    @apply dark:bg-[#333] dark:text-[#999];
+}
 .btn-outline {
     @apply border-2;
 }
@@ -414,7 +457,7 @@ input{outline:none;}
 
 /*main*/
 .logo {
-    @apply font-black text-xl mr-4 text-black flex items-center;
+    @apply font-black text-xl mr-4 text-black dark:text-white flex items-center;
 }
 .main-menu {
     @apply flex justify-start items-center space-x-4;
@@ -435,7 +478,7 @@ input{outline:none;}
 
 
 .input-box {
-    @apply font-ubuntu px-4 py-2 text-sm w-full border focus:ring-2 text-black input-base;
+    @apply font-ubuntu px-4 py-2 text-sm w-full border focus:ring-2 text-black input-base d-bg-c-1 dark:border-[#797d86]  dark:text-white;
 }
 .input-box.yellow {
     @apply bg-yellow-200 border border-yellow-300 text-black dark:bg-yellow-900 dark:border-yellow-700 text-black dark:text-white; 
@@ -508,7 +551,7 @@ input{outline:none;}
 }
 
 .block-title {
-    @apply font-bold text-xl mt-0 mb-4 text-black capitalize;
+    @apply font-bold text-xl mt-0 mb-4 text-gray-400 capitalize;
 }
 
 .form-box-one {
@@ -543,7 +586,9 @@ input{outline:none;}
     @apply flex;
 }
 
-
+.prose {
+    @apply dark:text-white;
+}
 .club-header-menu a {
     @apply py-2;
 }
@@ -675,7 +720,7 @@ input{outline:none;}
     @apply font-bold text-left capitalize text-lg py-2 
 }
 .info-table .lttd {
-    @apply text-black pr-6 capitalize w-48; 
+    @apply  pr-6 capitalize w-48; 
 }
 .info-table .rctd {
     @apply flex justify-start items-center text-gray-500;
@@ -685,3 +730,12 @@ input{outline:none;}
     min-height: 40px;
     height: 40px;
 }
+.gas-wrapper {
+    @apply p-4 py-2 text-base;
+}
+.gas-wrapper .gas-one {
+    @apply flex justify-between items-center my-2;
+}
+.gas-wrapper .gas-one .l {
+    @apply capitalize;
+} 

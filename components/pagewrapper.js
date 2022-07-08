@@ -4,23 +4,21 @@ import autobind from 'autobind-decorator'
 
 import classNames from 'classnames';
 import LanguageBtn from 'components/language/btn'
-// import NavLink from 'components/common/navlink'
 
 import Head from 'next/head'
 import Link from 'next/link'
-import Logo from 'public/img/logo.svg'
 import ConnectWalletButton from 'components/wallet/connect_button'
-// import WggLogo from 'public/img/wgg_logo.svg'
-
-// import { MenuIcon} from '@heroicons/react/outline'
+import GasButton from 'components/common/gas/button'
+import Footer from 'components/layout/footer'
 
 import { denormalize } from 'normalizr';
 import { userSchema } from 'redux/schema/index'
 import { initApp,setSlider,setGlobalModal } from 'redux/reducer/setting'
 import {withTranslate} from 'hocs/index'
 
-// import { HomeIcon,PlusCircleIcon , CashIcon , CogIcon,InboxInIcon} from '@heroicons/react/outline';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import DarkmodeSwitch from './common/darkmode_switch';
+
+// import { ConnectButton } from '@rainbow-me/rainbowkit';
 import config from 'helper/config'
 
 @withTranslate
@@ -71,43 +69,46 @@ class PageWrapper extends React.Component {
                 </Head>
                 <div>
 
-                    <div className="h-screen w-screen overflow-y-scroll flex flex-col justify-between">
+                    <div className='header-bg dark:bg-[#22252b] mb-8 fixed w-full top-0'>
+                        <div className="flex justify-between h-16 w-full max-w-screen-xl mx-auto">
 
-                        <div className='header-bg text-black mb-8 fixed w-full top-0'>
-                            <div className="flex justify-between h-16 w-full max-w-screen-xl mx-auto">
+                            <div className='flex justify-start'>
 
-                                <div className='flex justify-start'>
+                                <Link href="/">
+                                    <a className="logo">
+                                        Mane<span className="text-primary">SPACE</span>
+                                    </a>
+                                </Link>
 
-                                    <Link href="/">
-                                        <a className="logo">
-                                            Mane<span className="text-primary">SPACE</span>
-                                        </a>
-                                    </Link>
-
-                                    <div className='main-menu ml-4'>
-                                        <Link href="/project/list"><a className='font-bold capitalize ml-2'>{t('projects')}</a></Link>
-                                    </div>
-
-                                    
-
+                                <div className='main-menu ml-4'>
+                                    <Link href="/project/list"><a className='font-bold capitalize ml-2'>{t('projects')}</a></Link>
                                 </div>
+
                                 
 
-                                <div className='flex justify-end items-center'>
-
-                                    <LanguageBtn />
-
-                                    <ConnectWalletButton />
-                                </div>
-
                             </div>
-                        </div>
-
-                        <div className={(wapperClassName) ? wapperClassName : "flex-grow py-4"}>
-                            {this.props.children}
-                        </div>
                             
 
+                            <div className='flex justify-end items-center'>
+
+                            <GasButton />
+
+                            <LanguageBtn />
+
+                            <ConnectWalletButton />
+
+                            <div className='ml-2'>
+                                <DarkmodeSwitch />
+                            </div>
+                            
+                            </div>
+                        </div>
+                    </div>
+                    <div className="h-screen w-screen overflow-y-scroll pb-16">
+                        <div className={(wapperClassName) ? wapperClassName : "py-4"}>
+                            {this.props.children}
+                        </div>
+                        <Footer />
                     </div>
 
 

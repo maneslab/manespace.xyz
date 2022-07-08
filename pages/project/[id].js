@@ -18,12 +18,13 @@ import Cal from 'components/time/cal'
 import withClubView from 'hocs/clubview'
 import WhitelistCheck from 'components/whitelist/check'
 import WhitelistCheckAuto from 'components/whitelist/check_auto'
+import RefundModal from 'components/refund/modal'
 
 import { StatusOnlineIcon } from '@heroicons/react/outline';
 
 // import { atcb_action } from 'add-to-calendar-button'
 // import 'add-to-calendar-button/assets/css/atcb.min.css';
-// import { BellIcon } from '@heroicons/react/outline';
+import { DotsVerticalIcon,CurrencyDollarIcon} from '@heroicons/react/outline';
 import Countdown from 'react-countdown';
 import config from 'helper/config'
 
@@ -42,9 +43,11 @@ class ClubView extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            is_public : false
+            is_public : false,
+            show_refund_modal : false
         }
     }
+
 
     componentDidMount() {
         if (this.props.club) {
@@ -64,9 +67,9 @@ class ClubView extends React.Component {
 
 
     @autobind
-    toggleCreateModal() {
+    toggleRefundModal() {
         this.setState({
-            show_create_modal : !this.state.show_create_modal
+            show_refund_modal : !this.state.show_refund_modal
         })
     }
 
@@ -136,18 +139,18 @@ class ClubView extends React.Component {
             <div>
                 <div className="max-w-screen-xl mx-auto pb-32">
 
-                    <div className='flex justify-start items-center my-8 text-black'>
+                    <div className='flex justify-start items-center my-8'>
                         <StatusOnlineIcon className='h-8 w-8 mr-2' /><h2 className='h2'>{t('live now')}</h2>
                     </div>
                     
             
-                    <div className='p-6 bg-white mb-8 flex justify-start border-4 border-black'>
+                    <div className='p-6 d-bg-c-1 mb-8 flex justify-start border-4 border-black'>
                         <div className='w-96 h-96 overflow-hidden mr-6'>
                             <GalleryView gallery={club.get('gallery')} club_id={club_id} />
                         </div>
                         <div className='flex-grow'>
                             <div className=''>
-                                <div className='mb-4 py-4 border-b border-gray-100'>
+                                <div className='mb-4 py-4 border-b d-border-c-3'>
                                     <div className='h1'>{club.get('name')}</div>
                                 </div>
                                 {
@@ -258,25 +261,27 @@ class ClubView extends React.Component {
                                 }
                                 
 
-                                <div className='flex justify-between items-center py-4 border-t border-gray-100'>
+                                <div className='flex justify-between items-center py-4 border-t d-border-c-3'>
                                     <button className='btn btn-primary btn-wide capitalize'>mint</button>
+                                    <button className='btn btn-primary btn-wide capitalize' disabled={true}>mint</button>
+
                                 </div>
 
                             </div>
                         </div>
                     </div>
-                    <div className='mb-8 w-full p-6 bg-white'>
+                    <div className='mb-8 w-full p-6 d-bg-c-1'>
                         <div className='block-title'>{t('whitelist check')}</div>
                         <div className='grid grid-cols-2 gap-8'>
                             <WhitelistCheckAuto club_id={club_id} wallet={wallet}/>
                             <WhitelistCheck club_id={club_id}/>
                         </div>
                     </div>
-                    <div className='mb-8 w-full p-6 bg-white'>
+                    <div className='mb-8 w-full p-6 d-bg-c-1'>
                         <div className='block-title'>{t('about')}</div>
 
                         <div className='grid grid-cols-12 gap-8'>
-                            <div className="col-span-6 border-r border-gray-100">
+                            <div className="col-span-6 border-r d-border-c-3">
                                 <table className='info-table'>
                                     <thead>
                                         <tr>
@@ -419,7 +424,7 @@ class ClubView extends React.Component {
 
                     </div>
 
-                    <div className='p-6 pt-4 bg-white mb-8'>
+                    <div className='p-6 pt-4 d-bg-c-1 mb-8'>
                         <div className='block-title'>{t('creator')}</div>
                         <div className='grid grid-cols-2 gap-16'>
                             {club.get('creator').map((one,index) => <CreatorOne 
@@ -431,7 +436,7 @@ class ClubView extends React.Component {
                         </div>
                     </div>
 
-                    <div className='p-6 pt-4 bg-white mb-8'>
+                    <div className='p-6 pt-4 d-bg-c-1 mb-8'>
                         <div className='block-title'>{t('roadmap')}</div>
 
                         <div>
@@ -448,7 +453,7 @@ class ClubView extends React.Component {
 
                     {
                         (contract.get('refund').count() > 0)
-                        ?   <div className='p-6 pt-4 bg-white mb-8'>
+                        ?   <div className='p-6 pt-4 d-bg-c-1 mb-8'>
                             <div className='block-title'>{t('refund')}</div>
 
                             <div className='grid grid-cols-2 gap-8'>
@@ -495,6 +500,37 @@ class ClubView extends React.Component {
                         : null
                     }
 
+                    <div className='p-6 pt-4 bg-white mb-8'>
+                        <div className='block-title'>{t('My Nfts')}</div>
+                        <div className='grid grid-cols-6 gap-8'>
+                            <div className=''>
+                                <div className='relative'>
+                                    <img src="http://dev.static.manestudio.com/public/gallery/bd/fa/bdfa104a2a4247eadf396d1f31d9006b267a2bbe.png" />
+                                    <div class="dropdown dropdown-right absolute right-1 top-1">
+                                        <label tabindex="0" class="btn m-1 px-2 bg-transparent border-none text-gray-600 hover:text-black hover:bg-transparent">
+                                            <DotsVerticalIcon className='icon-sm'/>
+                                        </label>
+                                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-white rounded-box w-52 capitalize">
+                                            <li><a onClick={this.toggleRefundModal}><CurrencyDollarIcon className="icon-sm" />{t('refund')}</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div>
+                                    #1
+                                </div>
+                            </div>
+                            <div className=''>
+                                <div>
+                                    <img src="http://dev.static.manestudio.com/public/gallery/fd/6b/fd6be03709cb57ede19a622ddeffff39a0d44a0c.png" />
+                                </div>
+                                <div>
+                                    #2
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <RefundModal visible={this.state.show_refund_modal} closeModal={this.toggleRefundModal}/>
 
 
                 </div> 

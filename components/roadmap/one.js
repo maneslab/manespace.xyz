@@ -8,7 +8,7 @@ export default function SortableItem({roadmap,open_index,id,toggleOpen,remove,dr
     // const {t} = useTranslation('common');
 
     return (
-        <div className={classNames('bg-[#fff] text-black z-10 border-b border-gray-200 mb-6 pb-2 last:mb-0 last:pb-0 last:border-b-0')} >
+        <div className={classNames(' z-10 border-b d-border-c-2 mb-6 pb-2 last:mb-0 last:pb-0 last:border-b-0')} >
             <div>
                 <div className='flex justify-start font-bold'>
                     <div className='py-1 pr-4 border-r border-black'>
