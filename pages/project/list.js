@@ -7,52 +7,45 @@ import autobind from 'autobind-decorator'
 import PageWrapper from 'components/pagewrapper'
 
 import MyClubList from 'components/club/mylist'
+import MyClubList2 from 'components/club/mylist2'
+
 import withMustLogin from 'hocs/mustlogin';
 import withTranslate from 'hocs/translate';
-import CreateModal from 'components/club/create_modal'
+
+import { CollectionIcon,FireIcon } from '@heroicons/react/outline';
 
 @withTranslate
-@withMustLogin
 class ClubList extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            show_create_modal : false,
         }
     }
 
-    @autobind
-    toggleCreateModal() {
-        this.setState({
-            show_create_modal : !this.state.show_create_modal
-        })
-    }
 
     render() {
         const {t} = this.props.i18n;
-        const {show_create_modal} = this.state;
 
         return <PageWrapper>
             <Head>
-                <title>{'My Project List'}</title>
+                <title>{'Project List'}</title>
             </Head>
-            <div className="max-w-screen-xl grid grid-cols-3 gap-4 mx-auto">
-                <div className="col-span-2">
-                    <div className='flex justify-between items-center mb-8'>
-                        <h1 className="h1">{t('my projects')}</h1>
-                        <button className='btn btn-primary' onClick={this.toggleCreateModal}>
-                            {t('add project')}
-                        </button>
-                    </div>
-                    <MyClubList />
-                    <CreateModal visible={show_create_modal} closeModal={this.toggleCreateModal}/>
-                </div>
-                <div class="">
+            <div className="max-w-screen-xl mx-auto">
 
+                <div className='flex justify-between items-center mb-4'>
+                    <h2 className="h2 capitalize flex justify-start items-center"><FireIcon className="icon-sm mr-2" />{t('next up')}</h2>
                 </div>
-            </div> 
-    </PageWrapper>
+                <div className='mb-16'>
+                    <MyClubList2 />
+                </div>
+
+                <div className='flex justify-between items-center mb-4'>
+                    <h2 className="h2 capitalize flex justify-start items-center"><CollectionIcon className="icon-sm mr-2" />{t('more upcoming drops')}</h2>
+                </div>
+                <MyClubList />
+            </div>
+        </PageWrapper>
     }
     
 }

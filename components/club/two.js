@@ -1,0 +1,200 @@
+import React from 'react';
+import autobind from 'autobind-decorator';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import EthIcon from 'public/img/token/eth.svg'
+
+import {BadgeCheckIcon} from '@heroicons/react/solid'
+import Link from 'next/link'
+import GalleryView from 'components/gallery/view'
+import Countdown from 'react-countdown';
+import Cal from 'components/time/cal'
+
+import {showTimeLeft} from 'helper/time'
+
+import {getItemImage} from 'helper/common'
+import {UserIcon} from '@heroicons/react/outline'
+import { t } from 'helper/translate';
+import Showtime from 'components/time/showtime';
+import withTranslate from 'hocs/translate';
+import config from 'helper/config'
+import {autoDecimal} from 'helper/number'
+import { getUnixtime } from 'helper/time';
+
+@withTranslate
+class clubOne extends React.Component {
+
+    @autobind
+    getCalendarTitle(time_type = 'whitelist') {
+        const {club} = this.props;
+        const {t} =  this.props.i18n;
+        switch(time_type) {
+            case 'whitelist':
+                return club.get('name') + ' ' + t('whitelist mint begin');
+            case 'public':
+                return club.get('name') + ' ' + t('public mint begin');
+            default:
+                return '';
+        }
+    }
+
+    @autobind
+    getMintUrl() {
+        const {club} = this.props;
+        if (club.get('unique_name')) {
+            return config.get('WEBSITE') + '/project/' +club.get('unique_name')
+        }else {
+            return config.get('WEBSITE') + '/project/' +club.get('id')
+        }
+    }
+
+    render() {
+
+        const { club } = this.props;
+
+        let creator_name_list = [];
+        club.get('creator').forEach((one)=>{
+            creator_name_list.push(one.get('name'))
+        });
+
+        let contract = club.get('contract')
+        let mint_url = this.getMintUrl();
+        let now_unixtime = getUnixtime();
+
+        console.log('contract-gallery',club.get('gallery').toJS());
+
+        return <div>
+            <Link href={"/project/"+club.get('id')}>
+            <div className='p-6 d-bg-c-1 mb-8 flex justify-start border-4 border-black'>
+                <div className='w-96 h-96 overflow-hidden mr-10'>
+                    <GalleryView gallery={club.get('gallery')} club_id={club.get('id')} />
+                </div>
+                <div className='flex-grow'>
+                    <div className=''>
+                        <div className='mb-4 py-4 border-b d-border-c-3'>
+                            <div className='h1'>{club.get('name')}</div>
+                        </div>
+                        {
+                            (contract && contract.get('wl_enable'))
+                            ?   <div className='flex justify-between '>
+                                <div className='w-1/2 box-one '>
+                                    <div className='lb'>{t('whitelist presale starts in')}</div>
+                                    <div className='ma flex justify-start items-center'>
+                                        {
+                                            (contract.get('wl_start_time'))
+                                            ? <>
+                                            <Countdown date={contract.get('wl_start_time')*1000} />
+                                            <span className='ml-4 flex-item-center'>
+                                                <Cal begin_time={contract.get('wl_start_time')} 
+                                                    text={this.getCalendarTitle('whitelist')} 
+                                                    details={'url:'+mint_url} />
+                                            </span>
+                                            </>
+                                            : t('not set yet')
+                                        }
+                                    </div>
+                                </div>
+                                <div className='w-1/2 box-one'>
+                                    <div className='lb'>{t('whitelist presale price')}</div>
+                                    <div className='ma'>
+                                        {
+                                            (contract.get('wl_price'))
+                                            ? <>
+                                                <span>{parseFloat(contract.get('wl_price'))}</span>
+                                                <span className='text-base ml-2'>ETH</span>
+                                            </>
+                                            : t('not set yet')
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            : null
+                        }
+                        <div className='flex justify-between '>
+                            <div className='w-1/2 box-one '>
+                                <div className='lb'>{t('minted / whitelist supply')}</div>
+                                <div className='ma flex justify-start items-center'>
+                                    0 / {contract.get('wl_max_supply')}
+                                </div>
+                            </div>
+                            <div className='w-1/2 box-one '>
+                                <div className='lb'>{t('total supply')}</div>
+                                <div className='ma flex justify-start items-center'>
+                                    {contract.get('max_supply')}
+                                </div>
+                            </div>
+                        </div>
+                        {
+                            (contract && contract.get('pb_enable'))
+                            ?   <div className='flex justify-between '>
+                                <div className='w-1/2 box-one '>
+                                    <div className='lb'>{t('public sale starts in')}</div>
+                                    <div className='ma flex justify-start items-center'>
+                                        {
+                                            (contract.get('pb_start_time') > 0)
+                                            ? <>
+                                                {
+                                                    (contract.get('pb_enable') && now_unixtime > Number(contract.get('wl_start_time')))
+                                                    ? <Countdown date={contract.get('pb_start_time')*1000} />
+                                                    : <>
+
+                                                        <Showtime unixtime={contract.get('pb_start_time')} cale={true} />
+                                                        <span className='ml-4 flex-item-center'>
+                                                            <Cal begin_time={contract.get('pb_start_time')} 
+                                                                text={this.getCalendarTitle('public')} 
+                                                                details={'url:'+mint_url} />
+                                                        </span>
+                                                    </>
+                                                }
+                                            </>
+                                            : 'not set yet'
+                                        }
+                                    </div>
+                                </div>
+                                <div className='w-1/2 box-one'>
+                                    <div className='lb'>{t('public sale price')}</div>
+                                    <div className='ma'>
+                                        {
+                                            (contract.get('pb_price'))
+                                            ? <>
+                                                <span>{parseFloat(contract.get('pb_price'))}</span>
+                                                <span className='text-base ml-2'>ETH</span>
+                                            </>
+                                            : 'not set yet'
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            : <div className='flex justify-between '>
+                                <div className='w-1/2 box-one '>
+                                    <div className='lb'>{t('public sale starts in')}</div>
+                                    <div className='ma'>
+                                        {t('not set yet')}
+                                    </div>
+                                </div>
+                                <div className='w-1/2 box-one'>
+                                    <div className='lb'>{t('mint price')}</div>
+                                    <div className='ma'>
+                                        {t('not set yet')}
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
+
+                        <div className='flex justify-between items-center py-4 border-t d-border-c-3'>
+                            <button className='btn btn-primary btn-wide capitalize'>mint</button>
+                            <button className='btn btn-primary btn-wide capitalize' disabled={true}>mint</button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            </Link>
+        </div>
+    }
+}
+
+
+module.exports = clubOne

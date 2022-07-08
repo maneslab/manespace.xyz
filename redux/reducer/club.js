@@ -74,13 +74,14 @@ export function loadClubList(condition) {
         callAPI: () => {
             return httpRequest({
                 'method'  : 'GET',
-                'url'     : '/v1/club/list',
+                'url'     : '/v1/club/public_list',
                 'data'    : condition
             })
         },
 
         data_format : (result) => {
-            var output = normalize(result.data, clubListSchema)
+            var output = normalize(result.data.data, clubListSchema)
+            output['total'] = result.data.total
             return output
         },
 
@@ -92,7 +93,6 @@ export function loadClubList(condition) {
         },
         payload: {
             hash : hash,
-            login_user_id : login_user_id
         }
     };
 }
@@ -211,23 +211,22 @@ export function reducer(state = Immutable.fromJS({
             }
 
        case BEFORE_LOAD_CLUB_LIST:
-            if (!state.getIn(['my_list',action.payload.login_user_id])) {
-                state = state.setIn(['my_list',action.payload.login_user_id,'list'],Immutable.List([]));
+            if (!state.getIn(['list',action.payload.hash])) {
+                state = state.setIn(['list',action.payload.hash,'list'],Immutable.List([]));
             }
             return state
-            .setIn(['my_list',action.payload.login_user_id,'is_fetching'],true)
-            .setIn(['my_list',action.payload.login_user_id,'is_fetched'],false)
-            .setIn(['my_list',action.payload.login_user_id,'is_end'],false)
+            .setIn(['list',action.payload.hash,'is_fetching'],true)
+            .setIn(['list',action.payload.hash,'is_fetched'],false)
 
         case LOAD_CLUB_LIST_SUCCESS:
-            return state.setIn(['my_list',action.payload.login_user_id,'is_fetching'],false)
-            .setIn(['my_list',action.payload.login_user_id,'is_fetched'],true)
-            .setIn(['my_list',action.payload.login_user_id,'list'],Immutable.List(action.payload.response.result))
-            .setIn(['my_list',action.payload.login_user_id,'data_count'],action.payload.response.data_count)
+            return state.setIn(['list',action.payload.hash,'is_fetching'],false)
+            .setIn(['list',action.payload.hash,'is_fetched'],true)
+            .setIn(['list',action.payload.hash,'list'],Immutable.List(action.payload.response.result))
+            .setIn(['list',action.payload.hash,'total'],action.payload.response.total)
 
         case LOAD_CLUB_LIST_FAILURE:
-            return state.setIn(['my_list',action.payload.login_user_id,'is_fetching'],false)
-            .setIn(['my_list',action.payload.login_user_id,'is_fetched'],false)
+            return state.setIn(['list',action.payload.hash,'is_fetching'],false)
+            .setIn(['list',action.payload.hash,'is_fetched'],false)
 
 
 

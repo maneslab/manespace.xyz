@@ -397,7 +397,7 @@ html,body {
     @apply dark:bg-[#333] dark:text-[#999];
 }
 .btn-outline {
-    @apply border-2;
+    @apply border-2 dark:border-white dark:text-white;
 }
 
 .select-box {
@@ -739,3 +739,13 @@ input{outline:none;}
 .gas-wrapper .gas-one .l {
     @apply capitalize;
 } 
+
+.club-one-item {
+    @apply mb-4;
+}
+.club-one-item label {
+    @apply text-sm dark:text-gray-500;
+}
+.club-one-item .v {
+    @apply font-bold; 
+}

@@ -113,7 +113,7 @@ class ClubView extends React.Component {
         const {club,club_id,wallet} = this.props;
 
 
-        if (!club) {
+        if (!club || !club.get('is_detail')) {
             return <PageWrapper>
                 <Head>
                     <title>{'Drop details'}</title>
@@ -137,9 +137,9 @@ class ClubView extends React.Component {
                 <title>{'Drop details'}</title>
             </Head>
             <div>
-                <div className="max-w-screen-xl mx-auto pb-32">
+                <div className="max-w-screen-xl mx-auto pb-32 pt-8">
 
-                    <div className='flex justify-start items-center my-8'>
+                    <div className='flex justify-start items-center mb-4'>
                         <StatusOnlineIcon className='h-8 w-8 mr-2' /><h2 className='h2'>{t('live now')}</h2>
                     </div>
                     
@@ -543,7 +543,7 @@ class ClubView extends React.Component {
 ClubView.getInitialProps =  wrapper.getInitialPageProps((store) => async ({pathname, req, res,query}) => {
     return {
         club_id : query.id,
-        address : (query.address) ? query.address : null
+        address : (query.address) ? query.address : ''
     };
 });
 

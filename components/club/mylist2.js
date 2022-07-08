@@ -8,7 +8,7 @@ import { denormalize } from 'normalizr';
 import Loading from 'components/common/loading'
 import Empty from 'components/common/empty'
 import Pager from 'components/common/pager'
-import ClubOne  from 'components/club/one'
+import ClubTwo  from 'components/club/two'
 
 import {removeValueEmpty} from 'helper/common'
 
@@ -61,14 +61,14 @@ class MyClubList extends React.Component {
                     <Empty text={t('I have not created any project yet')} icon={<UserGroupIcon className='icon-base'/>}/>
                     <button className={"btn btn-primary"} onClick={this.toggleCreateModal}>{t('create project')}</button>
                 </div>
-                : <div className='grid grid-cols-4 gap-4'>
+                : <div className=''>
 
                     {
                         (list_data_one.get('is_fetched'))
                         ? <>
                             {
                                 list_rows.map((one)=>{
-                                    return <ClubOne club={one} key={one.get('id')} />
+                                    return <ClubTwo club={one} key={one.get('id')} />
                                 })
                             }
                         </>

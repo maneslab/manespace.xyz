@@ -145,7 +145,7 @@ class GasButton extends React.Component {
             trigger="click"
             placement="bottomLeft" 
             onVisibleChange={this.props.toggleDropdown} >
-            <button className='btn btn-ghost mr-2 text-blue-500'>
+            <button className='btn btn-ghost text-blue-500'>
                 <GasIcon className="icon-xs"/>
                 {
                     (gas_data && gas_data.getIn(['data','average'])) 
