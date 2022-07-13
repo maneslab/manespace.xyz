@@ -7,7 +7,7 @@ import {DotsVerticalIcon,TrashIcon,PencilIcon} from '@heroicons/react/outline'
 import DragIcon from 'public/img/icons/drag.svg'
 
 import {useSortable} from '@dnd-kit/sortable';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'next-translate/useTranslation';
 import {CSS} from '@dnd-kit/utilities';
 
 import TraitList from 'components/image/trait/list'

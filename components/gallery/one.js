@@ -1,6 +1,6 @@
 import React from 'react';
 // import classNames from 'classnames';
-// import { useTranslation } from 'next-i18next';
+// import { useTranslation } from 'next-translate/useTranslation';
 
 export default function SortableItem({img,id}) {
 

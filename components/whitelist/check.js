@@ -68,7 +68,7 @@ class CheckWhitelist extends React.Component {
         const {is_fetching,address,result} = this.state;
         const {t} = this.props.i18n;
 
-        console.log('test0address-result',result[address])
+        // console.log('test0address-result',result[address])
 
         return  <div className='flex justify-center flex-col'>
             <div className="flex justify-start items-end">

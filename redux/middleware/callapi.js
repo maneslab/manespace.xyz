@@ -84,8 +84,10 @@ function callapiMiddleware({ dispatch, getState }) {
 
             return callAPI()
             .then(response => {
-                // console.log('debug02,response',typeof response,response);
+                console.log('debug02,response',typeof response,response);
                 if (typeof response == 'object' && !response.json) {
+                    return response
+                }else if (typeof response == 'string') {
                     return response
                 }else {
                     return response.json()
@@ -93,7 +95,7 @@ function callapiMiddleware({ dispatch, getState }) {
             })
             .then(json => {
 
-                // console.log('debug02,进入正常流程',json);
+                console.log('debug02,进入正常流程',json);
 
                 if (show_status.loading) {
                     hide();
@@ -159,9 +161,11 @@ function callapiMiddleware({ dispatch, getState }) {
 
             }).catch(function(e) {
 
-                // console.log('debug02,进入错误控制',show_status.error);
-                // console.log('debug02,errpr',typeof e,e.name,e.message);
-                // console.log('debug02,error-stack',e.stack);
+
+                console.log('debug02,进入错误控制',show_status.error);
+                console.log('debug02,error',typeof e,e.name,e.message);
+                console.log('debug02,error-stack',e.stack);
+                console.log('debug02,dataSource',dataSource)
 
                 if (hide) {
                     hide();

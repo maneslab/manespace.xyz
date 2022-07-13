@@ -4,7 +4,10 @@ import {getGoogleCalendarUrl} from 'helper/calendar'
 import useTranslation from 'next-translate/useTranslation'
 
 export default function Cal({text,details,begin_time,end_time = null}) {
-    
+
+    begin_time = parseInt(begin_time)
+    end_time = parseInt(end_time)
+
     const begin_date = fromUnixTime(begin_time);
     const end_date = (end_time) ? fromUnixTime(end_time) : fromUnixTime(begin_time + 3600);
 

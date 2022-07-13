@@ -219,24 +219,24 @@ html,body {
   }
   
   .loading-container::before {
+    @apply bg-black dark:bg-white;
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     height: 100%;
     width: 100%;
-    background-color: black;
     opacity: 0.1;
   }
   
   .loading-container::after {
+    @apply bg-black dark:bg-white;
     content: '';
     height: 100%;
     width: 100%;
     border-radius: 3px;
     animation: raceBy 1.4s ease-in-out infinite;
     transform: translateX(-100%);
-    background-color: black;
   }
   
   @keyframes raceBy {
@@ -748,4 +748,43 @@ input{outline:none;}
 }
 .club-one-item .v {
     @apply font-bold; 
+}
+
+/*rc-pagination*/
+.rc-pagination {
+    @apply flex justify-center text-sm items-center;
+}
+/*.rc-pagination .rc-pagination-disabled .rc-pagination-item-link {
+    @apply text-gray-300 dark:text-gray-500;
+}*/
+.rc-pagination .item-icon {
+    @apply h-6 w-6;
+}
+.rc-pagination li {
+    @apply px-3 py-1 flex items-center h-8 cursor-pointer font-bold
+}
+.rc-pagination .rc-pagination-next,
+.rc-pagination .rc-pagination-prev,
+.rc-pagination .rc-pagination-item {
+    @apply text-white bg-[#ccc] hover:bg-[#bbb] dark:text-white dark:hover:bg-[#444] dark:bg-[#333];
+}
+
+.rc-pagination .rc-pagination-next,
+.rc-pagination .rc-pagination-prev {
+    @apply px-1 mx-1 ;
+}
+.rc-pagination .rc-pagination-item {
+    @apply rounded-none mx-1;
+}
+.rc-pagination .rc-pagination-disabled,
+.rc-pagination .rc-pagination-item-disabled {
+    @apply text-[#bbb] dark:text-[#444] dark:hover:bg-[#333] hover:bg-[#ccc] cursor-text;
+}
+
+.rc-pagination .rc-pagination-item-active {
+    @apply bg-black text-white hover:bg-black dark:bg-white dark:text-black dark:hover:bg-white;
+}
+
+.menu[class*=" p-"] li > a:hover {
+    @apply dark:bg-[#22252b];
 }

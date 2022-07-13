@@ -133,6 +133,15 @@ const showBalance = (balance,decimals = 18) => {
     return new BigNumber(balance).dividedBy(Math.pow(10,decimals));
 }
 
+const hex2Number = (str = '') => {
+    if (str.indexOf('0x') === 0) {
+        str = str.slice(2);
+    }
+    return parseInt(`0x${str}`, 16);
+}
+
+
+
 module.exports = {
     'percentDecimal' : percentDecimal,
     'autoDecimal'    : autoDecimal,
@@ -147,5 +156,6 @@ module.exports = {
     'getAmountFromIntAmount' : getAmountFromIntAmount,
     'getIntAmountByAmount'   : getIntAmountByAmount,
     'getAmountFromHex'       : getAmountFromHex,
-    'showBalance'            : showBalance
+    'showBalance'            : showBalance,
+    'hex2Number'             : hex2Number
 }

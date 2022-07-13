@@ -7,6 +7,9 @@ export default function withPageList(WrappedComponent,options) {
 
         constructor(props) {
             super(props)
+            console.log('debug05,withpagelist,props',props);
+            console.log('debug05,withpagelist,options',options);
+
             this.state = {
                 'page'      : 1,
                 'page_size' : (this.props.page_size) ? this.props.page_size : 20,

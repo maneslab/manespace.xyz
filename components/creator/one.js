@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { useTranslation } from 'next-i18next';
+import useTranslation from 'next-translate/useTranslation'
 
 import TwitterIcon  from 'public/img/social/default/twitter.svg';
 import InstagramIcon  from 'public/img/social/default/instagram.svg';
@@ -8,7 +8,7 @@ import WebIcon  from 'public/img/social/default/web.svg';
 
 export default function SortableItem({creator,club,id}) {
       
-    console.log('creator',creator.toJS())
+    // console.log('creator',creator.toJS())
     const {t} = useTranslation('common');
     let is_empty = (!creator['name'] && !creator['title']);
 

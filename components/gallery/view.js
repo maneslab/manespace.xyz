@@ -29,7 +29,7 @@ class GalleryView extends React.Component {
 
         return  <Carousel showArrows={true} onClickItem={this.onClickItem} onClickThumb={this.onClickThumb} >
             {gallery.map((one,index) => <GalleryOne 
-                key={one.id} 
+                key={one.id+index} 
                 id={index}
                 img={one}
             />)}

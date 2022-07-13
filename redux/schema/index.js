@@ -82,6 +82,11 @@ const clubSchema =  new schema.Entity('club',{
 },{ idAttribute: 'id' });
 const clubListSchema =  new schema.Array(clubSchema);
 
+const nftSchema = new schema.Entity('nft',{
+
+},{idAttribute:'id'});
+const nftListSchema =  new schema.Array(nftSchema);
+
 
 module.exports = {
     
@@ -121,6 +126,9 @@ module.exports = {
     imageSpecialSchema,
     imageSpecialListSchema,
 
-    contractSchema
+    contractSchema,
+
+    nftSchema  : nftSchema,
+    nftListSchema : nftListSchema
 
 }

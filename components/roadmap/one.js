@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-// import { useTranslation } from 'next-i18next';
+// import { useTranslation } from 'next-translate/useTranslation';
 
 export default function SortableItem({roadmap,open_index,id,toggleOpen,remove,draging_index,errors}) {
 
@@ -11,7 +11,7 @@ export default function SortableItem({roadmap,open_index,id,toggleOpen,remove,dr
         <div className={classNames(' z-10 border-b d-border-c-2 mb-6 pb-2 last:mb-0 last:pb-0 last:border-b-0')} >
             <div>
                 <div className='flex justify-start font-bold'>
-                    <div className='py-1 pr-4 border-r border-black'>
+                    <div className='py-1 pr-4 border-r d-border-c-2 '>
                         {roadmap.get('time_point')}
                     </div>
                     <div className='py-1 px-4'>
