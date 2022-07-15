@@ -1,11 +1,9 @@
 import React,{useEffect,useState} from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import ConnectButton  from 'components/wallet/connect_button';
 import { useAccount } from 'wagmi'
 
 const MustConnectWalletWrapper = ({ children}) => {
     const { data, isError, isLoading } = useAccount()
-
-
 
     return <div>
         {

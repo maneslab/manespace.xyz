@@ -3,38 +3,35 @@ import Immutable from 'immutable';
 import {httpRequest} from 'helper/http'
 import { getHashByData,removeValueEmpty} from 'helper/common'
 
-// import {ADD_CLUB_USER_SUCCESS,DELETE_CLUB_USER_SUCCESS} from 'redux/reducer/club_user'
-import {LOGOUT_SUCCESS} from 'redux/reducer/user'
 
-import { clubListSchema ,clubSchema , categoryListSchema} from 'redux/schema/index'
+import { clubListSchema ,clubSchema } from 'redux/schema/index'
 
 
-export const BEFORE_LOAD_RECOMMEND_CLUB_LIST = 'BEFORE_LOAD_RECOMMEND_CLUB_LIST'
-export const LOAD_RECOMMEND_CLUB_LIST_SUCCESS = 'LOAD_RECOMMEND_CLUB_LIST_SUCCESS'
-export const LOAD_RECOMMEND_CLUB_LIST_FAILURE = 'LOAD_RECOMMEND_CLUB_LIST_FAILURE'
+export const BEFORE_LOAD_WHITELIST_CLUB_LIST = 'BEFORE_LOAD_WHITELIST_CLUB_LIST'
+export const LOAD_WHITELIST_CLUB_LIST_SUCCESS = 'LOAD_WHITELIST_CLUB_LIST_SUCCESS'
+export const LOAD_WHITELIST_CLUB_LIST_FAILURE = 'LOAD_WHITELIST_CLUB_LIST_FAILURE'
 
 
-export function loadRecommendClubList() {
-
+export function loadWhitelistClubList(cond) {
+    var hash = getHashByData(cond)
     return {
         // 要在之前和之后发送的 action types
-        types: ['BEFORE_LOAD_RECOMMEND_CLUB_LIST', 'LOAD_RECOMMEND_CLUB_LIST_SUCCESS', 'LOAD_RECOMMEND_CLUB_LIST_FAILURE'],
+        types: ['BEFORE_LOAD_WHITELIST_CLUB_LIST', 'LOAD_WHITELIST_CLUB_LIST_SUCCESS', 'LOAD_WHITELIST_CLUB_LIST_FAILURE'],
         // 检查缓存 (可选):
-        shouldCallAPI:  (state) => (
-            !state.getIn(['club','recommend_list','is_fetching'])
-            && !state.getIn(['club','recommend_list','is_fetched'])
-        ),
+        shouldCallAPI:  (state) => !state.getIn(['club','whitelist_list',hash,'is_fetching']),
         // 进行取：
         callAPI: () => {
             return httpRequest({
                 'method'  : 'GET',
-                'url'     : '/v1/club/recommend_list',
-                'data'    : {}
+                'url'     : '/v1/club/public_list_with_whitelist',
+                'data'    : cond
             })
         },
 
         data_format : (result) => {
-            return normalize(result.data, categoryListSchema)
+            var output = normalize(result.data.data, clubListSchema)
+            output['total'] = result.data.total
+            return output
         },
 
         show_status : {
@@ -43,6 +40,7 @@ export function loadRecommendClubList() {
             'error'     :    true
         },
         payload: {
+            hash  : hash
         }
     };
 }
@@ -69,7 +67,7 @@ export function loadClubList(condition) {
         // 要在之前和之后发送的 action types
         types: ['BEFORE_LOAD_CLUB_LIST', 'LOAD_CLUB_LIST_SUCCESS', 'LOAD_CLUB_LIST_FAILURE'],
         // 检查缓存 (可选):
-        shouldCallAPI:  (state) => !state.getIn(['club',hash,'is_fetching']),
+        shouldCallAPI:  (state) => !state.getIn(['club','list',hash,'is_fetching']),
         // 进行取：
         callAPI: () => {
             return httpRequest({
@@ -159,6 +157,7 @@ export function reducer(state = Immutable.fromJS({
     'map_name' : {},
     'map_id'   : {},
     'my_list' : {},
+    'whitelist_list' : {},
     'map'   : {},
     'key'   : {}
 }), action) {
@@ -228,6 +227,25 @@ export function reducer(state = Immutable.fromJS({
             return state.setIn(['list',action.payload.hash,'is_fetching'],false)
             .setIn(['list',action.payload.hash,'is_fetched'],false)
 
+        case BEFORE_LOAD_WHITELIST_CLUB_LIST:
+            if (!state.getIn(['whitelist_list',action.payload.hash])) {
+                state = state.setIn(['whitelist_list',action.payload.hash,'list'],Immutable.List([]));
+            }
+            return state
+            .setIn(['whitelist_list',action.payload.hash,'is_fetching'],true)
+            .setIn(['whitelist_list',action.payload.hash,'is_fetched'],false)
+
+        case LOAD_WHITELIST_CLUB_LIST_SUCCESS:
+            return state.setIn(['whitelist_list',action.payload.hash,'is_fetching'],false)
+            .setIn(['whitelist_list',action.payload.hash,'is_fetched'],true)
+            .setIn(['whitelist_list',action.payload.hash,'list'],Immutable.List(action.payload.response.result))
+            .setIn(['whitelist_list',action.payload.hash,'total'],action.payload.response.total)
+
+        case LOAD_WHITELIST_CLUB_LIST_FAILURE:
+            return state.setIn(['whitelist_list',action.payload.hash,'is_fetching'],false)
+            .setIn(['whitelist_list',action.payload.hash,'is_fetched'],false)
+
+    
 
 
         default:

@@ -63,7 +63,7 @@ class CheckWhitelist extends React.Component {
         this.setState({
             'is_fetching' : false,
             'is_fetched'  : true,
-            'result'      : (request_result.data) ? true : false
+            'result'      : request_result.data.is_whitelist
         })
 
     }

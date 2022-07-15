@@ -13,13 +13,15 @@ import Cal from 'components/time/cal'
 import {showTimeLeft} from 'helper/time'
 
 import {getItemImage} from 'helper/common'
-import {UserIcon} from '@heroicons/react/outline'
+import {CheckCircleIcon, UserIcon} from '@heroicons/react/outline'
 import { t } from 'helper/translate';
 import Showtime from 'components/time/showtime';
 import withTranslate from 'hocs/translate';
 import config from 'helper/config'
 import {autoDecimal} from 'helper/number'
 import { getUnixtime } from 'helper/time';
+
+import RefundIcon from 'public/img/icons/refund.svg'
 
 @withTranslate
 class clubOne extends React.Component {
@@ -57,22 +59,35 @@ class clubOne extends React.Component {
             creator_name_list.push(one.get('name'))
         });
 
-        let contract = club.get('contract')
+        let contract = club.get('contract_info') ? club.get('contract_info') : club.get('contract');
+
         let mint_url = this.getMintUrl();
         let now_unixtime = getUnixtime();
 
         console.log('contract-gallery',club.get('gallery').toJS());
+        let is_whitelist = club.getIn(['white_list','is_whitelist']);
 
+        let has_refund = false;
+        if (contract.get('refund') && contract.get('refund').count() > 0) {
+            has_refund = true;
+        }
+
+        // is_whitelist = true;
         return <div>
             <Link href={"/project/"+club.get('id')}>
             <div className='p-6 d-bg-c-1 mb-8 flex justify-start border-4 border-black'>
                 <div className='w-96 h-96 overflow-hidden mr-10'>
-                    <GalleryView gallery={club.get('gallery')} club_id={club.get('id')} />
+                    <img src={club.getIn(['gallery',0,'img','image_urls','url'])} />
                 </div>
                 <div className='flex-grow'>
                     <div className=''>
-                        <div className='mb-4 py-4 border-b d-border-c-3'>
+                        <div className='mb-4 py-2 border-b d-border-c-3 flex justify-between'>
                             <div className='h1'>{club.get('name')}</div>
+                            <div>{
+                                (has_refund)
+                                ?   <span className='text-green-500 flex justify-end font-bold capitalize'><RefundIcon className="icon-sm mr-2"/> {t('refundable')}</span>
+                                :   null
+                            }</div>
                         </div>
                         {
                             (contract && contract.get('wl_enable'))
@@ -114,7 +129,7 @@ class clubOne extends React.Component {
                             <div className='w-1/2 box-one '>
                                 <div className='lb'>{t('minted / whitelist supply')}</div>
                                 <div className='ma flex justify-start items-center'>
-                                    0 / {contract.get('wl_max_supply')}
+                                    {contract.get('total_supply') ? contract.get('total_supply') : 0} / {contract.get('wl_max_supply')}
                                 </div>
                             </div>
                             <div className='w-1/2 box-one '>
@@ -137,7 +152,6 @@ class clubOne extends React.Component {
                                                     (contract.get('pb_enable') && now_unixtime > Number(contract.get('wl_start_time')))
                                                     ? <Countdown date={contract.get('pb_start_time')*1000} />
                                                     : <>
-
                                                         <Showtime unixtime={contract.get('pb_start_time')} cale={true} />
                                                         <span className='ml-4 flex-item-center'>
                                                             <Cal begin_time={contract.get('pb_start_time')} 
@@ -182,10 +196,18 @@ class clubOne extends React.Component {
                         }
                         
 
-                        <div className='flex justify-between items-center py-4 border-t d-border-c-3'>
-                            <button className='btn btn-primary btn-wide capitalize'>mint</button>
-                            <button className='btn btn-primary btn-wide capitalize' disabled={true}>mint</button>
-
+                        <div className='py-4 border-t d-border-c-3'>
+                            <div className='text-gray-500 capitalize text-sm mb-2 text-left'>{t('your mint qualification')}</div>
+                            {
+                                (is_whitelist)
+                                ? <div className='text-green-500 uppercase flex justify-start items-center font-bold text-left'> 
+                                    <CheckCircleIcon className='icon-sm mr-2'/> {t('whitelisted')}
+                                </div>
+                                : <div className='font-bold text-gray-500 capitalize text-left'>
+                                    {t('you are not in the whitelist')}
+                                </div>
+                            }
+                            
                         </div>
 
                     </div>

@@ -1,16 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import EthIcon from 'public/img/token/eth.svg'
 
-import {BadgeCheckIcon} from '@heroicons/react/solid'
 import Link from 'next/link'
-import {showTimeLeft} from 'helper/time'
-
-import {getItemImage} from 'helper/common'
 import {UserIcon} from '@heroicons/react/outline'
 import { t } from 'helper/translate';
 import Showtime from 'components/time/showtime';
+import {getAmountFromIntAmount} from 'helper/number'
+import {CheckCircleIcon} from '@heroicons/react/outline'
 
 class clubOne extends React.Component {
 
@@ -18,16 +13,28 @@ class clubOne extends React.Component {
 
         const { club } = this.props;
 
+        // console.log('debug-club-01',club.toJS())
+
         let creator_name_list = [];
         club.get('creator').forEach((one)=>{
             creator_name_list.push(one.get('name'))
         });
 
+        let contract = (club.get('contract_info')) ? club.get('contract_info') : club.get('contract');
+        let is_whitelist = club.getIn(['white_list','is_whitelist']);
+
+
+        // is_whitelist = true;
         return <div>
             <Link href={"/project/"+club.get('id')}>
             <div className="cursor-pointer d-bg-c-1">
-                <div className="w-full aspect-video overflow-hidden">
-                    <img src="http://dev.static.manestudio.com/public/gallery/fd/6b/fd6be03709cb57ede19a622ddeffff39a0d44a0c.png" />
+                <div className="w-full aspect-square overflow-hidden relative">
+                    <img src={club.getIn(['gallery',0,'img','image_urls','url'])} />
+                    {
+                        (is_whitelist)
+                        ? <div className='absolute top-0 right-0 flex justify-end items-center bg-green-500 py-1 px-2 text-white uppercase text-sm'><CheckCircleIcon className="icon-sm mr-2" />{t('in whitelist')}</div>
+                        : null
+                    }
                 </div>
                 <div className="flex-grow p-4">
                     <h2 className='font-bold text-lg capitalize'>{club.get('name')}</h2>
@@ -42,18 +49,18 @@ class clubOne extends React.Component {
                     <div className='border-t d-border-c-1 my-4'></div>
 
                     {
-                        (club.getIn(['contract','wl_enable']))
+                        (contract.getIn(['wl_enable']))
                         ? <div className='flex justify-between items-center club-one-item'>
-                            <div className='w-2/3'>
+                            <div className='w-3/5'>
                                 <label>{t('WL presale start')}</label>
                                 <div className='v'>
-                                    <Showtime unixtime={club.getIn(['contract','wl_start_time'])} timezone={false}/>
+                                    <Showtime unixtime={contract.getIn(['wl_start_time'])} timezone={false}/>
                                 </div>
                             </div>
-                            <div className='w-1/3'>
+                            <div className='w-2/5'>
                                 <label>{t('WL mint price')}</label>
                                 <div className='v'>
-                                    {parseFloat(club.getIn(['contract','wl_price']))} ETH
+                                    {parseFloat(contract.getIn(['wl_price']))} ETH
                                 </div>
                             </div>
                         </div>
@@ -61,18 +68,18 @@ class clubOne extends React.Component {
                     }
 
                     {
-                        (club.getIn(['contract','pb_enable']))
+                        (contract.getIn(['pb_enable']))
                         ? <div className='flex justify-between items-center club-one-item'>
-                            <div className='w-2/3'>
+                            <div className='w-3/5'>
                                 <label>{t('public sale start')}</label>
                                 <div className='v'>
-                                    <Showtime unixtime={club.getIn(['contract','pb_start_time'])} timezone={false}/>
+                                    <Showtime unixtime={contract.getIn(['pb_start_time'])} timezone={false}/>
                                 </div>
                             </div>
-                            <div className='w-1/3'>
+                            <div className='w-2/5'>
                                 <label>{t('public price')}</label>
                                 <div className='v'>
-                                    {parseFloat(club.getIn(['contract','pb_price']))} ETH
+                                    {parseFloat(contract.getIn(['pb_price']))} ETH
                                 </div>
                             </div>
                         </div>
@@ -80,12 +87,14 @@ class clubOne extends React.Component {
                     }
 
                     {
-                        (club.getIn(['contract']))
+                        (contract)
                         ? <div className='flex justify-between items-center club-one-item'>
                             <div className='w-2/3'>
-                                <label>{t('max supply')}</label>
+                                <label>{t('minted')} / {t('max supply')}</label>
                                 <div className='v'>
-                                {club.getIn(['contract','max_supply'])}
+                                {contract.getIn(['total_supply'])}
+                                <span className='mx-1'>/</span>
+                                {contract.getIn(['max_supply'])}
                                 </div>
                             </div>
                         </div>

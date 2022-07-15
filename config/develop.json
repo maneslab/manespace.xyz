@@ -17,7 +17,7 @@
     "NEXTID_ENV"        : "develop",
 
     "MANE_CONTRACT"     : {
-        "kovan"     :   "0xA0d022c730A38a77AD927A8BB551cA28465514c0",
+        "kovan"     :   "0x79d9b5cA0419FDD56a97f3e7202b1A7C1BB5296D",
         "ropsten"   :   "",
         "mainnet"   :   ""
     }

@@ -8,7 +8,7 @@ import { denormalize } from 'normalizr';
 import Loading from 'components/common/loading'
 import Empty from 'components/common/empty'
 import Pager from 'components/common/pager'
-import ClubTwo  from 'components/club/two'
+import ClubOne  from 'components/club/one'
 
 import {removeValueEmpty} from 'helper/common'
 
@@ -36,7 +36,7 @@ class MyClubList extends React.Component {
 
     render() {
 
-        let {list_data,entities} = this.props;
+        let {list_data,entities,pageSize,page} = this.props;
         const {t} = this.props.i18n;
 
 
@@ -44,7 +44,7 @@ class MyClubList extends React.Component {
         let list_rows = denormalize(list_data_one.get('list'),clubListSchema,entities)
 
         let is_fetching = list_data_one.get('is_fetching');
-        let count = list_data_one.get('total');
+        let total = list_data_one.get('total');
         let is_empty = (list_data_one.get('is_fetched') && list_rows.count() == 0)
 
 
@@ -57,24 +57,31 @@ class MyClubList extends React.Component {
 
             {
                 (is_empty)
-                ? <div className='py-12 shadow-lg d-bg-c-1 my-12 text-center'>
-                    <Empty text={t('I have not created any project yet')} icon={<UserGroupIcon className='icon-base'/>}/>
-                    <button className={"btn btn-primary"} onClick={this.toggleCreateModal}>{t('create project')}</button>
+                ? <div className='py-12 my-12 text-center'>
+                    <Empty text={t('no any project yet')} icon={<UserGroupIcon className='icon-base'/>}/>
                 </div>
-                : <div className=''>
+                : <div className='grid grid-cols-4 gap-4'>
 
                     {
                         (list_data_one.get('is_fetched'))
                         ? <>
                             {
                                 list_rows.map((one)=>{
-                                    return <ClubTwo club={one} key={one.get('id')} />
+                                    return <ClubOne club={one} key={one.get('id')} />
                                 })
                             }
                         </>
                         : null
                     }
                 </div>
+            }
+
+            {
+                (total > 0) 
+                ? <div className='py-8'>
+                    <Pager page_size={pageSize} page={page} total={total} onChange={this.props.setPage} />
+                </div>
+                : null
             }
         </div>;
 
@@ -103,8 +110,10 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 const formatData = (props) => {
+    console.log('props',props)
     let result = removeValueEmpty({
         order_by        : props.order_by,
+        address         : props.address
     })
     return result;
 }

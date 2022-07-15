@@ -704,10 +704,10 @@ input{outline:none;}
     @apply mb-4;
 }
 .box-one .lb {
-    @apply text-gray-500 mb-2;
+    @apply text-gray-500 mb-2 text-left;
 }
 .box-one .ma {
-    @apply text-xl font-bold;
+    @apply text-xl font-bold text-left;
 }
 .flex-item-center {
     @apply flex items-center;
@@ -747,7 +747,11 @@ input{outline:none;}
     @apply text-sm dark:text-gray-500;
 }
 .club-one-item .v {
-    @apply font-bold; 
+    @apply font-bold text-sm; 
+}
+
+.carousel-status {
+    @apply hidden;
 }
 
 /*rc-pagination*/
@@ -787,4 +791,14 @@ input{outline:none;}
 
 .menu[class*=" p-"] li > a:hover {
     @apply dark:bg-[#22252b];
+}
+
+.block-tab {
+    @apply flex justify-center;
+}
+.block-tab .tab-one {
+    @apply text-gray-500 font-bold capitalize mx-2 cursor-pointer;
+}
+.block-tab .tab-one.active {
+    @apply text-black border-b-2 border-primary;
 }

@@ -51,7 +51,7 @@ class CheckWhitelist extends React.Component {
 
         const {result} = this.state;
 
-        if (request_result.data) {
+        if (request_result.data.is_whitelist) {
             result[address] = true
         }else {
             result[address] = false

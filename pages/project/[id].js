@@ -52,6 +52,7 @@ class ClubView extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            is_fetching             : false,
             show_refund_modal       : false,
 
             deploy_contract_address     : null,
@@ -68,7 +69,8 @@ class ClubView extends React.Component {
         this.fetchContractDataInBlockchain();
         if (this.props.club) {
             ///把club里面对应的contract数据放入state中
-            this.setContractDataInServer(this.props.club.get('contract'));
+            let contract = this.props.club.get('contract_info') ? this.props.club.get('contract_info') : this.props.club.get('contract')
+            this.setContractDataInServer(contract);
         }
     }
 
@@ -78,7 +80,8 @@ class ClubView extends React.Component {
             this.fetchContractDataInBlockchain();
 
             ///把club里面对应的contract数据放入state中
-            this.setContractDataInServer(this.props.club.get('contract'));
+            let contract = this.props.club.get('contract_info') ? this.props.club.get('contract_info') : this.props.club.get('contract')
+            this.setContractDataInServer(contract);
         }
 
         if (this.props.wallet && 
@@ -106,6 +109,10 @@ class ClubView extends React.Component {
         const {wallet} = this.props;
 
         if (!wallet || !wallet.address) {
+            return;
+        }
+
+        if (!this.manenft) {
             return;
         }
 
@@ -137,7 +144,13 @@ class ClubView extends React.Component {
     @autobind
     async fetchContractDataInBlockchain() {
 
+        ///一开始需要设置is_fetching
+        this.setState({
+            'is_fetching' : true
+        })
+
         let addr = await this.getDeployedContractAddress();
+
         this.setState({
             'deploy_contract_address'   : addr,
         })
@@ -178,6 +191,10 @@ class ClubView extends React.Component {
             //获得我持有的这个合约的NFT数量
             this.updateBalanceOf()
         }
+
+        this.setState({
+            'is_fetching' : false
+        })
     }
 
 
@@ -201,8 +218,8 @@ class ClubView extends React.Component {
 
     deformatContractData(contract_data) {
         let contract_data_formatted = {
-            'reserve_count' : Number(contract_data[0].toString()),
-            'max_supply'    : Number(contract_data[1].toString()),
+            'reserve_count'         : Number(contract_data[0].toString()),
+            'max_supply'            : Number(contract_data[1].toString()),
             'presale_max_supply'    :   Number(contract_data[2].toString()),
             'club_id'               :   Number(contract_data[3].toString()),
             'presale_start_time'    :   Number(contract_data[4].toString()),
@@ -412,7 +429,7 @@ class ClubView extends React.Component {
 
 
         const mint_price_in_wei = ethers.utils.parseEther(contract_data['sale_price']);
-        const deadline = 0
+        // const deadline = 0
 
         let empty_bytes_32 = ethers.utils.formatBytes32String("")
 
@@ -565,24 +582,24 @@ class ClubView extends React.Component {
 
     render() {
         const {t} = this.props.i18n;
-        const {deploy_contract_address,is_fetching_contract_data,contract_data,contract_data_in_server,mint_count} = this.state;
-        const {club,club_id,wallet,balance_map} = this.props;
+        const {deploy_contract_address,is_fetching_contract_data,contract_data,contract_data_in_server,mint_count,is_fetching} = this.state;
+        const {club,club_id,wallet,network} = this.props;
 
-        if (!club || !club.get('is_detail')) {
+        if (!club || !club.get('is_detail') || is_fetching_contract_data || is_fetching) {
             return <PageWrapper>
                 <Head>
                     <title>{'Drop details'}</title>
                 </Head>
                 <div>
-                    <div className="max-w-screen-xl mx-auto pb-32">
-
+                    <div className="max-w-screen-xl mx-auto py-12">
+                        <Loading />
                     </div>
                 </div>
             </PageWrapper>
         }
 
         let mint_url = this.getMintUrl();
-        let contract = club.get('contract');
+        let contract = club.get('contract_info') ? club.get('contract_info') : club.get('contract');
         let now_unixtime = getUnixtime();
         let merged_data = Object.assign({},contract_data_in_server,contract_data);
 
@@ -607,28 +624,14 @@ class ClubView extends React.Component {
         -   1.3.是否已经结束mint时间了
         */
 
-
-        if (is_fetching_contract_data) {
-            return <PageWrapper>
-                <Head>
-                    <title>{'Drop details'}</title>
-                </Head>
-                <div>
-                    <div className='p-12'>
-                        <Loading />
-                    </div>
-                </div>
-            </PageWrapper>
-        }
-
-        console.log('merged_data',merged_data)
+        console.log('contract-data',contract.toJS())
 
         return <PageWrapper>
             <Head>
                 <title>{'Drop details'}</title>
             </Head>
             <div>
-                <div className="max-w-screen-xl mx-auto pb-32 pt-8">
+                <div className="max-w-screen-xl mx-auto pb-12">
 
                     <div className='flex justify-start items-center mb-4'>
                         <StatusOnlineIcon className='h-8 w-8 mr-2' /><h2 className='h2'>{t('live now')}</h2>
@@ -700,7 +703,7 @@ class ClubView extends React.Component {
                                     <div className='w-1/2 box-one '>
                                         <div className='lb'>{t('minted / total supply')}</div>
                                         <div className='ma flex justify-start items-center'>
-                                            0 / {contract.get('max_supply')}
+                                            {contract.get('total_supply')?contract.get('total_supply'):0} / {contract.get('max_supply')}
                                         </div>
                                     </div>
                                     <div className='w-1/2 box-one '>
@@ -897,7 +900,7 @@ class ClubView extends React.Component {
                                                     {t('whitelist presale price')}
                                                 </td>
                                                 <td className='rctd'>
-                                                    {autoDecimal(contract.get('wl_price'))}
+                                                    {parseFloat(contract.get('wl_price'))}
                                                     <span className='ml-2 text-base'>ETH</span>
                                                 </td>
                                             </tr>
@@ -935,7 +938,7 @@ class ClubView extends React.Component {
                                                     {t('public sale price')}
                                                 </td>
                                                 <td className='rctd'>
-                                                    {autoDecimal(contract.get('pb_price'))}
+                                                    {parseFloat(contract.get('pb_price'))}
                                                     <span className='ml-2 text-base'>ETH</span>
                                                 </td>
                                             </tr>
@@ -1047,6 +1050,7 @@ class ClubView extends React.Component {
                             ref={this.nftlistRef}
                             contract_address={deploy_contract_address} 
                             address={wallet.address}
+                            network={network}
                             openRefundModal={this.openRefundModal}
                             />
                         : null
@@ -1054,7 +1058,7 @@ class ClubView extends React.Component {
 
                     <RefundModal 
                         contract_address={deploy_contract_address} 
-                        address={wallet.address}
+                        address={wallet ? wallet.address : ''}
                         visible={this.state.show_refund_modal} 
                         nft_id={this.state.refund_nft_id} 
                         closeModal={this.toggleRefundModal}

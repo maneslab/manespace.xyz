@@ -40,7 +40,7 @@ class RefundModal extends React.Component {
 
 
         let manenft_interface = new manenft(contract_address,t);
-        manenft_interface.contract.refund(nft_id)
+        // manenft_interface.contract.refund(nft_id)
 
         var that = this;
 
