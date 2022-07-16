@@ -690,6 +690,8 @@ input{outline:none;}
 .fullpage-container.blue .ju367vfd {
     @apply text-white;
 }
+
+
 .landingpage {
     @apply h-full;
     background: url('/img/landingpage/banner2.png') no-repeat;
