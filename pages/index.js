@@ -1,76 +1,81 @@
-import React, { useState,useEffect } from 'react';
+import React from 'react';
 
 import {wrapper} from 'redux/store';
-import { connect } from "react-redux";
+import Head from 'next/head'
+import autobind from 'autobind-decorator'
+import classNames from 'classnames'
+
 import PageWrapper from 'components/pagewrapper'
 
-import Head from 'next/head'
-// import { withRouter } from 'next/router'
-import {withTranslate} from 'hocs/index'
-// import config from 'helper/config';
-import Logo from 'public/img/logo.svg'
+import ClubList from 'components/club/list'
+import ClubRecommendList from 'components/club/recommend_list'
+import ClubWhitelistList  from 'components/club/whitelist_list'
 
-// import PersonalSign from 'components/wallet/personal_sign'
-import { getUnixtime } from 'helper/time';
+import withTranslate from 'hocs/translate';
+
+import { CollectionIcon,FireIcon } from '@heroicons/react/outline';
 import withWallet from 'hocs/wallet';
-import MustLoginWrapper from 'components/must_login';
 
 @withTranslate
 @withWallet
-class Home extends React.Component {
+class ProjectList extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
+            'list_type': 'all',
         }
     }
+
+    @autobind
+    onTabChange(name) {
+        this.setState({
+            'list_type': name,
+        })
+    }
+
 
     render() {
         const {t} = this.props.i18n;
         const {wallet} = this.props;
-
-        let wallet_address = '';
-        if (wallet) {
-            wallet_address = wallet.address;
-        }
-        let msgstr = JSON.stringify({
-            'action_name' : 'login',
-            'site'        : 'manestudio',
-            'create_time' : getUnixtime(),
-            'wallet_address' : wallet_address
-        });
-        console.log('msgstr',msgstr);
+        const {list_type} = this.state;
 
         return <PageWrapper>
             <Head>
-                <title>ManeStudio</title>
+                <title>{'Project List'}</title>
             </Head>
-            <MustLoginWrapper>
-            <div className="">
+            <div className="max-w-screen-xl mx-auto">
 
+                <div className='flex justify-between items-center mb-4 pt-8'>
+                    <h2 className="h2 capitalize flex justify-start items-center"><FireIcon className="icon-sm mr-2" />{t('next up')}</h2>
+                    
+                </div>
+                <div className='mb-16'>
+                    <ClubRecommendList address={wallet?wallet.address:''}/>
+                </div>
 
+                <div className='flex justify-between items-center mb-4'>
+                    <h2 className="h2 capitalize flex justify-start items-center"><CollectionIcon className="icon-sm mr-2" />{t('more upcoming drops')}</h2>
+                    <div className="block-tab">
+                        <div className={classNames("tab-one",{"active":(list_type=='all')})} onClick={this.onTabChange.bind({},'all')}>{t('all')}</div> 
+                        <div className={classNames("tab-one",{"active":(list_type=='whitelist')})} onClick={this.onTabChange.bind({},'whitelist')}>{t('whitelist')}</div> 
+                    </div>
+                </div>
+                {
+                    (list_type=='all')
+                    ? <ClubList address={wallet?wallet.address:''} />
+                    : <ClubWhitelistList address={wallet?wallet.address:''} />
+                }
+                
             </div>
-            </MustLoginWrapper>
-    </PageWrapper>
+        </PageWrapper>
     }
-
     
 }
 
-Home.getInitialProps =  wrapper.getInitialPageProps((store) => async ({pathname, req, res,query}) => {
+ProjectList.getInitialProps =  wrapper.getInitialPageProps((store) => async ({pathname, req, res,query}) => {
     return {
     };
 });
 
-const mapDispatchToProps = (dispatch) => {
-     return {
-     }
-}
-function mapStateToProps(state,ownProps) {
-    return {
-        'status' : state.getIn(['setting','status']),
-    }
-}
-
-export default connect(mapStateToProps,mapDispatchToProps)(Home)
-
+export default ProjectList

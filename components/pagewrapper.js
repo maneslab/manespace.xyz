@@ -18,7 +18,6 @@ import {withTranslate} from 'hocs/index'
 
 import DarkmodeSwitch from './common/darkmode_switch';
 
-// import { ConnectButton } from '@rainbow-me/rainbowkit';
 import config from 'helper/config'
 
 @withTranslate
@@ -55,11 +54,7 @@ class PageWrapper extends React.Component {
         const {t} = this.props.i18n;
         const {theme,wapperClassName} = this.props;
 
-        /*<div onClick={this.toggleSider} className="md:hidden py-4 mr-2">
-            <MenuIcon className='icon-sm text-gray-800 dark:text-gray-200'/>
-        </div>*/
-        //<ConnectButton showBalance={false} accountStatus="address" chainStatus="icon"/>
-
+        let manestudio_url = config.get('MANASTUDIO_WEBSITE');
 
         return (
             <div className={classNames("fullpage-container pt-16",{"blue":(theme == 'blue')})}>
@@ -69,7 +64,7 @@ class PageWrapper extends React.Component {
                 </Head>
                 <div>
 
-                    <div className='header-bg dark:bg-[#22252b] mb-8 fixed w-full top-0'>
+                    <div className='header-bg dark:bg-[#22252b] mb-8 fixed w-full top-0 shadow-sm'>
                         <div className="flex justify-between h-16 w-full max-w-screen-xl mx-auto">
 
                             <div className='flex justify-start'>
@@ -81,25 +76,23 @@ class PageWrapper extends React.Component {
                                 </Link>
 
                                 <div className='main-menu ml-4'>
-                                    <Link href="/project/list"><a className='font-bold capitalize ml-2'>{t('projects')}</a></Link>
+                                    <a className='font-bold capitalize ml-2' href={manestudio_url} target="_blank">{t('create project')}</a>
                                 </div>
-
-                                
 
                             </div>
                             
 
                             <div className='flex justify-end items-center'>
 
-                            <div className='mr-2'>
-                                <DarkmodeSwitch />
-                            </div>
+                                <div className='mr-4'>
+                                    <DarkmodeSwitch />
+                                </div>
 
-                            <GasButton />
+                                <GasButton />
 
-                            <LanguageBtn />
+                                <LanguageBtn />
 
-                            <ConnectWalletButton />
+                                <ConnectWalletButton />
 
                             </div>
                         </div>

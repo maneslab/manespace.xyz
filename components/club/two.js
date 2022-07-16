@@ -75,7 +75,7 @@ class clubOne extends React.Component {
         // is_whitelist = true;
         return <div>
             <Link href={"/project/"+club.get('id')}>
-            <div className='p-6 d-bg-c-1 mb-8 flex justify-start border-4 border-black'>
+            <div className='p-6 d-bg-c-1 mb-8 flex justify-start border-4 border-black dark:border-[#999]'>
                 <div className='w-96 h-96 overflow-hidden mr-10'>
                     <img src={club.getIn(['gallery',0,'img','image_urls','url'])} />
                 </div>

@@ -6,7 +6,9 @@
 
     "WEBSITE"           : "http://127.0.0.1:3000",
     
-    "API"               : "http://127.0.0.1:3000",
+    "API"               : "http://dev.api.manestudio.com",
+    
+    "MANASTUDIO_WEBSITE"    : "http://127.0.0.1:3001",
 
     "LOGO"              : "test",
     
@@ -14,6 +16,8 @@
 
     "ETHERSCAN_BASE"    : "https://testnet.bscscan.com",
 
-    "NEXTID_ENV"        : "production"
+    "NEXTID_ENV"        : "production",
 
+    "ETH_NETWORK"       :   "mainnet"
+    
 }

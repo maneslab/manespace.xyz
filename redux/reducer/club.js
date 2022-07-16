@@ -7,6 +7,44 @@ import { getHashByData,removeValueEmpty} from 'helper/common'
 import { clubListSchema ,clubSchema } from 'redux/schema/index'
 
 
+export const BEFORE_LOAD_RECOMMEND_CLUB_LIST = 'BEFORE_LOAD_RECOMMEND_CLUB_LIST'
+export const LOAD_RECOMMEND_CLUB_LIST_SUCCESS = 'LOAD_RECOMMEND_CLUB_LIST_SUCCESS'
+export const LOAD_RECOMMEND_CLUB_LIST_FAILURE = 'LOAD_RECOMMEND_CLUB_LIST_FAILURE'
+
+export function loadRecommendClubList(cond) {
+    var hash = getHashByData(cond)
+    return {
+        // 要在之前和之后发送的 action types
+        types: ['BEFORE_LOAD_RECOMMEND_CLUB_LIST', 'LOAD_RECOMMEND_CLUB_LIST_SUCCESS', 'LOAD_RECOMMEND_CLUB_LIST_FAILURE'],
+        // 检查缓存 (可选):
+        shouldCallAPI:  (state) => !state.getIn(['club','recommend',hash,'is_fetching']),
+        // 进行取：
+        callAPI: () => {
+            return httpRequest({
+                'method'  : 'GET',
+                'url'     : '/v1/club/public_list',
+                'data'    : cond
+            })
+        },
+
+        data_format : (result) => {
+            var output = normalize(result.data.data, clubListSchema)
+            output['total'] = result.data.total
+            return output
+        },
+
+        show_status : {
+            'loading'   :    false,
+            'success'   :    false,
+            'error'     :    true
+        },
+        payload: {
+            hash  : hash
+        }
+    };
+}
+
+
 export const BEFORE_LOAD_WHITELIST_CLUB_LIST = 'BEFORE_LOAD_WHITELIST_CLUB_LIST'
 export const LOAD_WHITELIST_CLUB_LIST_SUCCESS = 'LOAD_WHITELIST_CLUB_LIST_SUCCESS'
 export const LOAD_WHITELIST_CLUB_LIST_FAILURE = 'LOAD_WHITELIST_CLUB_LIST_FAILURE'
@@ -245,7 +283,24 @@ export function reducer(state = Immutable.fromJS({
             return state.setIn(['whitelist_list',action.payload.hash,'is_fetching'],false)
             .setIn(['whitelist_list',action.payload.hash,'is_fetched'],false)
 
-    
+        case BEFORE_LOAD_RECOMMEND_CLUB_LIST:
+            if (!state.getIn(['recommend_list',action.payload.hash])) {
+                state = state.setIn(['recommend_list',action.payload.hash,'list'],Immutable.List([]));
+            }
+            return state
+            .setIn(['recommend_list',action.payload.hash,'is_fetching'],true)
+            .setIn(['recommend_list',action.payload.hash,'is_fetched'],false)
+
+        case LOAD_RECOMMEND_CLUB_LIST_SUCCESS:
+            return state.setIn(['recommend_list',action.payload.hash,'is_fetching'],false)
+            .setIn(['recommend_list',action.payload.hash,'is_fetched'],true)
+            .setIn(['recommend_list',action.payload.hash,'list'],Immutable.List(action.payload.response.result))
+            .setIn(['recommend_list',action.payload.hash,'total'],action.payload.response.total)
+
+        case LOAD_RECOMMEND_CLUB_LIST_FAILURE:
+            return state.setIn(['recommend_list',action.payload.hash,'is_fetching'],false)
+            .setIn(['recommend_list',action.payload.hash,'is_fetched'],false)
+
 
 
         default:

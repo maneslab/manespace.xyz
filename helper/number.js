@@ -113,7 +113,7 @@ const forceDecimal = function(num , dec = 12) {
 
 
 const getAmountFromIntAmount = (amount,decimals) => {
-    console.log('getAmountFromIntAmount',amount,decimals)
+    // console.log('getAmountFromIntAmount',amount,decimals)
     amount = new BigNumber(amount);
     let value = amount.div(Math.pow(10,Number(decimals)));
     return value;

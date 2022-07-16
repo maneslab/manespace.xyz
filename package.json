@@ -1,6 +1,6 @@
 {
-  "name": "tinyclub",
-  "version": "0.0.1",
+  "name": "manaspace",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "ENV=dev next dev",

@@ -2,5 +2,15 @@
 
     "FORBIDDEN_CHINA"   : true,
     "NAME"              : "ManeSpace",
-    "ALCHEMY_ID"        : "JPWQi3ZfcRsCPerhWtcVYtJeWmYfUC-a"
+    "ALCHEMY_ID"        : "JPWQi3ZfcRsCPerhWtcVYtJeWmYfUC-a",
+
+    "GAS"               : {
+        "MINT"      :   240000
+    },
+
+    "MANE_CONTRACT"     : {
+        "kovan"     :   "0x79d9b5cA0419FDD56a97f3e7202b1A7C1BB5296D",
+        "ropsten"   :   "",
+        "mainnet"   :   ""
+    }
 }

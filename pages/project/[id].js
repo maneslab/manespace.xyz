@@ -638,7 +638,7 @@ class ClubView extends React.Component {
                     </div>
                     
             
-                    <div className='p-6 d-bg-c-1 mb-8 flex justify-start border-4 border-black'>
+                    <div className='p-6 d-bg-c-1 mb-8 flex justify-start border-4 border-black dark:border-[#999]'>
                         <div className='w-96 h-96 overflow-hidden mr-6'>
                             <GalleryView gallery={club.get('gallery')} club_id={club_id} />
                         </div>
@@ -1073,10 +1073,13 @@ class ClubView extends React.Component {
 }
 
 ClubView.getInitialProps =  wrapper.getInitialPageProps((store) => async ({pathname, req, res,query}) => {
+    
+    let network = config.get('ETH_NETWORK');
+
     return {
         club_id : query.id,
         address : (query.address) ? query.address : '',
-        network : 'kovan'
+        network : network
     };
 });
 

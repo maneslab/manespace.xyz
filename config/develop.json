@@ -8,6 +8,8 @@
     
     "API"               : "http://dev.api.manestudio.com",
 
+    "MANASTUDIO_WEBSITE"    : "http://127.0.0.1:3001",
+
     "LOGO"              : "test",
     
     "GA_TRACKING_ID"    : "",
@@ -16,10 +18,5 @@
 
     "NEXTID_ENV"        : "develop",
 
-    "MANE_CONTRACT"     : {
-        "kovan"     :   "0x79d9b5cA0419FDD56a97f3e7202b1A7C1BB5296D",
-        "ropsten"   :   "",
-        "mainnet"   :   ""
-    }
-
+    "ETH_NETWORK"   :   "kovan"
 }
