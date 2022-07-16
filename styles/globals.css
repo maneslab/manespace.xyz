@@ -800,5 +800,5 @@ input{outline:none;}
     @apply text-gray-500 font-bold capitalize mx-2 cursor-pointer;
 }
 .block-tab .tab-one.active {
-    @apply text-black border-b-2 border-primary;
+    @apply text-black border-b-2 border-primary dark:text-white;
 }
