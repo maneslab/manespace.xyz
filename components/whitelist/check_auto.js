@@ -74,8 +74,8 @@ class CheckWhitelist extends React.Component {
         const {t} = this.props.i18n;
 
         if (!wallet) {
-            return <div className='py-4 text-center bg-gray-100 flex items-center justify-center text-gray-500'>
-                not connect yet
+            return <div className='py-4 text-center flex items-center justify-center text-gray-500'>
+                {t('not connect wallet yet')}
             </div>
         }
 
