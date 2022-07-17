@@ -80,13 +80,22 @@ export default function withClubView(WrappedComponent) {
         ///注册成功
 
         let club_id = ownProps.club_id;   
-        let club_data = state.getIn(['club','map_id',ownProps.club_id]);
+        let club_name = ownProps.club_name;   
 
+        let club_data = null;
         let club = null;
         if (club_id) {
-           club = denormalize(club_id,clubSchema,entities)
+            club_data = state.getIn(['club','map_id',ownProps.club_id]);
+            if (club_id) {
+               club = denormalize(club_id,clubSchema,entities)
+            }
+        }else if (club_name) {
+            club_data = state.getIn(['club','map_name',ownProps.club_name]);
+            if (club_data) {
+               club = denormalize(club_data.get('result'),clubSchema,entities)
+            }
         }
-   
+
        let login_user_id = state.getIn(['setting','login_user']);
        let login_user = null;
        if (login_user_id) {

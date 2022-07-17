@@ -43,7 +43,7 @@ export function loadNftList(condition) {
 
     condition = removeValueEmpty(condition);
 
-    console.log('format-condition',condition)
+    // console.log('format-condition',condition)
 
     return {
         // 要在之前和之后发送的 action types
@@ -227,7 +227,9 @@ export function reducer(state = Immutable.fromJS({
 
         case SET_NFT_BALANCE:
             return state
-                .setIn(['list',action.payload.contract_address,action.payload.address,'total'],action.payload.balance);
+                .setIn(['list',action.payload.contract_address,action.payload.address,'total'],action.payload.balance)
+                .setIn(['list',action.payload.contract_address,action.payload.address,'presale_mint_count'],action.payload.presale_mint_count)
+                .setIn(['list',action.payload.contract_address,action.payload.address,'sale_mint_count'],action.payload.sale_mint_count);
 
         default:
             return state

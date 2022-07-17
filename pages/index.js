@@ -48,9 +48,8 @@ class ProjectList extends React.Component {
 
                 <div className='flex justify-between items-center mb-4 pt-8'>
                     <h2 className="h2 capitalize flex justify-start items-center"><FireIcon className="icon-sm mr-2" />{t('next up')}</h2>
-                    
                 </div>
-                <div className='mb-16'>
+                <div className='mb-4'>
                     <ClubRecommendList address={wallet?wallet.address:''}/>
                 </div>
 

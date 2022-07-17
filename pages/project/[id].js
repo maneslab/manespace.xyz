@@ -26,6 +26,8 @@ import WhitelistCheckAuto from 'components/whitelist/check_auto'
 import RefundModal from 'components/nft/refund_modal'
 import NftList from 'components/nft/list'
 
+import {myIsNaN} from 'helper/common'
+
 import { StatusOnlineIcon } from '@heroicons/react/outline';
 
 import Countdown from 'react-countdown';
@@ -118,18 +120,31 @@ class ClubView extends React.Component {
             return;
         }
 
-        let result = await this.manenft.contract.balanceOf(this.props.wallet.address);
+        let address = wallet.address;
+
+        let result = await this.manenft.contract.balanceOf(address);
+        let presale_mint_count = await this.manenft.contract.presaleMintCountByAddress(address);
+        let sale_mint_count = await this.manenft.contract.saleMintCountByAddress(address);
 
         this.props.setNftBalance({
             'address'            : this.props.wallet.address,
             'contract_address'   : this.state.deploy_contract_address,
-            'balance'            : Number(result.toString())
+            'balance'            : Number(result.toString()),
+            'presale_mint_count' : Number(presale_mint_count.toString()),
+            'sale_mint_count'    : Number(sale_mint_count.toString())
         })
     }
 
     @autobind
     async getDeployedContractAddress() {
-        const {club_id} = this.props;
+        // const {club_id} = this.props;
+
+        let club_id = this.getClubId();
+        if (!club_id) {
+            console.log('debug-error:准备getDeployedContractAddress的时候发现club_id为空');
+            return;
+        }
+
         let addr = '0x0';
         try {
             addr = await this.mane.contract.clubMap(club_id);
@@ -285,6 +300,18 @@ class ClubView extends React.Component {
             return config.get('WEBSITE') + '/project/' +club.get('unique_name')
         }else {
             return config.get('WEBSITE') + '/project/' +club.get('id')
+        }
+    }
+
+    @autobind
+    getClubId() {
+        const {club,club_id} = this.props;
+        if (club_id) {
+            return club_id;
+        }else if (club) {
+            return club.get('id');
+        }else {
+            return '';  
         }
     }
 
@@ -483,16 +510,21 @@ class ClubView extends React.Component {
     getBalance(deploy_contract_address,address) {
         const {balance_map} = this.props;
 
+        let default_data = {
+            'balance' : 0,
+            'presale_mint_count' : 0,
+            'sale_mint_count' : 0,
+        };
+
         if (!address) {
-            return 0;
+            return default_data;
         }
 
-        let count = balance_map.getIn([deploy_contract_address,address,'total']);
-        if (count) {
-            return count
-        }else {
-            return 0;
-        }
+        default_data['balance'] = balance_map.getIn([deploy_contract_address,address,'total']) ?? 0;
+        default_data['presale_mint_count'] = balance_map.getIn([deploy_contract_address,address,'presale_mint_count']) ?? 0;
+        default_data['sale_mint_count'] = balance_map.getIn([deploy_contract_address,address,'sale_mint_count']) ?? 0;
+
+        return default_data;
     }
     
 
@@ -537,29 +569,35 @@ class ClubView extends React.Component {
                 stage = 'finished';
             }
         }
+        
+        let address  = (wallet && wallet.address) ? wallet.address : '';
+        let {balance,presale_mint_count,sale_mint_count} = this.getBalance(deploy_contract_address,address);
 
-        let balance = 0;
+        console.log('获得我已经mint的数据',balance,presale_mint_count,sale_mint_count);
+
+        let minted = 0;
         if (!wallet || !wallet.address) {
             status = 'connect_wallet';
         }else {
 
-            balance = this.getBalance(deploy_contract_address,wallet.address);
             console.log('debug-stage,当前用户持有的NFT数量是',balance,wallet.address);
 
             switch(stage) {
                 case 'in_whitelist':
-                    if (balance >= merged_data['presale_per_wallet_count']) {
+                    if (presale_mint_count >= merged_data['presale_per_wallet_count']) {
                         status = 'out_of_limit';
                     }else {
                         status = 'enable';
                     }
+                    minted = sale_mint_count;
                     break;
                 case 'in_public':
-                    if (balance >= merged_data['sale_per_wallet_count']) {
+                    if (sale_mint_count >= merged_data['sale_per_wallet_count']) {
                         status = 'out_of_limit';
                     }else {
                         status = 'enable';
                     }
+                    minted = sale_mint_count;
                     break;
                     
             }
@@ -568,7 +606,7 @@ class ClubView extends React.Component {
         return {
             'stage'         : stage,
             'stage_status'  : status,
-            'balance'       : balance
+            'minted'        : minted
         }
     }
 
@@ -591,13 +629,15 @@ class ClubView extends React.Component {
     render() {
         const {t} = this.props.i18n;
         const {deploy_contract_address,is_fetching_contract_data,contract_data,contract_data_in_server,mint_count,is_fetching} = this.state;
-        const {club,club_id,wallet,network,club_data} = this.props;
+        const {club,wallet,network,club_data} = this.props;
+
+        let club_id = this.getClubId();
 
         if (club_data && club_data.get('is_fetched') && !club) {
             return  <Error404 />
         }
 
-        if (!club || !club.get('is_detail') || is_fetching_contract_data || is_fetching) {
+        if (!club || !club.get('is_detail') || is_fetching_contract_data || is_fetching || !club_id) {
             return <PageWrapper>
                 <Head>
                     <title>{'Drop details'}</title>
@@ -615,17 +655,17 @@ class ClubView extends React.Component {
         let now_unixtime = getUnixtime();
         let merged_data = Object.assign({},contract_data_in_server,contract_data);
 
-        let {stage,stage_status,balance} = this.getProjectStage(merged_data);
-        console.log('debug-stage,当前项目的stage是',stage,stage_status,balance);
+        let {stage,stage_status,minted} = this.getProjectStage(merged_data);
+        console.log('debug-stage,当前项目的stage是',stage,stage_status,minted);
 
 
         //计算我现在还可以mint几个nft
         let can_mint_count = 0
         if (stage_status == 'enable') {
             if (stage == 'in_whitelist') {
-                can_mint_count = merged_data['presale_per_wallet_count'] - balance;
+                can_mint_count = merged_data['presale_per_wallet_count'] - minted;
             }else if (stage =='in_public') {
-                can_mint_count = merged_data['sale_per_wallet_count'] - balance;
+                can_mint_count = merged_data['sale_per_wallet_count'] - minted;
             }
         }
         /*
@@ -636,8 +676,8 @@ class ClubView extends React.Component {
         -   1.3.是否已经结束mint时间了
         */
 
-        console.log('contract-data',contract.toJS())
-        console.log('contract_data',contract_data)
+        // console.log('contract-data',contract.toJS())
+        // console.log('contract_data',contract_data)
 
         return <PageWrapper>
             <Head>
@@ -649,7 +689,6 @@ class ClubView extends React.Component {
                     <div className='flex justify-start items-center mb-4'>
                         <StatusOnlineIcon className='h-8 w-8 mr-2' /><h2 className='h2'>{t('live now')}</h2>
                     </div>
-                    
             
                     <div className='p-6 d-bg-c-1 mb-8 flex justify-start border-4 border-black dark:border-[#999]'>
                         <div className='w-96 h-96 overflow-hidden mr-6'>
@@ -859,10 +898,26 @@ class ClubView extends React.Component {
                                         </tr>
                                         <tr>
                                             <td className='lttd'>
+                                                {t('contract address')}
+                                            </td>
+                                            <td className='rctd'>
+                                                {deploy_contract_address}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className='lttd'>
+                                                {t('network')}
+                                            </td>
+                                            <td className='rctd'>
+                                                {network}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className='lttd'>
                                                 1/1 NFT
                                             </td>
                                             <td className='rctd'>
-                                                {contract.get('special_supply')}
+                                                {club.get('special_supply')}
                                             </td>
                                         </tr>
                                         <tr>
@@ -1089,10 +1144,15 @@ class ClubView extends React.Component {
     
 }
 
+
+
+
 ClubView.getInitialProps =  wrapper.getInitialPageProps((store) => async ({pathname, req, res,query}) => {
     let network = config.get('ETH_NETWORK');
+    let is_number = myIsNaN(query.id);
     return {
-        club_id : query.id,
+        club_id : (is_number) ? query.id : '',
+        club_name : (is_number) ? '' : query.id,
         preview_key : (query.key) ? query.key : '',
         network : network
     };

@@ -248,3 +248,8 @@ export const getItemImage = function (item,width = 500) {
     let api = getConfig('API');
     return api + '/v1/item/image?contract_address=' + item.get('contract_address') + '&token_id=' + item.get('token_id') + '&width=' + width;
 }
+
+
+export const myIsNaN = function(value) {  
+    return typeof value === 'number' && !isNaN(value);
+}

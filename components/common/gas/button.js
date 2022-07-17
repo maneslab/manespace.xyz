@@ -80,7 +80,7 @@ class GasButton extends React.Component {
 
     async getGas() {
 
-        console.log('调用到getGas');
+        // console.log('调用到getGas');
 
         this.setState({
             'is_fetching' : true,
@@ -112,13 +112,11 @@ class GasButton extends React.Component {
         const {mint_gas_limit} = this.state;
         const {t} = this.props.i18n;
 
-        
-
         let mint_gas_estimate = this.getGasEstimate(gas_data.getIn(['data','average']),mint_gas_limit);
 
-        if (gas_data) {
-            console.log('gas_data',gas_data.toJS())
-        }
+        // if (gas_data) {
+        //     console.log('gas_data',gas_data.toJS())
+        // }
 
         let content = <div className="block-menu w-64">
             {
