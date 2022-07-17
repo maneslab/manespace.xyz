@@ -140,6 +140,21 @@ const hex2Number = (str = '') => {
     return parseInt(`0x${str}`, 16);
 }
 
+const removeSuffixZero = (number) => {
+    let number_str = String(number);
+    let number_str_arr = number_str.split('.');
+    if (number_str_arr.length === 2) {
+        let n1 = number_str_arr[1];
+        let es = n1.slice(-1);
+        while (es == '0' && n1.length > 1) {
+            n1 = n1.slice(0,-1);
+            es = n1.slice(-1);
+        }
+        return number_str_arr[0] + '.' + n1;
+    }else {
+        return number;
+    }
+}
 
 
 module.exports = {
@@ -157,5 +172,6 @@ module.exports = {
     'getIntAmountByAmount'   : getIntAmountByAmount,
     'getAmountFromHex'       : getAmountFromHex,
     'showBalance'            : showBalance,
-    'hex2Number'             : hex2Number
+    'hex2Number'             : hex2Number,
+    'removeSuffixZero'       : removeSuffixZero
 }

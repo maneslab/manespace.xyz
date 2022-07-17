@@ -4,8 +4,9 @@ import Link from 'next/link'
 import {UserIcon} from '@heroicons/react/outline'
 import { t } from 'helper/translate';
 import Showtime from 'components/time/showtime';
-import {getAmountFromIntAmount} from 'helper/number'
+import {removeSuffixZero} from 'helper/number'
 import {CheckCircleIcon} from '@heroicons/react/outline'
+import GalleryBlank from 'components/gallery/blank';
 
 class clubOne extends React.Component {
 
@@ -29,7 +30,11 @@ class clubOne extends React.Component {
             <Link href={"/project/"+club.get('id')}>
             <div className="cursor-pointer d-bg-c-1">
                 <div className="w-full aspect-square overflow-hidden relative">
-                    <img src={club.getIn(['gallery',0,'img','image_urls','url'])} />
+                    {
+                        (club.getIn(['gallery',0,'img','image_urls','url']))
+                        ? <img src={club.getIn(['gallery',0,'img','image_urls','url'])} />
+                        : <GalleryBlank size={'middle'}/>
+                    }
                     {
                         (is_whitelist)
                         ? <div className='absolute top-0 right-0 flex justify-end items-center bg-green-500 py-1 px-2 text-white uppercase text-sm'><CheckCircleIcon className="icon-sm mr-2" />{t('in whitelist')}</div>
@@ -60,7 +65,7 @@ class clubOne extends React.Component {
                             <div className='w-2/5'>
                                 <label>{t('WL mint price')}</label>
                                 <div className='v'>
-                                    {parseFloat(contract.getIn(['wl_price']))} ETH
+                                    {removeSuffixZero(contract.getIn(['wl_price']))} ETH
                                 </div>
                             </div>
                         </div>
@@ -79,7 +84,7 @@ class clubOne extends React.Component {
                             <div className='w-2/5'>
                                 <label>{t('public price')}</label>
                                 <div className='v'>
-                                    {parseFloat(contract.getIn(['pb_price']))} ETH
+                                    {removeSuffixZero(contract.getIn(['pb_price']))} ETH
                                 </div>
                             </div>
                         </div>

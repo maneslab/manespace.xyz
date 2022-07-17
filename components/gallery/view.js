@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Carousel } from 'react-responsive-carousel';
 import GalleryOne from 'components/gallery/one'
+import GalleryBlank from 'components/gallery/blank'
 
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
@@ -19,10 +20,12 @@ class GalleryView extends React.Component {
     render() {
         const {gallery} = this.props;
 
+        if (gallery.count() == 0) {
+            return <GalleryBlank />
+        }
+
         const customRenderThumb = (children) =>
             children.map((item) => {
-                // console.log('item.props.img',item.props.img.toJS())
-                // const videoId = getVideoId(item.props.url);
                 return <img src={item.props.img.getIn(['img','image_urls','url'])} />;
             }
         );

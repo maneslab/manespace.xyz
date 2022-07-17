@@ -1,24 +1,17 @@
 import React from 'react';
 import autobind from 'autobind-decorator';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import EthIcon from 'public/img/token/eth.svg'
 
-import {BadgeCheckIcon} from '@heroicons/react/solid'
 import Link from 'next/link'
-import GalleryView from 'components/gallery/view'
+import GalleryBlank from 'components/gallery/blank';
 import Countdown from 'react-countdown';
 import Cal from 'components/time/cal'
 
-import {showTimeLeft} from 'helper/time'
-
-import {getItemImage} from 'helper/common'
-import {CheckCircleIcon, UserIcon} from '@heroicons/react/outline'
+import {CheckCircleIcon} from '@heroicons/react/outline'
 import { t } from 'helper/translate';
 import Showtime from 'components/time/showtime';
 import withTranslate from 'hocs/translate';
 import config from 'helper/config'
-import {autoDecimal} from 'helper/number'
+import {removeSuffixZero} from 'helper/number'
 import { getUnixtime } from 'helper/time';
 
 import RefundIcon from 'public/img/icons/refund.svg'
@@ -77,7 +70,11 @@ class clubOne extends React.Component {
             <Link href={"/project/"+club.get('id')}>
             <div className='p-6 d-bg-c-1 mb-8 flex justify-start border-4 border-black dark:border-[#999] cursor-pointer'>
                 <div className='w-96 h-96 overflow-hidden mr-10'>
-                    <img src={club.getIn(['gallery',0,'img','image_urls','url'])} />
+                    {
+                        (club.getIn(['gallery',0,'img','image_urls','url']))
+                        ? <img src={club.getIn(['gallery',0,'img','image_urls','url'])} />
+                        : <GalleryBlank />
+                    }
                 </div>
                 <div className='flex-grow'>
                     <div className=''>
@@ -115,7 +112,7 @@ class clubOne extends React.Component {
                                         {
                                             (contract.get('wl_price'))
                                             ? <>
-                                                <span>{parseFloat(contract.get('wl_price'))}</span>
+                                                <span>{removeSuffixZero(contract.get('wl_price'))}</span>
                                                 <span className='text-base ml-2'>ETH</span>
                                             </>
                                             : t('not set yet')
@@ -171,7 +168,7 @@ class clubOne extends React.Component {
                                         {
                                             (contract.get('pb_price'))
                                             ? <>
-                                                <span>{parseFloat(contract.get('pb_price'))}</span>
+                                                <span>{removeSuffixZero(contract.get('pb_price'))}</span>
                                                 <span className='text-base ml-2'>ETH</span>
                                             </>
                                             : 'not set yet'

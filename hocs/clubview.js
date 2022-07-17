@@ -19,12 +19,12 @@ export default function withClubView(WrappedComponent) {
             if (this.props.club_id) {
                 this.load({
                     id:this.props.club_id,
-                    address : this.props.address
+                    preview_key : this.props.preview_key
                 })
             }else if (this.props.club_name) {
                 this.load({
                     name:this.props.club_name,
-                    address : this.props.address
+                    preview_key : this.props.preview_key
                 })
             }
         }
@@ -45,8 +45,10 @@ export default function withClubView(WrappedComponent) {
         }
         
         render() {
+
+            const {club_data} = this.props;
             
-            let is_fetched = (this.props.club_data) ? this.props.club_data.get('is_fetched') : false;
+            let is_fetched = (club_data) ? club_data.get('is_fetched') : false;
 
             if (is_fetched) {
                 return <WrappedComponent {...this.props} />;
@@ -90,7 +92,6 @@ export default function withClubView(WrappedComponent) {
        if (login_user_id) {
            login_user = denormalize(login_user_id,userSchema,entities)
        }
-
    
        return {
            'club'      : club,

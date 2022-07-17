@@ -33,7 +33,7 @@ import config from 'helper/config'
 import { httpRequest } from 'helper/http';
 import message from 'components/common/message';
 
-import {autoDecimal,percentDecimal,hex2Number} from 'helper/number'
+import {removeSuffixZero,percentDecimal,hex2Number} from 'helper/number'
 import Showtime from 'components/time/showtime'
 import { getUnixtime } from 'helper/time';
 
@@ -43,6 +43,8 @@ import mane from 'helper/web3/manestudio';
 import manenft from 'helper/web3/manenft';
 import ConnectWalletButton from 'components/wallet/connect_button';
 import { setNftBalance } from 'redux/reducer/nft';
+
+import Error404 from 'pages/404'
 
 @withTranslate
 @withClubView
@@ -503,25 +505,31 @@ class ClubView extends React.Component {
         let stage = 'unstart';          ///stage状态分为:unstart,in_whitelist,in_public,finished
         let status = 'disable';         ///status状态分为:disable,enable,connect_wallet,out_of_limit
 
+        let contract = null;
+        if (club.get('contract_info')) {
+            contract = club.get('contract_info')
+        }else {
+            contract = club.get('contract')
+        }
 
         if (!deploy_contract_address) {
             stage = 'unstart';
         }else {
-            if (club && club.getIn(['contract','wl_enable'])
+            if (contract && contract.getIn(['wl_enable'])
                 &&  merged_data['presale_end_time'] > now_unixtime 
                 && merged_data['presale_start_time'] <= now_unixtime ) {
                 
                 console.log('debug-stage,因为当前处于预售时间内,',now_unixtime,merged_data['presale_start_time'],merged_data['presale_end_time']);
                 stage = 'in_whitelist';
             }
-            if (club && club.getIn(['contract','pb_enable'])
+            if (contract && contract.getIn(['pb_enable'])
                 && (merged_data['sale_end_time'] > now_unixtime || merged_data['sale_end_time'] == 0)
                 && merged_data['sale_start_time'] <= now_unixtime ) {
                 console.log('debug-stage,因为当前处于销售时间内,',now_unixtime,merged_data['sale_start_time'],merged_data['sale_end_time']);
                 stage = 'in_public';
             }
             if (
-                club && club.getIn(['contract','pb_enable'])
+                contract && contract.getIn(['pb_enable'])
                 && merged_data['sale_end_time'] < now_unixtime 
                 && merged_data['sale_end_time'] != 0
             ) {
@@ -583,7 +591,11 @@ class ClubView extends React.Component {
     render() {
         const {t} = this.props.i18n;
         const {deploy_contract_address,is_fetching_contract_data,contract_data,contract_data_in_server,mint_count,is_fetching} = this.state;
-        const {club,club_id,wallet,network} = this.props;
+        const {club,club_id,wallet,network,club_data} = this.props;
+
+        if (club_data && club_data.get('is_fetched') && !club) {
+            return  <Error404 />
+        }
 
         if (!club || !club.get('is_detail') || is_fetching_contract_data || is_fetching) {
             return <PageWrapper>
@@ -625,6 +637,7 @@ class ClubView extends React.Component {
         */
 
         console.log('contract-data',contract.toJS())
+        console.log('contract_data',contract_data)
 
         return <PageWrapper>
             <Head>
@@ -689,7 +702,7 @@ class ClubView extends React.Component {
                                                 {
                                                     (contract.get('wl_price'))
                                                     ? <>
-                                                        <span>{parseFloat(contract.get('wl_price'))}</span>
+                                                        <span>{removeSuffixZero(contract.get('wl_price'))}</span>
                                                         <span className='text-base ml-2'>ETH</span>
                                                     </>
                                                     : t('not set yet')
@@ -744,9 +757,9 @@ class ClubView extends React.Component {
                                             <div className='lb'>{t('public sale price')}</div>
                                             <div className='ma'>
                                                 {
-                                                    (contract_data && contract_data['sale_price'])
+                                                    (contract && contract.get('pb_price'))
                                                     ? <>
-                                                        <span>{parseFloat(contract_data['sale_price'])}</span>
+                                                        <span>{removeSuffixZero(contract.get('pb_price'))}</span>
                                                         <span className='text-base ml-2'>ETH</span>
                                                     </>
                                                     : 'not set yet'
@@ -771,7 +784,7 @@ class ClubView extends React.Component {
                                 }
                                 
 
-                                <div className='flex justify-start items-center py-4 border-t d-border-c-3'>
+                                <div className='flex justify-start items-center pt-4 border-t d-border-c-3'>
                                     {
                                         (stage_status == 'disable')
                                         ? <button className='btn btn-primary btn-wide capitalize' disabled={true}>mint</button>
@@ -783,7 +796,7 @@ class ClubView extends React.Component {
                                             {
                                                 (stage == 'in_whitelist')
                                                 ? <>
-                                                <CountBtn max_count={can_mint_count} count={mint_count} handleCountChange={this.handleMintCountChange} />
+                                                <CountBtn max_count={can_mint_count} count={(mint_count>can_mint_count)?can_mint_count:mint_count} andleCountChange={this.handleMintCountChange} />
                                                 <Button loading={this.state.is_minting} className='btn btn-primary btn-wide capitalize' onClick={this.whiteListMint}>mint</Button>
                                                 </>
                                                 : null
@@ -791,7 +804,7 @@ class ClubView extends React.Component {
                                             {
                                                 (stage == 'in_public')
                                                 ? <>
-                                                <CountBtn max_count={can_mint_count} count={mint_count} handleCountChange={this.handleMintCountChange} />
+                                                <CountBtn max_count={can_mint_count} count={(mint_count>can_mint_count)?can_mint_count:mint_count} handleCountChange={this.handleMintCountChange} />
                                                 <Button loading={this.state.is_minting} className='btn btn-primary btn-wide capitalize' onClick={this.mint}>mint</Button>
                                                 </>
                                                 : null
@@ -900,7 +913,7 @@ class ClubView extends React.Component {
                                                     {t('whitelist presale price')}
                                                 </td>
                                                 <td className='rctd'>
-                                                    {parseFloat(contract.get('wl_price'))}
+                                                    {removeSuffixZero(contract.get('wl_price'))}
                                                     <span className='ml-2 text-base'>ETH</span>
                                                 </td>
                                             </tr>
@@ -938,7 +951,7 @@ class ClubView extends React.Component {
                                                     {t('public sale price')}
                                                 </td>
                                                 <td className='rctd'>
-                                                    {parseFloat(contract.get('pb_price'))}
+                                                    {removeSuffixZero(contract.get('pb_price'))}
                                                     <span className='ml-2 text-base'>ETH</span>
                                                 </td>
                                             </tr>
@@ -969,32 +982,36 @@ class ClubView extends React.Component {
 
                     </div>
 
-                    <div className='p-6 pt-4 d-bg-c-1 mb-8'>
-                        <div className='block-title'>{t('creator')}</div>
-                        <div className='grid grid-cols-2 gap-16'>
-                            {club.get('creator').map((one,index) => <CreatorOne 
-                                key={one.id} 
-                                id={index}
-                                club={club}
-                                creator={one}
-                            />)}
+                    {
+                        (club.get('creator').count() > 0)
+                        ? <div className='p-6 pt-4 d-bg-c-1 mb-8'>
+                            <div className='block-title'>{t('creator')}</div>
+                            <div className='grid grid-cols-2 gap-16'>
+                                {club.get('creator').map((one,index) => <CreatorOne 
+                                    key={one.id} 
+                                    id={index}
+                                    club={club}
+                                    creator={one}
+                                />)}
+                            </div>
                         </div>
-                    </div>
-
-                    <div className='p-6 pt-4 d-bg-c-1 mb-8'>
-                        <div className='block-title'>{t('roadmap')}</div>
-
-                        <div>
-                            
-                            {club.get('roadmap').map((one,index) => <RoadmapOne 
-                                key={one.id} 
-                                id={index}
-                                roadmap={one}
-                            />)}
-
+                        : null
+                    }
+                    
+                    {
+                        (club.get('roadmap').count() > 0)
+                        ? <div className='p-6 pt-4 d-bg-c-1 mb-8'>
+                            <div className='block-title'>{t('roadmap')}</div>
+                            <div>
+                                {club.get('roadmap').map((one,index) => <RoadmapOne 
+                                    key={one.id} 
+                                    id={index}
+                                    roadmap={one}
+                                />)}
+                            </div>
                         </div>
-
-                    </div>
+                        : null
+                    }
 
                     {
                         (contract.get('refund').count() > 0)
@@ -1073,12 +1090,10 @@ class ClubView extends React.Component {
 }
 
 ClubView.getInitialProps =  wrapper.getInitialPageProps((store) => async ({pathname, req, res,query}) => {
-    
     let network = config.get('ETH_NETWORK');
-
     return {
         club_id : query.id,
-        address : (query.address) ? query.address : '',
+        preview_key : (query.key) ? query.key : '',
         network : network
     };
 });
