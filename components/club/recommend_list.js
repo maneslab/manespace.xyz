@@ -9,7 +9,6 @@ import Empty from 'components/common/empty'
 import ClubTwo  from 'components/club/two'
 
 import {removeValueEmpty} from 'helper/common'
-
 import {withPageList} from 'hocs/index'
 
 import {loadRecommendClubList} from 'redux/reducer/club'
@@ -53,7 +52,7 @@ class MyClubList extends React.Component {
             </div>;
         }
 
-        return  <Carousel showArrows={true} autoPlay={true} onClickItem={this.onClickItem} onClickThumb={this.onClickThumb} >
+        return  <Carousel showArrows={true} autoPlay={true} onClickItem={this.onClickItem} showThumbs={false} >
             {
                 list_rows.map((one)=>{
                     return <div>

@@ -37,7 +37,7 @@ import message from 'components/common/message';
 
 import {removeSuffixZero,percentDecimal,hex2Number} from 'helper/number'
 import Showtime from 'components/time/showtime'
-import { getUnixtime } from 'helper/time';
+import { getUnixtime,formatOverflowUnixtime } from 'helper/time';
 
 // import {t} from 'helper/translate'
 import withWallet from 'hocs/wallet';
@@ -976,13 +976,18 @@ class ClubView extends React.Component {
                                                 <td className='lttd'>
                                                     {t('whitelist mint time')}
                                                 </td>
-                                                <td className='rctd'>
-                                                    <Showtime unixtime={contract.get('wl_start_time')} cale={true} />
-                                                    <span className='ml-4 flex-item-center'>
-                                                        <Cal begin_time={contract.get('wl_start_time')} 
-                                                            text={this.getCalendarTitle('whitelist')} 
-                                                            details={'url:'+mint_url} />
-                                                    </span>
+                                                <td className='rctd flex-col'>
+                                                    <div className='flex justify-start items-center w-full'>
+                                                        <Showtime unixtime={contract.get('wl_start_time')} />
+                                                        <span className='ml-4 flex-item-center'>
+                                                            <Cal begin_time={contract.get('wl_start_time')} 
+                                                                text={this.getCalendarTitle('whitelist')} 
+                                                                details={'url:'+mint_url} />
+                                                        </span>
+                                                    </div>
+                                                    <div className='flex justify-start w-full'>
+                                                        <Showtime unixtime={contract.get('wl_end_time')}  />
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -1014,13 +1019,25 @@ class ClubView extends React.Component {
                                                 <td className='lttd'>
                                                     {t('public mint time')}
                                                 </td>
-                                                <td className='rctd'>
-                                                    <Showtime unixtime={contract.get('pb_start_time')} cale={true} />
-                                                    <span className='ml-4 flex-item-center'>
-                                                        <Cal begin_time={contract.get('pb_start_time')} 
-                                                            text={this.getCalendarTitle('public')} 
-                                                            details={'url:'+mint_url} />
-                                                    </span>
+                                                <td className='rctd flex-col'>
+                                                    <div className='flex justify-start items-center w-full'>
+                                                        <Showtime unixtime={contract.get('pb_start_time')} cale={true} />
+                                                        <span className='ml-4 flex-item-center'>
+                                                            <Cal begin_time={contract.get('pb_start_time')} 
+                                                                text={this.getCalendarTitle('public')} 
+                                                                details={'url:'+mint_url} />
+                                                        </span>
+                                                    </div>
+                                                    {
+                                                        (formatOverflowUnixtime(contract.get('pb_end_time')))
+                                                        ? <div className='flex justify-start w-full'>
+                                                            <Showtime unixtime={formatOverflowUnixtime(contract.get('pb_end_time'))}  />
+                                                        </div>
+                                                        : <div className='flex justify-start w-full'>
+                                                            {t('(no end time)')}
+                                                        </div>
+                                                    }
+                                                    
                                                 </td>
                                             </tr>
                                         </tbody>

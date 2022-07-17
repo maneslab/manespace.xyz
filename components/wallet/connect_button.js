@@ -1,6 +1,6 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-
+import config from 'helper/config'
 
 /**/
 const ConnectWalletButton = () => {
@@ -42,9 +42,9 @@ const ConnectWalletButton = () => {
                 );
               }
 
-              return (
-                <div style={{ display: 'flex', gap: 12 }}>
-                  <button
+              let changeNetHtml = null;
+              if (config.get('ENV') != 'production') {
+                changeNetHtml = <button
                     onClick={openChainModal}
                     style={{ display: 'flex', alignItems: 'center' }}
                     type="button"
@@ -72,7 +72,11 @@ const ConnectWalletButton = () => {
                     )}
                     {chain.name}
                   </button>
+              }
 
+              return (
+                <div style={{ display: 'flex', gap: 12 }}>
+                  {changeNetHtml}
                   <button onClick={openAccountModal} type="button" className='btn btn-ghost capitalize text-base'>
                     {account.displayName}
                   </button>

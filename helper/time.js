@@ -62,3 +62,12 @@ export const showTimeLeft = (unixtime) => {
 export function getUnixtime() {
     return Math.floor(Date.now() / 1000)
 }
+
+
+export function formatOverflowUnixtime(unixtime) {
+    if (unixtime > 2147483647) {
+        unixtime = 0;
+    }
+    return unixtime;
+}
+

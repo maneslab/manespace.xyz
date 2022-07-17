@@ -28,8 +28,19 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 //rainbowkit导入结束
 
+let network = config.get('ETH_NETWORK');
+
+let net_arr = [];
+if (network == 'kovan') {
+    net_arr.push(chain.kovan)
+}else if (network == 'mainnet') {
+    net_arr.push(chain.network)
+}else if (network == 'ropsten') {
+    net_arr.push(chain.ropsten)
+}
+
 const { chains, provider } = configureChains(
-    [chain.mainnet, chain.ropsten, chain.kovan ],
+    net_arr,
     [
         alchemyProvider({ alchemyId: config.get('ALCHEMY_ID') }),
         publicProvider()
@@ -48,34 +59,6 @@ const wagmiClient = createClient({
 })
 
 import merge from 'lodash.merge';
-// const env = config.get('ENV')
-
-// let allow_nets = [];
-// if (env == 'production') {
-//     allow_nets = [chain.polygonMumbai]
-// }else {
-//     allow_nets = [chain.kovan]
-
-// }
-
-// const { chains, provider } = configureChains(
-//     allow_nets,
-//     [
-//       apiProvider.alchemy(process.env.ALCHEMY_ID),
-//       apiProvider.fallback()
-//     ]
-// );
-  
-// const { connectors } = getDefaultWallets({
-//     appName: 'My RainbowKit App',
-//     chains
-// });
-  
-// const wagmiClient = createClient({
-//     autoConnect: true,
-//     connectors,
-//     provider
-// })
 
 
 const myLightTheme = merge(lightTheme(),{
