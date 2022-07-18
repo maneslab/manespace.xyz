@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { denormalize } from 'normalizr';
 import { userSchema,clubSchema } from 'redux/schema/index'
-import { loadClubDetail,updateClub } from 'redux/reducer/club'
+import { loadClubDetail } from 'redux/reducer/club'
 import Loading from 'components/common/loading'
 
 export default function withClubView(WrappedComponent) {
@@ -68,9 +68,9 @@ export default function withClubView(WrappedComponent) {
             loadClubDetail : (cond) => {
                return dispatch(loadClubDetail(cond))
             },
-            updateClub : (id,data) => {
-               return dispatch(updateClub(id,data))
-            },
+            // updateClub : (id,data) => {
+            //    return dispatch(updateClub(id,data))
+            // },
         }
    }
    function mapStateToProps(state,ownProps) {
