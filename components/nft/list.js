@@ -40,7 +40,7 @@ class NftList extends React.Component {
  
     render() {
 
-        const {list_data_one,page,pageSize,network,contract_address} = this.props;
+        const {list_data_one,page,pageSize,network,contract_address,is_allow_refundable} = this.props;
         const {t} = this.props.i18n;
 
 
@@ -63,11 +63,12 @@ class NftList extends React.Component {
                 }
                 {
                     (list_data_one.get('is_fetched'))
-                    ? <div className='grid grid-cols-6 gap-8'>
+                    ? <div className='grid lg:grid-cols-6 gap-8'>
                         {
                             list_one.map((one)=>{
                                 return <NftOne 
                                     nftid={one} 
+                                    is_allow_refundable={is_allow_refundable}
                                     network={network}
                                     contract_address={contract_address}
                                     key={one} openRefundModal={this.props.openRefundModal} />

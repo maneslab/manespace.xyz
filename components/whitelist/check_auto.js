@@ -102,7 +102,7 @@ class CheckWhitelist extends React.Component {
                         </span>
                     }
                     </div>
-                    <div className='mt-2 text-sm text-gray-500'>
+                    <div className='mt-2 text-xs lg:text-sm text-gray-500'>
                         {wallet.address}
                     </div>
                 </>

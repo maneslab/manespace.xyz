@@ -189,9 +189,12 @@ class ClubView extends React.Component {
 
             ///获得contract数据
             let contract_data = await this.manenft.contract.getAll();
+            let isForceRefundable = await this.manenft.contract.isForceRefundable();
+
             // console.log('debug01,contract_data',contract_data)
             let formated_data = this.deformatContractData(contract_data);
             // console.log('debug01,formated_data',formated_data)
+            formated_data['is_force_refundable'] = (isForceRefundable == 1) ? true : false;
 
             this.setState({
                 'contract_data'             : formated_data,
@@ -666,6 +669,25 @@ class ClubView extends React.Component {
         }
     }
 
+    isAllowRefundable(refund_list,is_force_refundable) {
+        console.log('debug-refundable',refund_list,is_force_refundable);
+        if (is_force_refundable) {
+            return true;
+        }
+        if (!refund_list) {
+            return false;
+        }
+        let now_unixtime = getUnixtime();
+        let allow_refundable = false;
+        refund_list.map((item,index) => {
+            if (now_unixtime < item.get('end_time')) {
+                allow_refundable = true;
+            }
+        })
+        return allow_refundable;
+    }
+
+
     @autobind
     getPbHtml(contract) {
         const {t} = this.props.i18n;
@@ -746,6 +768,8 @@ class ClubView extends React.Component {
                 can_mint_count = merged_data['sale_per_wallet_count'] - minted;
             }
         }
+
+        let is_allow_refundable = this.isAllowRefundable(contract.get('refund'),merged_data['is_force_refundable']);
         /*
         是否展示mint按钮
         - 1.是否这个contract拥有已经部署的合约？
@@ -762,14 +786,14 @@ class ClubView extends React.Component {
                 <title>{'Drop details'}</title>
             </Head>
             <div>
-                <div className="max-w-screen-xl mx-auto pb-12">
+                <div className="max-w-screen-xl mx-auto pb-12 px-2 lg:px-0">
 
-                    <div className='flex justify-start items-center mb-4'>
+                    <div className='flex justify-start items-center mb-4 hidden lg:show'>
                         <StatusOnlineIcon className='h-8 w-8 mr-2' /><h2 className='h2'>{t('live now')}</h2>
                     </div>
             
-                    <div className='p-6 d-bg-c-1 mb-8 flex justify-start border-4 border-black dark:border-[#999]'>
-                        <div className='w-96 h-96 overflow-hidden mr-6'>
+                    <div className='p-6 d-bg-c-1 mb-8 flex justify-start flex-col lg:flex-row border-4 border-black dark:border-[#999]'>
+                        <div className='lg:w-96 lg:h-96 overflow-hidden lg:mr-6'>
                             <GalleryView gallery={club.get('gallery')} club_id={club_id} />
                         </div>
                         <div className='flex-grow'>
@@ -851,7 +875,7 @@ class ClubView extends React.Component {
                                 }
                                 
 
-                                <div className='flex justify-start items-center pt-4 border-t d-border-c-3'>
+                                <div className='flex justify-center lg:justify-start items-center pt-4 border-t d-border-c-3'>
                                     {
                                         (stage_status == 'disable')
                                         ? <button className='btn btn-primary btn-wide capitalize' disabled={true}>mint</button>
@@ -864,7 +888,7 @@ class ClubView extends React.Component {
                                                 (stage == 'in_whitelist')
                                                 ? <>
                                                 <CountBtn max_count={can_mint_count} count={(mint_count>can_mint_count)?can_mint_count:mint_count} andleCountChange={this.handleMintCountChange} />
-                                                <Button loading={this.state.is_minting} className='btn btn-primary btn-wide capitalize' onClick={this.whiteListMint}>mint</Button>
+                                                <Button loading={this.state.is_minting} className='btn btn-primary lg:btn-wide capitalize' onClick={this.whiteListMint}>mint</Button>
                                                 </>
                                                 : null
                                             }
@@ -872,7 +896,7 @@ class ClubView extends React.Component {
                                                 (stage == 'in_public')
                                                 ? <>
                                                 <CountBtn max_count={can_mint_count} count={(mint_count>can_mint_count)?can_mint_count:mint_count} handleCountChange={this.handleMintCountChange} />
-                                                <Button loading={this.state.is_minting} className='btn btn-primary btn-wide capitalize' onClick={this.mint}>mint</Button>
+                                                <Button loading={this.state.is_minting} className='btn btn-primary lg:btn-wide capitalize' onClick={this.mint}>mint</Button>
                                                 </>
                                                 : null
                                             }
@@ -897,7 +921,7 @@ class ClubView extends React.Component {
                     </div>
                     <div className='mb-8 w-full p-6 d-bg-c-1'>
                         <div className='block-title'>{t('whitelist check')}</div>
-                        <div className='grid grid-cols-2 gap-8'>
+                        <div className='grid lg:grid-cols-2 lg:gap-8'>
                             <WhitelistCheckAuto club_id={club_id} wallet={wallet}/>
                             <WhitelistCheck club_id={club_id}/>
                         </div>
@@ -905,8 +929,8 @@ class ClubView extends React.Component {
                     <div className='mb-8 w-full p-6 d-bg-c-1'>
                         <div className='block-title'>{t('about')}</div>
 
-                        <div className='grid grid-cols-12 gap-8'>
-                            <div className="col-span-6 border-r d-border-c-3">
+                        <div className='lg:grid lg:grid-cols-12 gap-8'>
+                            <div className="lg:col-span-6 border-r d-border-c-3">
                                 <table className='info-table'>
                                     <thead>
                                         <tr>
@@ -1040,7 +1064,7 @@ class ClubView extends React.Component {
                                                 </td>
                                                 <td className='rctd'>
                                                     {removeSuffixZero(contract.get('pb_price'))}
-                                                    <span className='ml-2 text-base'>ETH</span>
+                                                    <span className='ml-2'>ETH</span>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -1048,7 +1072,7 @@ class ClubView extends React.Component {
                                                     {t('public mint time')}
                                                 </td>
                                                 <td className='rctd flex-col'>
-                                                    <div className='flex justify-start items-center w-full'>
+                                                <div className='flex justify-start items-center w-full'>
                                                         <Showtime unixtime={contract.get('pb_start_time')} cale={true} />
                                                         <span className='ml-4 flex-item-center'>
                                                             <Cal begin_time={contract.get('pb_start_time')} 
@@ -1086,7 +1110,7 @@ class ClubView extends React.Component {
                         (club.get('creator').count() > 0)
                         ? <div className='p-6 pt-4 d-bg-c-1 mb-8'>
                             <div className='block-title'>{t('creator')}</div>
-                            <div className='grid grid-cols-2 gap-16'>
+                            <div className='grid lg:grid-cols-2 gap-16'>
                                 {club.get('creator').map((one,index) => <CreatorOne 
                                     key={one.id} 
                                     id={index}
@@ -1118,7 +1142,7 @@ class ClubView extends React.Component {
                         ?   <div className='p-6 pt-4 d-bg-c-1 mb-8'>
                             <div className='block-title'>{t('refund')}</div>
 
-                            <div className='grid grid-cols-2 gap-8'>
+                            <div className='grid lg:grid-cols-2 gap-8'>
                                 
                                 <div>
                                 {contract.get('refund').map((one,index) => {
@@ -1168,6 +1192,7 @@ class ClubView extends React.Component {
                             contract_address={deploy_contract_address} 
                             address={wallet.address}
                             network={network}
+                            is_allow_refundable={is_allow_refundable}
                             openRefundModal={this.openRefundModal}
                             />
                         : null

@@ -105,7 +105,7 @@ class RefundModal extends React.Component {
 
             <div className='border-t border-gray-100 my-4' />
             <div className='mb-4'>
-                {t('this action cannot be undone. This will permanently remove this NFT from your wallet and then refund your money.')}
+                {t('refund-notice-info')}
             </div>
 
             <div class="alert alert-warning my-4">

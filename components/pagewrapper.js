@@ -17,6 +17,7 @@ import { initApp,setSlider,setGlobalModal } from 'redux/reducer/setting'
 import {withTranslate} from 'hocs/index'
 
 import DarkmodeSwitch from './common/darkmode_switch';
+import {MenuIcon} from '@heroicons/react/outline'   
 
 import config from 'helper/config'
 
@@ -65,7 +66,7 @@ class PageWrapper extends React.Component {
                 <div>
 
                     <div className='header-bg dark:bg-[#22252b] mb-8 fixed w-full top-0 shadow-sm'>
-                        <div className="flex justify-between h-16 w-full max-w-screen-xl mx-auto">
+                        <div className="flex justify-between h-16 w-full max-w-screen-xl mx-auto px-4 lg:px-0">
 
                             <div className='flex justify-start'>
 
@@ -75,14 +76,14 @@ class PageWrapper extends React.Component {
                                     </a>
                                 </Link>
 
-                                <div className='main-menu ml-4'>
+                                <div className='ml-4 hidden lg:flex lg:items-center'>
                                     <a className='font-bold capitalize ml-2' href={manestudio_url} target="_blank">{t('create project')}</a>
                                 </div>
 
                             </div>
                             
 
-                            <div className='flex justify-end items-center'>
+                            <div className='flex justify-end items-center hidden lg:flex'>
 
                                 <div className='mr-4 dark-switch'>
                                     <DarkmodeSwitch />
@@ -95,6 +96,14 @@ class PageWrapper extends React.Component {
                                 <ConnectWalletButton />
 
                             </div>
+
+                            <div className='h-16 flex items-center lg:hidden'>
+                                <MenuIcon className="w-8 h-8" />
+                            </div>
+
+                           
+
+
                         </div>
                     </div>
                     <div className="h-screen w-screen overflow-y-scroll pb-16">

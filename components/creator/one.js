@@ -17,7 +17,7 @@ export default function SortableItem({creator,club,id}) {
             <div className='flex justify-between'>
 
                 <div className=''>
-                    <div className='w-48'>
+                    <div className='w-24 lg:w-48'>
                         {
                             (!creator.getIn(['img','image_urls','url'])) 
                             ? <div className='aspect-square bg-gray-200'>
@@ -49,7 +49,7 @@ export default function SortableItem({creator,club,id}) {
                         
                     </div>
                 </div>
-                <div className='text-left flex-grow p-4 text-gray-500'>
+                <div className='text-left flex-grow px-4 g:p-4 text-gray-500'>
                     {creator.get('bio')}
                 </div>
             </div>

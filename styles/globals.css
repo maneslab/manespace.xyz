@@ -725,16 +725,16 @@ input{outline:none;}
 }
 
 .info-table {
-    @apply mb-8;
+    @apply mb-8 text-sm lg:text-base;
 }
 .info-table th {
     @apply font-bold text-left capitalize text-lg py-2 
 }
 .info-table .lttd {
-    @apply  pr-6 capitalize w-48; 
+    @apply  pr-6 capitalize w-36 lg:w-48; 
 }
 .info-table .rctd {
-    @apply flex justify-start items-center text-gray-500;
+    @apply flex justify-start items-center text-gray-500 break-all lg:break-words;
 }
 
 .btn-inline-form {

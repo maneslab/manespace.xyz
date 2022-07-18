@@ -39,13 +39,6 @@ export default class extends Document {
         <body>
           <Main />
           <NextScript />
-          <svg height="0" viewBox="0 0 200 200" width="0">
-            <defs>
-              <clipPath clipPathUnits="objectBoundingBox" id="hex-clip" transform="scale(0.005 0.005)">
-              <path d="M 100 0 C 20 0 0 20 0 100 C 0 180 20 200 100 200 C 180 200 200 180 200 100 C 200 20 180 0 100 0 Z"/>
-              </clipPath>
-            </defs>
-          </svg>
         </body>
       </Html>
     )
