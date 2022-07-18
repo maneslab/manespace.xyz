@@ -140,6 +140,11 @@ html,body {
     overflow: hidden;
 }
 
+
+body,div {
+    transition: background 0.3s;
+}
+
 .icon-xs {
     @apply w-4 h-4;
 }

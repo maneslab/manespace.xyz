@@ -1,5 +1,7 @@
 import React from 'react';
 import Countdown from 'react-countdown';
+import { formatOverflowUnixtime } from 'helper/time';
+import withTranslate from 'hocs/translate';
 
 const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -16,7 +18,7 @@ const renderer = ({ days, hours, minutes, seconds, completed }) => {
     }
   };
   
-
+@withTranslate
 class CountDown extends React.Component {
 
     constructor(props) {
@@ -27,7 +29,17 @@ class CountDown extends React.Component {
 
     render() {
 
-        const {unixtime} = this.props;
+        let {unixtime} = this.props;
+        const {t} = this.props.i18n;
+
+        unixtime = formatOverflowUnixtime(unixtime);
+
+        if (!unixtime) {
+            return <div>
+                {t('(no end time)')}
+            </div>
+        }
+
         return (
             <Countdown
                 date={unixtime*1000}
