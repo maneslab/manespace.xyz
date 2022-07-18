@@ -126,6 +126,9 @@
 .divider::after {
     @apply dark:bg-[#31343a]
 }
+.control-disabled {
+    @apply hidden;
+}
 
 
 body {

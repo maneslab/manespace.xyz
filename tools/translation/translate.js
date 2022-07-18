@@ -16,7 +16,6 @@ class translateHelper  {
 
         this.un_translate_csv_path = path.resolve(this.base_path,'./tools/translation/un_translate.csv');
         this.translate_csv_path = path.resolve(this.base_path,'./tools/translation/translate.csv');
-      
         this.translated_csv_path = path.resolve(this.base_path,'./tools/translation/translated.csv');
 
         this.chars = [

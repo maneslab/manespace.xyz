@@ -2,17 +2,20 @@ import React from 'react';
 
 import Link from 'next/link'
 import {UserIcon} from '@heroicons/react/outline'
-import { t } from 'helper/translate';
+// import { t } from 'helper/translate';
 import Showtime from 'components/time/showtime';
 import {removeSuffixZero} from 'helper/number'
 import {CheckCircleIcon} from '@heroicons/react/outline'
 import GalleryBlank from 'components/gallery/blank';
+import withTranslate from 'hocs/translate';
 
+@withTranslate
 class clubOne extends React.Component {
 
     render() {
 
         const { club } = this.props;
+        const {t} = this.props.i18n;
 
         // console.log('debug-club-01',club.toJS())
 

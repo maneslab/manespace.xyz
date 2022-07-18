@@ -8,7 +8,7 @@ import Countdown from 'components/common/countdown';
 import Cal from 'components/time/cal'
 
 import {CheckCircleIcon} from '@heroicons/react/outline'
-import { t } from 'helper/translate';
+// import { t } from 'helper/translate';
 import Showtime from 'components/time/showtime';
 import withTranslate from 'hocs/translate';
 import config from 'helper/config'
@@ -122,6 +122,7 @@ class clubOne extends React.Component {
     render() {
 
         const { club } = this.props;
+        const {t} = this.props.i18n;
 
         let creator_name_list = [];
         club.get('creator').forEach((one)=>{
@@ -184,7 +185,7 @@ class clubOne extends React.Component {
                         }
                         <div className='flex justify-between '>
                             <div className='w-1/2 box-one '>
-                                <div className='lb'>{t('minted / whitelist supply')}</div>
+                                <div className='lb'>{t('minted')} / {t('whitelist supply')}</div>
                                 <div className='ma flex justify-start items-center'>
                                     {contract.get('total_supply') ? contract.get('total_supply') : 0} / {contract.get('wl_max_supply')}
                                 </div>
