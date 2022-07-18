@@ -3,7 +3,8 @@ import autobind from 'autobind-decorator';
 
 import Link from 'next/link'
 import GalleryBlank from 'components/gallery/blank';
-import Countdown from 'react-countdown';
+// import Countdown from 'react-countdown';
+import Countdown from 'components/common/countdown';
 import Cal from 'components/time/cal'
 
 import {CheckCircleIcon} from '@heroicons/react/outline'
@@ -12,7 +13,7 @@ import Showtime from 'components/time/showtime';
 import withTranslate from 'hocs/translate';
 import config from 'helper/config'
 import {removeSuffixZero} from 'helper/number'
-import { getUnixtime } from 'helper/time';
+import { getUnixtime,formatOverflowUnixtime } from 'helper/time';
 
 import RefundIcon from 'public/img/icons/refund.svg'
 
@@ -40,6 +41,81 @@ class clubOne extends React.Component {
             return config.get('WEBSITE') + '/project/' +club.get('unique_name')
         }else {
             return config.get('WEBSITE') + '/project/' +club.get('id')
+        }
+    }
+
+    @autobind
+    getWlHtml(contract) {
+        const {t} = this.props.i18n;
+        let now_unixtime = getUnixtime();
+
+        if (now_unixtime > contract.get('wl_end_time')) {
+            return <div className='w-1/2 box-one '>
+                <div className='lb'>{t('whitelist presale')}</div>
+                <div className='ma flex justify-start items-center'>
+                    {t('finished')}
+                </div>
+            </div>
+
+        }
+
+        if (now_unixtime > contract.get('wl_start_time')) {
+            return  <div className='w-1/2 box-one '>
+                <div className='lb'>{t('whitelist presale end in')}</div>
+                <div className='ma flex justify-start items-center'>
+                    <Countdown unixtime={contract.get('wl_end_time')} />
+                </div>
+            </div>
+        }else {
+            return  <div className='w-1/2 box-one '>
+                <div className='lb'>{t('whitelist presale start in')}</div>
+                <div className='ma flex justify-start items-center'>
+                    <Countdown unixtime={contract.get('wl_start_time')} />
+                    <span className='ml-4 flex-item-center'>
+                        <Cal begin_time={contract.get('wl_start_time')} 
+                            text={this.getCalendarTitle('whitelist')} 
+                            details={'url:'+mint_url} />
+                    </span>
+                </div>
+            </div>
+        }
+    }
+
+    @autobind
+    getPbHtml(contract) {
+        const {t} = this.props.i18n;
+        let now_unixtime = getUnixtime();
+
+        if (now_unixtime > contract.get('pb_end_time')) {
+            return <div className='w-1/2 box-one '>
+                <div className='lb'>{t('public sale')}</div>
+                <div className='ma flex justify-start items-center'>
+                    {t('finished')}
+                </div>
+            </div>
+        }
+
+        if (now_unixtime > contract.get('pb_start_time')) {
+            return <div className='w-1/2 box-one '>
+                <div className='lb'>{t('public sale end in')}</div>
+                <div className='ma flex justify-start items-center'>
+                    <Countdown unixtime={contract.get('pb_end_time')} />
+                </div>
+            </div>
+        }else if (now_unixtime > contract.get('wl_end_time')) {
+            return <div className='w-1/2 box-one '>
+                <div className='lb'>{t('public sale start in')}</div>
+                <div className='ma flex justify-start items-center'>
+                    <Countdown unixtime={contract.get('pb_start_time')} />
+                </div>
+            </div>
+        }else {
+            return <div className='w-1/2 box-one '>
+                <div className='lb'>{t('public sale start in')}</div>
+                <div className='ma flex justify-start items-center'>
+                    <Showtime unixtime={contract.get('pb_start_time')}  />
+                </div>
+            </div>
         }
     }
 
@@ -89,23 +165,7 @@ class clubOne extends React.Component {
                         {
                             (contract && contract.get('wl_enable'))
                             ?   <div className='flex justify-between '>
-                                <div className='w-1/2 box-one '>
-                                    <div className='lb'>{t('whitelist presale starts in')}</div>
-                                    <div className='ma flex justify-start items-center'>
-                                        {
-                                            (contract.get('wl_start_time'))
-                                            ? <>
-                                            <Countdown date={contract.get('wl_start_time')*1000} />
-                                            <span className='ml-4 flex-item-center'>
-                                                <Cal begin_time={contract.get('wl_start_time')} 
-                                                    text={this.getCalendarTitle('whitelist')} 
-                                                    details={'url:'+mint_url} />
-                                            </span>
-                                            </>
-                                            : t('not set yet')
-                                        }
-                                    </div>
-                                </div>
+                                {this.getWlHtml(contract)}
                                 <div className='w-1/2 box-one'>
                                     <div className='lb'>{t('whitelist presale price')}</div>
                                     <div className='ma'>
@@ -139,29 +199,9 @@ class clubOne extends React.Component {
                         {
                             (contract && contract.get('pb_enable'))
                             ?   <div className='flex justify-between '>
-                                <div className='w-1/2 box-one '>
-                                    <div className='lb'>{t('public sale starts in')}</div>
-                                    <div className='ma flex justify-start items-center'>
-                                        {
-                                            (contract.get('pb_start_time') > 0)
-                                            ? <>
-                                                {
-                                                    (contract.get('pb_enable') && now_unixtime > Number(contract.get('wl_start_time')))
-                                                    ? <Countdown date={contract.get('pb_start_time')*1000} />
-                                                    : <>
-                                                        <Showtime unixtime={contract.get('pb_start_time')} cale={true} />
-                                                        <span className='ml-4 flex-item-center'>
-                                                            <Cal begin_time={contract.get('pb_start_time')} 
-                                                                text={this.getCalendarTitle('public')} 
-                                                                details={'url:'+mint_url} />
-                                                        </span>
-                                                    </>
-                                                }
-                                            </>
-                                            : 'not set yet'
-                                        }
-                                    </div>
-                                </div>
+                                {
+                                    this.getPbHtml(contract)
+                                }
                                 <div className='w-1/2 box-one'>
                                     <div className='lb'>{t('public sale price')}</div>
                                     <div className='ma'>

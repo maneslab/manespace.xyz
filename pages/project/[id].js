@@ -27,10 +27,11 @@ import RefundModal from 'components/nft/refund_modal'
 import NftList from 'components/nft/list'
 
 import {myIsNaN} from 'helper/common'
+import Countdown from 'components/common/countdown';
 
 import { StatusOnlineIcon } from '@heroicons/react/outline';
 
-import Countdown from 'react-countdown';
+// import Countdown from 'react-countdown';
 import config from 'helper/config'
 import { httpRequest } from 'helper/http';
 import message from 'components/common/message';
@@ -39,7 +40,6 @@ import {removeSuffixZero,percentDecimal,hex2Number} from 'helper/number'
 import Showtime from 'components/time/showtime'
 import { getUnixtime,formatOverflowUnixtime } from 'helper/time';
 
-// import {t} from 'helper/translate'
 import withWallet from 'hocs/wallet';
 import mane from 'helper/web3/manestudio';
 import manenft from 'helper/web3/manenft';
@@ -318,8 +318,10 @@ class ClubView extends React.Component {
     @autobind
     async getMintSignature() {
 
-        const {club_id,wallet} = this.props;
+        const {wallet} = this.props;
         const {mint_count} = this.state;
+
+        let club_id = this.getClubId();
 
         this.setState({
             'is_fetching_signature' : true
@@ -437,7 +439,7 @@ class ClubView extends React.Component {
     @autobind
     async mint() {
 
-        const {deploy_contract_address,contract_data} = this.state;
+        const {deploy_contract_address,contract_data,mint_count} = this.state;
         const {wallet} = this.props;
         const {t} = this.props.i18n;
 
@@ -457,14 +459,15 @@ class ClubView extends React.Component {
         }
 
 
-        const mint_price_in_wei = ethers.utils.parseEther(contract_data['sale_price']);
+        const mint_price_in_wei = ethers.utils.parseEther(String(contract_data['sale_price']));
         // const deadline = 0
 
         let empty_bytes_32 = ethers.utils.formatBytes32String("")
+        const total_mint_value = mint_price_in_wei.mul(mint_count)
 
         let params_options = {
             'gasLimit': 2000000,
-            'value' : mint_price_in_wei
+            'value' : total_mint_value
         }
 
         var that = this;
@@ -477,7 +480,7 @@ class ClubView extends React.Component {
             },
             'func' : {
                 'send_tx' : async () => {
-                    let tx_in = await  this.manenft.contract.mint(wallet.address,mint_price_in_wei,0,empty_bytes_32,empty_bytes_32,0,params_options);
+                    let tx_in = await  this.manenft.contract.mint(wallet.address,mint_price_in_wei,mint_count,0,empty_bytes_32,empty_bytes_32,0,params_options);
                     console.log('tx is send',tx_in)
                     return tx_in;
                 },
@@ -626,6 +629,81 @@ class ClubView extends React.Component {
         
     }
 
+    @autobind
+    getWlHtml(contract) {
+        const {t} = this.props.i18n;
+        let now_unixtime = getUnixtime();
+
+        if (now_unixtime > contract.get('wl_end_time')) {
+            return <div className='w-1/2 box-one '>
+                <div className='lb'>{t('whitelist presale')}</div>
+                <div className='ma flex justify-start items-center'>
+                    {t('finished')}
+                </div>
+            </div>
+
+        }
+
+        if (now_unixtime > contract.get('wl_start_time')) {
+            return  <div className='w-1/2 box-one '>
+                <div className='lb'>{t('whitelist presale end in')}</div>
+                <div className='ma flex justify-start items-center'>
+                    <Countdown unixtime={contract.get('wl_end_time')} />
+                </div>
+            </div>
+        }else {
+            return  <div className='w-1/2 box-one '>
+                <div className='lb'>{t('whitelist presale start in')}</div>
+                <div className='ma flex justify-start items-center'>
+                    <Countdown unixtime={contract.get('wl_start_time')} />
+                    <span className='ml-4 flex-item-center'>
+                        <Cal begin_time={contract.get('wl_start_time')} 
+                            text={this.getCalendarTitle('whitelist')} 
+                            details={'url:'+mint_url} />
+                    </span>
+                </div>
+            </div>
+        }
+    }
+
+    @autobind
+    getPbHtml(contract) {
+        const {t} = this.props.i18n;
+        let now_unixtime = getUnixtime();
+
+        if (now_unixtime > contract.get('pb_end_time')) {
+            return <div className='w-1/2 box-one '>
+                <div className='lb'>{t('public sale')}</div>
+                <div className='ma flex justify-start items-center'>
+                    {t('finished')}
+                </div>
+            </div>
+        }
+
+        if (now_unixtime > contract.get('pb_start_time')) {
+            return <div className='w-1/2 box-one '>
+                <div className='lb'>{t('public sale end in')}</div>
+                <div className='ma flex justify-start items-center'>
+                    <Countdown unixtime={contract.get('pb_end_time')} />
+                </div>
+            </div>
+        }else if (now_unixtime > contract.get('wl_end_time')) {
+            return <div className='w-1/2 box-one '>
+                <div className='lb'>{t('public sale start in')}</div>
+                <div className='ma flex justify-start items-center'>
+                    <Countdown unixtime={contract.get('pb_start_time')} />
+                </div>
+            </div>
+        }else {
+            return <div className='w-1/2 box-one '>
+                <div className='lb'>{t('public sale start in')}</div>
+                <div className='ma flex justify-start items-center'>
+                    <Showtime unixtime={contract.get('pb_start_time')}  />
+                </div>
+            </div>
+        }
+    }
+
     render() {
         const {t} = this.props.i18n;
         const {deploy_contract_address,is_fetching_contract_data,contract_data,contract_data_in_server,mint_count,is_fetching} = this.state;
@@ -703,36 +781,7 @@ class ClubView extends React.Component {
                                     (contract && contract.get('wl_enable'))
                                     ?   <div className='flex justify-between '>
                                         {
-                                            (stage == 'in_whitelist')
-                                            ? <div className='w-1/2 box-one '>
-                                                <div className='lb'>{t('whitelist presale ends in')}</div>
-                                                <div className='ma flex justify-start items-center'>
-                                                    {
-                                                        (merged_data['presale_end_time'])
-                                                        ? <>
-                                                        <Countdown date={merged_data['presale_end_time']*1000} />
-                                                        </>
-                                                        : t('not set yet')
-                                                    }
-                                                </div>
-                                            </div>
-                                            : <div className='w-1/2 box-one '>
-                                                <div className='lb'>{t('whitelist presale starts in')}</div>
-                                                <div className='ma flex justify-start items-center'>
-                                                    {
-                                                        (merged_data['presale_start_time'])
-                                                        ? <>
-                                                        <Countdown date={merged_data['presale_start_time']*1000} />
-                                                        <span className='ml-4 flex-item-center'>
-                                                            <Cal begin_time={merged_data['presale_start_time']} 
-                                                                text={this.getCalendarTitle('whitelist')} 
-                                                                details={'url:'+mint_url} />
-                                                        </span>
-                                                        </>
-                                                        : t('not set yet')
-                                                    }
-                                                </div>
-                                            </div>
+                                            this.getWlHtml(contract)
                                         }
                                         
                                         <div className='w-1/2 box-one'>
@@ -768,30 +817,9 @@ class ClubView extends React.Component {
                                 {
                                     (contract && contract.get('pb_enable'))
                                     ?   <div className='flex justify-between '>
-                                        <div className='w-1/2 box-one '>
-                                            <div className='lb'>{t('public sale starts in')}</div>
-                                            <div className='ma flex justify-start items-center'>
-                                                {
-                                                    (contract.get('pb_start_time') > 0)
-                                                    ? <>
-                                                        {
-                                                            (contract.get('pb_enable') && now_unixtime > Number(contract.get('wl_start_time')))
-                                                            ? <Countdown date={contract.get('pb_start_time')*1000} />
-                                                            : <>
-
-                                                                <Showtime unixtime={contract.get('pb_start_time')} cale={true} />
-                                                                <span className='ml-4 flex-item-center'>
-                                                                    <Cal begin_time={contract.get('pb_start_time')} 
-                                                                        text={this.getCalendarTitle('public')} 
-                                                                        details={'url:'+mint_url} />
-                                                                </span>
-                                                            </>
-                                                        }
-                                                    </>
-                                                    : 'not set yet'
-                                                }
-                                            </div>
-                                        </div>
+                                        {
+                                            this.getPbHtml(contract)
+                                        }
                                         <div className='w-1/2 box-one'>
                                             <div className='lb'>{t('public sale price')}</div>
                                             <div className='ma'>
