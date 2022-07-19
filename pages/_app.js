@@ -34,7 +34,7 @@ let net_arr = [];
 if (network == 'kovan') {
     net_arr.push(chain.kovan)
 }else if (network == 'mainnet') {
-    net_arr.push(chain.network)
+    net_arr.push(chain.mainnet)
 }else if (network == 'ropsten') {
     net_arr.push(chain.ropsten)
 }

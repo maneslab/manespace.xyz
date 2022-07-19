@@ -55,7 +55,7 @@ class MyClubList extends React.Component {
         return  <Carousel showArrows={true} autoPlay={true} onClickItem={this.onClickItem} showThumbs={false} >
             {
                 list_rows.map((one)=>{
-                    return <div>
+                    return <div className='px-2 lg:px-0'>
                         <ClubTwo club={one} key={one.get('id')+'_1'} />
                     </div>
                 })

@@ -135,7 +135,7 @@ class GasButton extends React.Component {
                         <div className='l'>{t('low')}</div>
                         <div className='r'>{gas_data.getIn(['data','safeLow']) / 10}</div>
                     </div>
-                    <div className='border-t border-gray-200 my-4'/>
+                    <div className='border-t d-border-c-2 my-4'/>
                     <div>
                         <div className='font-bold'>{t('Gas estimates')}</div>
                         <div className='gas-one '>

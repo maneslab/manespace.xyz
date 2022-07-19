@@ -9,7 +9,7 @@
     },
 
     "MANE_CONTRACT"     : {
-        "kovan"     :   "0xFB7E0aAA301dc500249f62D21180d23E6286e7C5",
+        "kovan"     :   "0x02d9E70158AE418ca9082A7794C21CD8f335E677",
         "ropsten"   :   "",
         "mainnet"   :   ""
     }

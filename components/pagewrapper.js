@@ -28,6 +28,7 @@ class PageWrapper extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            slider : false
         }
     }
 
@@ -45,8 +46,9 @@ class PageWrapper extends React.Component {
 
     @autobind
     toggleSider() {
-        const {slider} = this.props;
-        this.props.setSlider(!slider)
+        this.setState({
+            slider : !this.state.slider
+        })
     }
 
 
@@ -54,6 +56,7 @@ class PageWrapper extends React.Component {
 
         const {t} = this.props.i18n;
         const {theme,wapperClassName} = this.props;
+        const {slider} = this.state;
 
         let manestudio_url = config.get('MANASTUDIO_WEBSITE');
 
@@ -97,11 +100,19 @@ class PageWrapper extends React.Component {
 
                             </div>
 
-                            <div className='h-16 flex items-center lg:hidden'>
-                                <MenuIcon className="w-8 h-8" />
-                            </div>
 
-                           
+                            <div className='flex justify-end items-center md:hidden'>
+                                <div class="relative">
+                                    <button class="text-black dark:text-white w-10 h-10 relative focus:outline-none" onClick={this.toggleSider}>
+                                        <span class="sr-only">Open main menu</span>
+                                        <div class="block w-5 absolute left-1/2 top-1/2   transform  -translate-x-1/2 -translate-y-1/2">
+                                            <span aria-hidden="true" className={classNames("block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out" ,{'rotate-45': slider},{' -translate-y-1.5': !slider })}></span>
+                                            <span aria-hidden="true" className={classNames("block absolute  h-0.5 w-5 bg-current   transform transition duration-500 ease-in-out",{'opacity-0': slider })}></span>
+                                            <span aria-hidden="true" className={classNames("block absolute  h-0.5 w-5 bg-current transform  transition duration-500 ease-in-out",{'-rotate-45': slider},{' translate-y-1.5': !slider})}></span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
 
 
                         </div>
@@ -113,6 +124,23 @@ class PageWrapper extends React.Component {
                         <Footer />
                     </div>
 
+                    <div className={classNames('mobile-menu px-4',{"block":slider},{"hidden":!slider})}>
+                        <div className='mobile-menu-one flex justify-center py-4 border-b d-border-c-1'>
+                            <a className='font-bold capitalize text-black dark:text-white' href={manestudio_url} target="_blank">{t('create project')}</a>
+                        </div>
+                        <div className='mobile-menu-one  grid grid-cols-3 py-4 border-b d-border-c-1'>
+                            <GasButton />
+                            <div className='flex justify-center items-center text-black dark:text-white'>
+                            <LanguageBtn />
+                            </div>
+                            <div className='flex justify-center items-center text-black dark:text-white'>
+                                <DarkmodeSwitch />
+                            </div>
+                        </div>
+                        <div className='mobile-menu-one flex justify-center  py-4'>
+                            <ConnectWalletButton />
+                        </div>
+                    </div>
 
                 </div>
             </div>

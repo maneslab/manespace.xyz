@@ -145,8 +145,8 @@ class clubOne extends React.Component {
         // is_whitelist = true;
         return <div>
             <Link href={"/project/"+club.get('id')}>
-            <div className='p-6 d-bg-c-1 flex justify-start border-4 border-black dark:border-[#999] cursor-pointer'>
-                <div className='w-96 h-96 overflow-hidden mr-10'>
+            <div className='p-6 d-bg-c-1 mb-8 flex justify-start flex-col lg:flex-row border-4 border-black dark:border-[#999]'>
+                <div className='lg:w-96 lg:h-96 overflow-hidden lg:mr-6'>
                     {
                         (club.getIn(['gallery',0,'img','image_urls','url']))
                         ? <img src={club.getIn(['gallery',0,'img','image_urls','url'])} />
@@ -157,11 +157,11 @@ class clubOne extends React.Component {
                     <div className=''>
                         <div className='mb-4 py-2 border-b d-border-c-3 flex justify-between'>
                             <div className='h1'>{club.get('name')}</div>
-                            <div>{
+                            {
                                 (has_refund)
-                                ?   <span className='text-green-500 flex justify-end font-bold capitalize'><RefundIcon className="icon-sm mr-2"/> {t('refundable')}</span>
+                                ?   <div className='text-green-500 flex justify-end items-center font-bold capitalize'><RefundIcon className="icon-sm mr-2"/> {t('refundable')}</div>
                                 :   null
-                            }</div>
+                            }
                         </div>
                         {
                             (contract && contract.get('wl_enable'))

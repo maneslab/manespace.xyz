@@ -769,6 +769,7 @@ class ClubView extends React.Component {
             }
         }
 
+
         let is_allow_refundable = this.isAllowRefundable(contract.get('refund'),merged_data['is_force_refundable']);
         /*
         是否展示mint按钮

@@ -46,16 +46,16 @@ class ProjectList extends React.Component {
             </Head>
             <div className="max-w-screen-xl mx-auto">
 
-                <div className='flex justify-between items-center mb-4 pt-0'>
+                <div className='flex justify-center lg:justify-between items-center mb-4 pt-0'>
                     <h2 className="h2 capitalize flex justify-start items-center"><FireIcon className="icon-sm mr-2" />{t('next up')}</h2>
                 </div>
                 <div className='mb-12'>
                     <ClubRecommendList address={wallet?wallet.address:''}/>
                 </div>
 
-                <div className='flex justify-between items-center mb-4'>
+                <div className='flex justify-between flex-col lg:flex-row items-center mb-4'>
                     <h2 className="h2 capitalize flex justify-start items-center"><CollectionIcon className="icon-sm mr-2" />{t('more upcoming drops')}</h2>
-                    <div className="block-tab">
+                    <div className="block-tab my-4 lg:my-0">
                         <div className={classNames("tab-one",{"active":(list_type=='all')})} onClick={this.onTabChange.bind({},'all')}>{t('all')}</div> 
                         <div className={classNames("tab-one",{"active":(list_type=='whitelist')})} onClick={this.onTabChange.bind({},'whitelist')}>{t('whitelist')}</div> 
                     </div>

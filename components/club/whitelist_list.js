@@ -63,7 +63,7 @@ class MyClubList extends React.Component {
                 ? <div className='py-12 my-12 text-center'>
                     <Empty text={t('no any project yet')} icon={<UserGroupIcon className='icon-base'/>}/>
                 </div>
-                : <div className='grid grid-cols-4 gap-4'>
+                : <div className='lg:grid lg:grid-cols-4 gap-4 px-4 lg:px-0'>
 
                     {
                         (list_data_one.get('is_fetched'))

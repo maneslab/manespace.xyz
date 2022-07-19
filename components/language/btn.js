@@ -146,9 +146,9 @@ class LanguageBtn extends React.Component {
             <Dropdown visible={visible} overlay={content} 
                 trigger="click"
                 placement="bottomLeft" onVisibleChange={this.toggleVisible} >
-                <Button className='btn btn-ghost mr-2'>
+                <Button className='btn btn-ghost lg:mr-2'>
                     <div className="flex items-center text-sm">
-                    <span className='hidden md:block font-bold text-base uppercase'>{lang}</span>
+                    <span className='font-bold text-base uppercase'>{lang}</span>
                     <span><ChevronDownIcon className='icon-sm ml-2' /></span>
                     </div>
                 </Button>
