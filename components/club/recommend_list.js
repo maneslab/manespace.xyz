@@ -20,7 +20,7 @@ import { EmojiSadIcon } from '@heroicons/react/outline';
 // import { t } from 'helper/translate';
 
 @withTranslate
-class MyClubList extends React.Component {
+class RecommendClubList extends React.Component {
 
     constructor(props) {
         super(props)
@@ -55,8 +55,8 @@ class MyClubList extends React.Component {
         return  <Carousel showArrows={true} autoPlay={true} onClickItem={this.onClickItem} showThumbs={false} >
             {
                 list_rows.map((one)=>{
-                    return <div className='px-2 lg:px-0'>
-                        <ClubTwo club={one} key={one.get('id')+'_1'} />
+                    return <div className='px-2 lg:px-0' key={one.get('id')} >
+                        <ClubTwo club={one} />
                     </div>
                 })
             }
@@ -94,5 +94,5 @@ const formatData = (props) => {
     return result;
 }
 
-module.exports = connect(mapStateToProps,mapDispatchToProps,null, {forwardRef: true})(withPageList(MyClubList,{'formatData':formatData}))
+module.exports = connect(mapStateToProps,mapDispatchToProps,null, {forwardRef: true})(withPageList(RecommendClubList,{'formatData':formatData}))
 

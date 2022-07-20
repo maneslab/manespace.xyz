@@ -23,7 +23,7 @@ import {defaultListData} from 'helper/common'
 
 
 @withTranslate
-class MyClubList extends React.Component {
+class ClubList extends React.Component {
 
     constructor(props) {
         super(props)
@@ -118,5 +118,5 @@ const formatData = (props) => {
     return result;
 }
 
-module.exports = connect(mapStateToProps,mapDispatchToProps,null, {forwardRef: true})(withPageList(MyClubList,{'formatData':formatData}))
+module.exports = connect(mapStateToProps,mapDispatchToProps,null, {forwardRef: true})(withPageList(ClubList,{'formatData':formatData}))
 

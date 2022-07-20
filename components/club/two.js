@@ -137,6 +137,10 @@ class clubOne extends React.Component {
         console.log('contract-gallery',club.get('gallery').toJS());
         let is_whitelist = club.getIn(['white_list','is_whitelist']);
 
+        if (!contract) {
+            return null;
+        }
+
         let has_refund = false;
         if (contract.get('refund') && contract.get('refund').count() > 0) {
             has_refund = true;

@@ -27,7 +27,10 @@ class clubOne extends React.Component {
         let contract = (club.get('contract_info')) ? club.get('contract_info') : club.get('contract');
         let is_whitelist = club.getIn(['white_list','is_whitelist']);
 
-
+        if (!contract) {
+            return null;
+        }
+        
         // is_whitelist = true;
         return <div>
             <Link href={"/project/"+club.get('id')}>
