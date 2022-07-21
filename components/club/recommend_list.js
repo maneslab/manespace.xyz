@@ -60,13 +60,6 @@ class RecommendClubList extends React.Component {
                     </div>
                 })
             }
-            {
-                list_rows.map((one)=>{
-                    return <div className='px-2 lg:px-0' key={one.get('id')+'_1'} >
-                        <ClubTwo club={one} />
-                    </div>
-                })
-            }
         </Carousel>
 
     }
