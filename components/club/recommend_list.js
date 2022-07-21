@@ -17,7 +17,7 @@ import {withTranslate} from 'hocs/index'
 
 import { Carousel } from 'react-responsive-carousel';
 import { EmojiSadIcon } from '@heroicons/react/outline';
-// import { t } from 'helper/translate';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
 @withTranslate
 class RecommendClubList extends React.Component {
@@ -56,6 +56,13 @@ class RecommendClubList extends React.Component {
             {
                 list_rows.map((one)=>{
                     return <div className='px-2 lg:px-0' key={one.get('id')} >
+                        <ClubTwo club={one} />
+                    </div>
+                })
+            }
+            {
+                list_rows.map((one)=>{
+                    return <div className='px-2 lg:px-0' key={one.get('id')+'_1'} >
                         <ClubTwo club={one} />
                     </div>
                 })
