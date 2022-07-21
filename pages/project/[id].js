@@ -65,7 +65,6 @@ class ClubView extends React.Component {
             is_paused                   : false,        //是否暂停
             mint_count                  : 2
         }
-        this.mane = new mane(this.props.i18n.t,this.props.network);
         this.nftlistRef  = React.createRef();
     }
 
@@ -160,6 +159,13 @@ class ClubView extends React.Component {
 
     @autobind
     async fetchContractDataInBlockchain() {
+
+        const {wallet} = this.props;
+        if (!wallet) {
+            return;
+        }
+
+        this.mane = new mane(this.props.i18n.t,this.props.network);
 
         ///一开始需要设置is_fetching
         this.setState({
