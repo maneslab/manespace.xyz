@@ -122,7 +122,7 @@ class GasButton extends React.Component {
             {
                 (gas_data.getIn(['data','fast']))
                 ? <div className='gas-wrapper'>
-                    <div className='gas-one text-red-500'>
+                    <div className='gas-one text-green-500'>
                         <div className='l'>{t('fast')}</div>
                         <div className='r'>{gas_data.getIn(['data','fast']) / 10}</div>
                     </div>
