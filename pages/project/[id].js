@@ -965,7 +965,7 @@ class ClubView extends React.Component {
                                                 {t('contract address')}
                                             </td>
                                             <td className='rctd'>
-                                                {deploy_contract_address}
+                                                {contract.get('contract_address')}
                                             </td>
                                         </tr>
                                         <tr>
@@ -992,7 +992,14 @@ class ClubView extends React.Component {
                                                 Ethereum
                                             </td>
                                         </tr>
-                                    
+                                        <tr>
+                                            <td className='lttd'>
+                                                {t('reserved NFT')}
+                                            </td>
+                                            <td className='rctd'>
+                                                {contract.get('reserve_count')}
+                                            </td>
+                                        </tr>
                                         {
                                             (Number(contract.get('reveal_time')) > 0)
                                             ? <tr>
@@ -1109,6 +1116,35 @@ class ClubView extends React.Component {
                                     </>
                                     : null
                                 }
+                                {
+                                    (contract.get('revenue_share') && contract.get('revenue_share').count() > 0)
+                                    ? <><table className='info-table'>
+                                        <thead>
+                                            <tr>
+                                                <th colspan={2}>
+                                                    {t('revenue share')}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                (contract.get('revenue_share').map((one,index) => {
+                                                    return <tr>
+                                                        <td className='lttd'>
+                                                            {one.get('address')}
+                                                        </td>
+                                                        <td className='rctd'>
+                                                            {percentDecimal(one.get('rate'))}%
+                                                        </td>
+                                                    </tr>
+                                                }))
+                                            }
+                                        </tbody>
+                                    </table>
+                                    </>
+                                    : null
+                                }
+
 
                             </div>
                             <div className="col-span-6">
