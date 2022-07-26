@@ -899,7 +899,7 @@ class ClubView extends React.Component {
                                             {
                                                 (stage == 'in_whitelist')
                                                 ? <>
-                                                <CountBtn max_count={can_mint_count} count={(mint_count>can_mint_count)?can_mint_count:mint_count} andleCountChange={this.handleMintCountChange} />
+                                                <CountBtn max_count={can_mint_count} count={(mint_count>can_mint_count)?can_mint_count:mint_count} handleCountChange={this.handleMintCountChange} />
                                                 <Button loading={this.state.is_minting} className='btn btn-primary lg:btn-wide capitalize' onClick={this.whiteListMint}>mint</Button>
                                                 </>
                                                 : null
