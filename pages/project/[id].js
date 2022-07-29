@@ -160,6 +160,8 @@ class ClubView extends React.Component {
     @autobind
     async fetchContractDataInBlockchain() {
 
+        console.log('debug-fetchContractDataInBlockchain')
+
         const {wallet} = this.props;
         if (!wallet) {
             return;
@@ -215,7 +217,7 @@ class ClubView extends React.Component {
             })
 
             //获得我持有的这个合约的NFT数量
-            this.updateBalanceOf()
+            this.updateBalanceOf();
         }
 
         this.setState({
@@ -328,7 +330,22 @@ class ClubView extends React.Component {
     async getMintSignature() {
 
         const {wallet} = this.props;
-        const {mint_count} = this.state;
+        const {contract_data,contract_data_from_server,mint_count} = this.state;
+
+        let merged_data = Object.assign({},contract_data_from_server,contract_data);
+        let {stage,stage_status,minted} = this.getProjectStage(merged_data);
+
+        //计算我现在还可以mint几个nft
+        let can_mint_count = 0
+        if (stage_status == 'enable') {
+            if (stage == 'in_whitelist') {
+                can_mint_count = merged_data['presale_per_wallet_count'] - minted;
+            }else if (stage =='in_public') {
+                can_mint_count = merged_data['sale_per_wallet_count'] - minted;
+            }
+        }
+
+        let mcount = (can_mint_count > mint_count) ? mint_count : can_mint_count;
 
         let club_id = this.getClubId();
 
@@ -344,7 +361,7 @@ class ClubView extends React.Component {
                 'data'  : {
                     'id'        : club_id,
                     'address'   : wallet.address,
-                    'count'     : mint_count
+                    'count'     : mcount
                 }
             })
 
@@ -403,6 +420,7 @@ class ClubView extends React.Component {
             return;
         }
 
+
         const mint_price_in_wei = ethers.utils.parseEther(sign.wl_price);
         const total_mint_value = mint_price_in_wei.mul(sign.count)
 
@@ -448,21 +466,42 @@ class ClubView extends React.Component {
     @autobind
     async mint() {
 
-        const {deploy_contract_address,contract_data,mint_count} = this.state;
+        const {deploy_contract_address,contract_data,contract_data_from_server,mint_count} = this.state;
         const {wallet} = this.props;
         const {t} = this.props.i18n;
+
+
+
+        let merged_data = Object.assign({},contract_data_from_server,contract_data);
+        let {stage,stage_status,minted} = this.getProjectStage(merged_data);
+
+        //计算我现在还可以mint几个nft
+        let can_mint_count = 0
+        if (stage_status == 'enable') {
+            if (stage == 'in_whitelist') {
+                can_mint_count = merged_data['presale_per_wallet_count'] - minted;
+                console.log('can_mint_count',can_mint_count)
+            }else if (stage =='in_public') {
+                can_mint_count = merged_data['sale_per_wallet_count'] - minted;
+            }
+        }
+
+        let mcount = (can_mint_count > mint_count) ? mint_count : can_mint_count;
+
 
         if (!wallet || !wallet.address) {
             message.error('wallet is not connected');
             return;
         }
+    
+        console.log('debug-mint,deploy_contract_address',deploy_contract_address);
         
         if(!deploy_contract_address) {
             message.error('Contract address is not found');
             return;
         }
 
-        if (!contract_data || !contract_data['sale_price']) {
+        if (!contract_data) {
             message.error('Contract data is not found');
             return;
         }
@@ -472,7 +511,7 @@ class ClubView extends React.Component {
         // const deadline = 0
 
         let empty_bytes_32 = ethers.utils.formatBytes32String("")
-        const total_mint_value = mint_price_in_wei.mul(mint_count)
+        const total_mint_value = mint_price_in_wei.mul(mcount)
 
         let params_options = {
             'gasLimit': 2000000,
@@ -489,7 +528,7 @@ class ClubView extends React.Component {
             },
             'func' : {
                 'send_tx' : async () => {
-                    let tx_in = await  this.manenft.contract.mint(wallet.address,mint_price_in_wei,mint_count,0,empty_bytes_32,empty_bytes_32,0,params_options);
+                    let tx_in = await  this.manenft.contract.mint(wallet.address,mint_price_in_wei,mcount,0,empty_bytes_32,empty_bytes_32,0,params_options);
                     console.log('tx is send',tx_in)
                     return tx_in;
                 },
@@ -792,6 +831,8 @@ class ClubView extends React.Component {
 
         // console.log('contract-data',contract.toJS())
         // console.log('contract_data',contract_data)
+
+        console.log('can_mint_count',can_mint_count,mint_count);
 
         return <PageWrapper>
             <Head>
