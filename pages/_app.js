@@ -7,6 +7,7 @@ import Router from 'next/router'
 import config from 'helper/config'
 import {getTheme,setThemeInCss} from 'helper/local'
 
+
 //rainbowkit开始
 import '@rainbow-me/rainbowkit/styles.css';
 
@@ -35,8 +36,8 @@ if (network == 'kovan') {
     net_arr.push(chain.kovan)
 }else if (network == 'mainnet') {
     net_arr.push(chain.mainnet)
-}else if (network == 'ropsten') {
-    net_arr.push(chain.ropsten)
+}else if (network == 'rinkeby') {
+    net_arr.push(chain.rinkeby)
 }
 
 const { chains, provider } = configureChains(

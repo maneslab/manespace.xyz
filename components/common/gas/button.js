@@ -39,13 +39,7 @@ class GasButton extends React.Component {
         }
     }
 
-    // @autobind
-    // estimateGasDeploy(network = 'kovan') {
-    //     const {t} = this.props.i18n;
-    //     let mane = new manestudio(t,network,'tst');
-    //     let gas_data = mane.estimateGasDeploy();
-    //     console.log('gas_data',gas_data)
-    // }
+
 
     @autobind
     setGetGas() {
