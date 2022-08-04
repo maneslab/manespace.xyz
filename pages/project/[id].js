@@ -739,7 +739,7 @@ class ClubView extends React.Component {
         const {t} = this.props.i18n;
         let now_unixtime = getUnixtime();
 
-        if (now_unixtime > contract.get('pb_end_time')) {
+        if (now_unixtime > contract.get('pb_end_time') && contract.get('pb_end_time') > 0) {
             return <div className='w-1/2 box-one '>
                 <div className='lb'>{t('public sale')}</div>
                 <div className='ma flex justify-start items-center'>
@@ -774,10 +774,10 @@ class ClubView extends React.Component {
 
     render() {
         const {t} = this.props.i18n;
-        const {deploy_contract_address,is_fetching_contract_data,contract_data,contract_data_from_server,mint_count,is_fetching} = this.state;
+        const {deploy_contract_address,is_fetching_contract_data,contract_data,contract_data_from_server,mint_count,is_fetching,is_paused} = this.state;
         const {club,wallet,network,club_data} = this.props;
 
-        console.log('contract_data_from_server',this.state.contract_data_from_server)
+        console.log('is_paused',is_paused)
 
         let club_id = this.getClubId();
 
@@ -930,42 +930,49 @@ class ClubView extends React.Component {
 
                                 <div className='flex justify-center lg:justify-start items-center pt-4 border-t d-border-c-3'>
                                     {
-                                        (stage_status == 'disable')
+                                        (is_paused == true)
                                         ? <button className='btn btn-primary btn-wide capitalize' disabled={true}>mint</button>
-                                        : null
-                                    }
-                                    {
-                                        (stage_status == 'enable')
-                                        ? <>
+                                        : <>
                                             {
-                                                (stage == 'in_whitelist')
+                                                (stage_status == 'disable')
+                                                ? <button className='btn btn-primary btn-wide capitalize' disabled={true}>mint</button>
+                                                : null
+                                            }
+                                            {
+                                                (stage_status == 'enable')
                                                 ? <>
-                                                <CountBtn max_count={can_mint_count} count={(mint_count>can_mint_count)?can_mint_count:mint_count} handleCountChange={this.handleMintCountChange} />
-                                                <Button loading={this.state.is_minting} className='btn btn-primary lg:btn-wide capitalize' onClick={this.whiteListMint}>mint</Button>
+                                                    {
+                                                        (stage == 'in_whitelist')
+                                                        ? <>
+                                                        <CountBtn max_count={can_mint_count} count={(mint_count>can_mint_count)?can_mint_count:mint_count} handleCountChange={this.handleMintCountChange} />
+                                                        <Button loading={this.state.is_minting} className='btn btn-primary lg:btn-wide capitalize' onClick={this.whiteListMint}>mint</Button>
+                                                        </>
+                                                        : null
+                                                    }
+                                                    {
+                                                        (stage == 'in_public')
+                                                        ? <>
+                                                        <CountBtn max_count={can_mint_count} count={(mint_count>can_mint_count)?can_mint_count:mint_count} handleCountChange={this.handleMintCountChange} />
+                                                        <Button loading={this.state.is_minting} className='btn btn-primary lg:btn-wide capitalize' onClick={this.mint}>mint</Button>
+                                                        </>
+                                                        : null
+                                                    }
                                                 </>
                                                 : null
                                             }
                                             {
-                                                (stage == 'in_public')
-                                                ? <>
-                                                <CountBtn max_count={can_mint_count} count={(mint_count>can_mint_count)?can_mint_count:mint_count} handleCountChange={this.handleMintCountChange} />
-                                                <Button loading={this.state.is_minting} className='btn btn-primary lg:btn-wide capitalize' onClick={this.mint}>mint</Button>
-                                                </>
+                                                (stage_status == 'out_of_limit')
+                                                ? <button className='btn btn-primary btn-wide capitalize' disabled={true}>{t('the maximum number of Mint has been reached')}</button>
+                                                : null
+                                            }
+                                            {
+                                                (stage_status == 'connect_wallet')
+                                                ? <ConnectWalletButton />
                                                 : null
                                             }
                                         </>
-                                        : null
                                     }
-                                    {
-                                        (stage_status == 'out_of_limit')
-                                        ? <button className='btn btn-primary btn-wide capitalize' disabled={true}>{t('the maximum number of Mint has been reached')}</button>
-                                        : null
-                                    }
-                                    {
-                                        (stage_status == 'connect_wallet')
-                                        ? <ConnectWalletButton />
-                                        : null
-                                    }
+                                    
                                     
                                 </div>
 
