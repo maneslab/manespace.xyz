@@ -1,6 +1,9 @@
 import { format,fromUnixTime } from 'date-fns';
 
 export default function Showtime({unixtime,timezone}) {
+    if (!unixtime) {
+        return null
+    }
     const select_date = fromUnixTime(unixtime);
     return (
         <span className="flex flex-col lg:flex-row justify-center lg:justify-start lg:items-center">

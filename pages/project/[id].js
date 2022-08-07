@@ -30,7 +30,7 @@ import {myIsNaN} from 'helper/common'
 import Countdown from 'components/common/countdown';
 
 import { StatusOnlineIcon } from '@heroicons/react/outline';
-
+// import BigNumber from 'bignumber.js';
 // import Countdown from 'react-countdown';
 import config from 'helper/config'
 import { httpRequest } from 'helper/http';
@@ -585,6 +585,8 @@ class ClubView extends React.Component {
         const {deploy_contract_address,is_paused} = this.state;
         let now_unixtime = getUnixtime();
 
+        console.log('merged_data',merged_data)
+
         let stage = 'unstart';          ///stage状态分为:unstart,in_whitelist,in_public,finished
         let status = 'disable';         ///status状态分为:disable,enable,connect_wallet,out_of_limit
 
@@ -679,11 +681,11 @@ class ClubView extends React.Component {
     }
 
     @autobind
-    getWlHtml(contract) {
+    getWlHtml(merged_data) {
         const {t} = this.props.i18n;
         let now_unixtime = getUnixtime();
 
-        if (now_unixtime > contract.get('wl_end_time')) {
+        if (now_unixtime > merged_data['presale_end_time']) {
             return <div className='w-1/2 box-one '>
                 <div className='lb'>{t('whitelist presale')}</div>
                 <div className='ma flex justify-start items-center'>
@@ -693,20 +695,20 @@ class ClubView extends React.Component {
 
         }
 
-        if (now_unixtime > contract.get('wl_start_time')) {
+        if (now_unixtime > merged_data['presale_start_time']) {
             return  <div className='w-1/2 box-one '>
                 <div className='lb'>{t('whitelist presale end in')}</div>
                 <div className='ma flex justify-start items-center'>
-                    <Countdown unixtime={contract.get('wl_end_time')} />
+                    <Countdown unixtime={merged_data['presale_end_time']} />
                 </div>
             </div>
         }else {
             return  <div className='w-1/2 box-one '>
                 <div className='lb'>{t('whitelist presale start in')}</div>
                 <div className='ma flex justify-start items-center'>
-                    <Countdown unixtime={contract.get('wl_start_time')} />
+                    <Countdown unixtime={merged_data['presale_start_time']} />
                     <span className='ml-4 flex-item-center'>
-                        <Cal begin_time={contract.get('wl_start_time')} 
+                        <Cal begin_time={merged_data['presale_start_time']} 
                             text={this.getCalendarTitle('whitelist')} 
                             details={'url:'+mint_url} />
                     </span>
@@ -735,11 +737,11 @@ class ClubView extends React.Component {
 
 
     @autobind
-    getPbHtml(contract) {
+    getPbHtml(merged_data) {
         const {t} = this.props.i18n;
         let now_unixtime = getUnixtime();
 
-        if (now_unixtime > contract.get('pb_end_time') && contract.get('pb_end_time') > 0) {
+        if (now_unixtime > merged_data['sale_end_time'] && merged_data['sale_end_time'] > 0) {
             return <div className='w-1/2 box-one '>
                 <div className='lb'>{t('public sale')}</div>
                 <div className='ma flex justify-start items-center'>
@@ -748,25 +750,25 @@ class ClubView extends React.Component {
             </div>
         }
 
-        if (now_unixtime > contract.get('pb_start_time')) {
+        if (now_unixtime > merged_data['sale_start_time']) {
             return <div className='w-1/2 box-one '>
                 <div className='lb'>{t('public sale end in')}</div>
                 <div className='ma flex justify-start items-center'>
-                    <Countdown unixtime={contract.get('pb_end_time')} />
+                    <Countdown unixtime={merged_data['sale_end_time']} />
                 </div>
             </div>
-        }else if (now_unixtime > contract.get('wl_end_time')) {
+        }else if (now_unixtime > merged_data['presale_end_time']) {
             return <div className='w-1/2 box-one '>
                 <div className='lb'>{t('public sale start in')}</div>
                 <div className='ma flex justify-start items-center'>
-                    <Countdown unixtime={contract.get('pb_start_time')} />
+                    <Countdown unixtime={merged_data['presale_start_time']} />
                 </div>
             </div>
         }else {
             return <div className='w-1/2 box-one '>
                 <div className='lb'>{t('public sale start in')}</div>
                 <div className='ma flex justify-start items-center'>
-                    <Showtime unixtime={contract.get('pb_start_time')}  />
+                    <Showtime unixtime={merged_data['presale_start_time']}  />
                 </div>
             </div>
         }
@@ -831,8 +833,9 @@ class ClubView extends React.Component {
 
         // console.log('contract-data',contract.toJS())
         // console.log('contract_data',contract_data)
-
+        console.log('stage_status',stage_status)
         console.log('can_mint_count',can_mint_count,mint_count);
+        console.log('merged_data',merged_data)
 
         return <PageWrapper>
             <Head>
@@ -858,7 +861,7 @@ class ClubView extends React.Component {
                                     (contract && contract.get('wl_enable'))
                                     ?   <div className='flex justify-between '>
                                         {
-                                            this.getWlHtml(contract)
+                                            this.getWlHtml(merged_data)
                                         }
                                         
                                         <div className='w-1/2 box-one'>
@@ -881,13 +884,13 @@ class ClubView extends React.Component {
                                     <div className='w-1/2 box-one '>
                                         <div className='lb'>{t('minted / total supply')}</div>
                                         <div className='ma flex justify-start items-center'>
-                                            {contract.get('total_supply')?contract.get('total_supply'):0} / {contract.get('max_supply')}
+                                            {contract.get('total_supply')?contract.get('total_supply'):0} / {merged_data['max_supply']}
                                         </div>
                                     </div>
                                     <div className='w-1/2 box-one '>
                                         <div className='lb'>{t('whitelist supply')}</div>
                                         <div className='ma flex justify-start items-center'>
-                                            {contract.get('wl_max_supply')}
+                                            {merged_data['presale_max_supply']}
                                         </div>
                                     </div>
                                 </div>
@@ -895,15 +898,15 @@ class ClubView extends React.Component {
                                     (contract && contract.get('pb_enable'))
                                     ?   <div className='flex justify-between '>
                                         {
-                                            this.getPbHtml(contract)
+                                            this.getPbHtml(merged_data)
                                         }
                                         <div className='w-1/2 box-one'>
                                             <div className='lb'>{t('public sale price')}</div>
                                             <div className='ma'>
                                                 {
-                                                    (contract && contract.get('pb_price'))
+                                                    (merged_data && merged_data['sale_price'])
                                                     ? <>
-                                                        <span>{removeSuffixZero(contract.get('pb_price'))}</span>
+                                                        <span>{removeSuffixZero(merged_data['sale_price'])}</span>
                                                         <span className='text-base ml-2'>ETH</span>
                                                     </>
                                                     : 'not set yet'

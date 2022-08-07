@@ -141,7 +141,12 @@ const hex2Number = (str = '') => {
 }
 
 const removeSuffixZero = (number) => {
-    let number_str = String(number);
+
+    let bignumber_number = new BigNumber(number);
+    let number_str = bignumber_number.toFixed(18);
+
+
+    // let number_str = String(str_number);
     let number_str_arr = number_str.split('.');
     if (number_str_arr.length === 2) {
         let n1 = number_str_arr[1];
