@@ -51,7 +51,7 @@ class clubOne extends React.Component {
 
         if (now_unixtime > contract.get('wl_end_time')) {
             return <div className='w-1/2 box-one '>
-                <div className='lb'>{t('whitelist presale')}</div>
+                <div className='lb'>{t('allowlist presale')}</div>
                 <div className='ma flex justify-start items-center'>
                     {t('finished')}
                 </div>
@@ -61,14 +61,14 @@ class clubOne extends React.Component {
 
         if (now_unixtime > contract.get('wl_start_time')) {
             return  <div className='w-1/2 box-one '>
-                <div className='lb'>{t('whitelist presale end in')}</div>
+                <div className='lb'>{t('allowlist presale end in')}</div>
                 <div className='ma flex justify-start items-center'>
                     <Countdown unixtime={contract.get('wl_end_time')} />
                 </div>
             </div>
         }else {
             return  <div className='w-1/2 box-one '>
-                <div className='lb'>{t('whitelist presale start in')}</div>
+                <div className='lb'>{t('allowlist presale start in')}</div>
                 <div className='ma flex justify-start items-center'>
                     <Countdown unixtime={contract.get('wl_start_time')} />
                     <span className='ml-4 flex-item-center'>
@@ -172,7 +172,7 @@ class clubOne extends React.Component {
                             ?   <div className='flex justify-between '>
                                 {this.getWlHtml(contract)}
                                 <div className='w-1/2 box-one'>
-                                    <div className='lb'>{t('whitelist presale price')}</div>
+                                    <div className='lb'>{t('allowlist presale price')}</div>
                                     <div className='ma'>
                                         {
                                             (contract.get('wl_price'))
@@ -189,7 +189,7 @@ class clubOne extends React.Component {
                         }
                         <div className='flex justify-between '>
                             <div className='w-1/2 box-one '>
-                                <div className='lb'>{t('minted')} / {t('whitelist supply')}</div>
+                                <div className='lb'>{t('minted')} / {t('allowlist supply')}</div>
                                 <div className='ma flex justify-start items-center'>
                                     {contract.get('total_supply') ? contract.get('total_supply') : 0} / {contract.get('wl_max_supply')}
                                 </div>
@@ -239,14 +239,14 @@ class clubOne extends React.Component {
                         
 
                         <div className='py-4 border-t d-border-c-3'>
-                            <div className='text-gray-500 capitalize text-sm mb-2 text-left'>{t('your mint qualification')}</div>
+                            <div className='text-gray-500 capitalize text-sm mb-2 text-left'>{t('allowlist eligibility')}</div>
                             {
                                 (is_whitelist)
                                 ? <div className='text-green-500 uppercase flex justify-start items-center font-bold text-left'> 
-                                    <CheckCircleIcon className='icon-sm mr-2'/> {t('whitelisted')}
+                                    <CheckCircleIcon className='icon-sm mr-2'/> {t('allowlisted')} :)
                                 </div>
                                 : <div className='font-bold text-gray-500 capitalize text-left'>
-                                    {t('you are not in the whitelist')}
+                                    {t('not allowlisted')} :(
                                 </div>
                             }
                             

@@ -63,7 +63,9 @@ class ClubView extends React.Component {
             contract_data_from_server   : {},
             contract_data               : {},
             is_paused                   : false,        //是否暂停
-            mint_count                  : 2
+            mint_count                  : 2,
+
+            refund_nft_id : null
         }
         this.nftlistRef  = React.createRef();
     }
@@ -78,12 +80,16 @@ class ClubView extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
+
+        console.log('debug09,componentDidUpdate',this.props.club,this.props.club.equals(prevProps.club));
+
         if (this.props.club && !this.props.club.equals(prevProps.club)) {
             
             this.fetchContractDataInBlockchain();
 
             ///把club里面对应的contract数据放入state中
             let contract = this.props.club.get('contract_info') ? this.props.club.get('contract_info') : this.props.club.get('contract')
+            
             this.setContractDataInServer(contract);
         }
 
@@ -685,6 +691,8 @@ class ClubView extends React.Component {
         const {t} = this.props.i18n;
         let now_unixtime = getUnixtime();
 
+        let mint_url = this.getMintUrl();
+
         if (now_unixtime > merged_data['presale_end_time']) {
             return <div className='w-1/2 box-one '>
                 <div className='lb'>{t('whitelist presale')}</div>
@@ -805,7 +813,13 @@ class ClubView extends React.Component {
         let now_unixtime = getUnixtime();
 
 
+
         let merged_data = Object.assign({},contract_data_from_server,contract_data);
+
+        if (!merged_data['club_id']) {
+            return null
+        }
+
 
         let {stage,stage_status,minted} = this.getProjectStage(merged_data);
 
@@ -983,7 +997,7 @@ class ClubView extends React.Component {
                         </div>
                     </div>
                     <div className='mb-8 w-full p-6 d-bg-c-1'>
-                        <div className='block-title'>{t('whitelist check')}</div>
+                        <div className='block-title'>{t('allowlist eligibility')}</div>
                         <div className='grid lg:grid-cols-2 lg:gap-8'>
                             <WhitelistCheckAuto club_id={club_id} wallet={wallet}/>
                             <WhitelistCheck club_id={club_id}/>
@@ -998,17 +1012,17 @@ class ClubView extends React.Component {
                                     <thead>
                                         <tr>
                                             <th colspan={2}>
-                                                {t('basic')}
+                                                {t('basic info')}
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
                                             <td className='lttd'>
-                                                {t('collection size')}
+                                                {t('blockchain')}
                                             </td>
                                             <td className='rctd'>
-                                                {contract.get('max_supply')}
+                                                Ethereum
                                             </td>
                                         </tr>
                                         <tr>
@@ -1021,31 +1035,24 @@ class ClubView extends React.Component {
                                         </tr>
                                         <tr>
                                             <td className='lttd'>
-                                                {t('network')}
+                                                {t('collection size')}
                                             </td>
                                             <td className='rctd'>
-                                                {network}
+                                                {contract.get('max_supply')}
                                             </td>
                                         </tr>
                                         <tr>
                                             <td className='lttd'>
-                                                1/1 NFT
+                                                1/1 NFTs
                                             </td>
                                             <td className='rctd'>
                                                 {club.get('special_supply')}
                                             </td>
                                         </tr>
+                                        
                                         <tr>
                                             <td className='lttd'>
-                                                blockchain
-                                            </td>
-                                            <td className='rctd'>
-                                                Ethereum
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className='lttd'>
-                                                {t('reserved NFT')}
+                                                <span className='normal-case'>{t('Reserved for Team')}</span>
                                             </td>
                                             <td className='rctd'>
                                                 {contract.get('reserve_count')}
@@ -1055,7 +1062,7 @@ class ClubView extends React.Component {
                                             (Number(contract.get('reveal_time')) > 0)
                                             ? <tr>
                                                 <td className='lttd'>
-                                                    {t('reveal in')}
+                                                    {t('reveal time')}
                                                 </td>
                                                 <td className='rctd'>
                                                     <Showtime unixtime={contract.get('reveal_time')} cale={true} />
@@ -1072,14 +1079,14 @@ class ClubView extends React.Component {
                                         <thead>
                                             <tr>
                                                 <th colspan={2}>
-                                                    {t('whitelist')}
+                                                    {t('allowlist')}
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
                                                 <td className='lttd'>
-                                                    {t('whitelist spot')}
+                                                    {t('allowlist presale supply')}
                                                 </td>
                                                 <td className='rctd'>
                                                     {contract.get('wl_max_supply')}
@@ -1087,7 +1094,7 @@ class ClubView extends React.Component {
                                             </tr>
                                             <tr>
                                                 <td className='lttd'>
-                                                    {t('whitelist presale price')}
+                                                    {t('allowlist presale price')}
                                                 </td>
                                                 <td className='rctd'>
                                                     {removeSuffixZero(contract.get('wl_price'))}
@@ -1096,7 +1103,7 @@ class ClubView extends React.Component {
                                             </tr>
                                             <tr>
                                                 <td className='lttd'>
-                                                    {t('whitelist mint time')}
+                                                    {t('allowlist mint time')}
                                                 </td>
                                                 <td className='rctd flex-col'>
                                                     <div className='flex justify-start items-center w-full'>
@@ -1173,7 +1180,7 @@ class ClubView extends React.Component {
                                         <thead>
                                             <tr>
                                                 <th colspan={2}>
-                                                    {t('revenue share')}
+                                                    {t('spilt earnings')}
                                                 </th>
                                             </tr>
                                         </thead>
@@ -1247,13 +1254,13 @@ class ClubView extends React.Component {
                                 {contract.get('refund').map((one,index) => {
                                     return <div className='flex justify-start' key={one.get('end_time')}>
                                         <div className='py-4 pr-8'>
-                                            <label>{t('locked ends in')}</label>
+                                            <label>{t('Refundable Period Until')}</label>
                                             <div className='text-xl font-bold'>
                                             <Showtime unixtime={one.get('end_time')} cale={true} />
                                             </div>
                                         </div>
                                         <div className='py-4'>
-                                            <label>{t('refundable rate')}</label>
+                                            <label>{t('Refundable Rate')}</label>
                                             <div className='text-xl font-bold'>
                                                 {percentDecimal(one.get('refund_rate'))}%
                                             </div>
@@ -1263,17 +1270,11 @@ class ClubView extends React.Component {
                                 </div>
                                 <div>
                                     <h3 className='h3 mb-2'>
-                                        {t('refund introduction')}
+                                        {t('About Refund')}
                                     </h3>
                                     <div className='text-gray-500'>
                                         <p>
-                                            小幽灵是一个NFT项目，起源于最早的一个素描头像的构思，后来决定于发型在ETH上的NFT中，慢慢的我们对这个项目开始了更长时间的设计，规划。
-                                        </p>
-                                        <p>
-                                            从一开始我们就希望做一个高质量的NFT项目，吸取国产项目的教训，并用真正的设计和实力来Build一个足够好的项目。
-                                        </p>
-                                        <p>
-                                            在这里描述中，我们就需要更长的字数来介绍了，但是我是在不知道写了点什么就多一些一些，希望是可以个可以的啊打算啊苏丹啊苏丹。描述的中东。
+                                            {t('refund-intro')}
                                         </p>
                                     </div>
                                 </div>

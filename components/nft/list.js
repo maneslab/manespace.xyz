@@ -49,7 +49,7 @@ class NftList extends React.Component {
         // let list_rows = denormalize(list_data_one.get('list'),nftListSchema,entities)
 
         return  <div className='p-6 pt-4 d-bg-c-1 mb-8'>
-            <div className='block-title'>{t('My Nfts')} ({total})</div>
+            <div className='block-title'><span className='normal-case'>{t('My NFTs')}</span> ({total})</div>
             <div className=''>
                 {
                     (list_data_one.get('is_fetching'))

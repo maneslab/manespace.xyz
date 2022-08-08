@@ -29,7 +29,7 @@ class RefundModal extends React.Component {
         const {t} = this.props.i18n;
         const {contract_address,address,nft_id} = this.props;
 
-        if (this.state.value != 'refund') {
+        if (this.state.value != 'REFUND') {
             message.error(t('please type "refund" to confirm'));
             return
         }
@@ -107,6 +107,9 @@ class RefundModal extends React.Component {
             <div className='mb-4'>
                 {t('refund-notice-info')}
             </div>
+            <div className='mb-4'>
+                {t('refund-notice-info2')}
+            </div>
 
             <div class="alert alert-warning my-4">
                 <div>
@@ -116,7 +119,7 @@ class RefundModal extends React.Component {
             </div>
 
             <div className='mb-4'>
-                {t('Please type  "refund"  to confirm')}
+                {t('Please type  "REFUND"  to confirm')}
             </div>
 
             <div className='mb-4'>
@@ -124,7 +127,7 @@ class RefundModal extends React.Component {
                     this.setState({
                         'value' : e.target.value
                     })
-                }} className='input-box' placeholder={t('Please type  "refund"  to confirm')}/>
+                }} className='input-box' placeholder={t('Please type  "REFUND"  to confirm')}/>
             </div>
 
             <div className='flex justify-end'>

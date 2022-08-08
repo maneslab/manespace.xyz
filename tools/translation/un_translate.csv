@@ -1,1 +1,17 @@
 key,en
+allowlisted,allowlisted
+allowlist presale,allowlist presale
+allowlist presale end in,allowlist presale end in
+allowlist presale start in,allowlist presale start in
+allowlist presale price,allowlist presale price
+allowlist supply,allowlist supply
+allowlist eligibility,allowlist eligibility
+not allowlisted,not allowlisted
+reserved NFT,reserved NFT
+revenue share,revenue share
+Create Generative Collection,Create Generative Collection
+The smart tool by ManeSTUDIO allows artists to create their own collections by simply uploading traits in different layers.,The smart tool by ManeSTUDIO allows artists to create their own collections by simply uploading traits in different layers.
+You can easily tweak the rarity of each trait with the built-in editor.,You can easily tweak the rarity of each trait with the built-in editor.
+Batch Upload Artworks,Batch Upload Artworks
+"Batch upload already finished artworks, add properties manually","Batch upload already finished artworks, add properties manually"
+"Recommened for artists who want to create a collection of small amount, like 1-100","Recommened for artists who want to create a collection of small amount, like 1-100"

@@ -57,7 +57,7 @@ class ProjectList extends React.Component {
                     <h2 className="h2 capitalize flex justify-start items-center"><CollectionIcon className="icon-sm mr-2" />{t('more upcoming drops')}</h2>
                     <div className="block-tab my-4 lg:my-0">
                         <div className={classNames("tab-one",{"active":(list_type=='all')})} onClick={this.onTabChange.bind({},'all')}>{t('all')}</div> 
-                        <div className={classNames("tab-one",{"active":(list_type=='whitelist')})} onClick={this.onTabChange.bind({},'whitelist')}>{t('whitelist')}</div> 
+                        <div className={classNames("tab-one",{"active":(list_type=='whitelist')})} onClick={this.onTabChange.bind({},'whitelist')}>{t('allowlisted-tab')}</div> 
                     </div>
                 </div>
                 {

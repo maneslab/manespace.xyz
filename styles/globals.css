@@ -715,7 +715,7 @@ input{outline:none;}
     @apply mb-4;
 }
 .box-one .lb {
-    @apply text-gray-500 mb-2 text-left;
+    @apply text-gray-500 mb-2 text-left capitalize;
 }
 .box-one .ma {
     @apply text-xl font-bold text-left;

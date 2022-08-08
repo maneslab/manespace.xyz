@@ -43,7 +43,7 @@ class clubOne extends React.Component {
                     }
                     {
                         (is_whitelist)
-                        ? <div className='absolute top-0 right-0 flex justify-end items-center bg-green-500 py-1 px-2 text-white uppercase text-sm'><CheckCircleIcon className="icon-sm mr-2" />{t('in whitelist')}</div>
+                        ? <div className='absolute top-0 right-0 flex justify-end items-center bg-green-500 py-1 px-2 text-white uppercase text-sm'><CheckCircleIcon className="icon-sm mr-2" />{t('allowlisted')}</div>
                         : null
                     }
                 </div>
@@ -103,7 +103,7 @@ class clubOne extends React.Component {
                             <div className='w-2/3'>
                                 <label>{t('minted')} / {t('max supply')}</label>
                                 <div className='v'>
-                                {contract.getIn(['total_supply'])}
+                                {contract.getIn(['total_supply']) ? contract.getIn(['total_supply']) : 0}
                                 <span className='mx-1'>/</span>
                                 {contract.getIn(['max_supply'])}
                                 </div>

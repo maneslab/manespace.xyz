@@ -9,7 +9,6 @@ whitelist,whitelist,白名单
 are you sure you want to delete this item?,are you sure you want to delete this item?,你确定要删除这个项目吗？
 can not less then {{count}} character,can not less then {{count}} character,不能少于{{count}}字符
 no more than {{count}} character,no more than {{count}} character,不能多于{{count}}个字符
-in whitelist,in whitelist,在白名单中
 WL presale start,WL presale start,白名单预售开始
 WL mint price,WL mint price,白名单mint价格
 public sale start,public sale start,公开销售开始
@@ -38,11 +37,8 @@ public sale price,public sale price,公开销售价格
 public sale starts in,public sale starts in,公开销售开始于
 not set yet,not set yet,尚未确定
 mint price,mint price,铸币价格
-your mint qualification,your mint qualification,您的造币资格
-whitelisted,whitelisted,白名单
-you are not in the whitelist,you are not in the whitelist,你不在白名单中
-whitelist mint begin,whitelist mint begin,白名单上的薄荷糖开始
-public mint begin,public mint begin,公众的薄荷糖开始
+whitelist mint begin,whitelist mint begin,白名单上的MINT开始
+public mint begin,public mint begin,公众的MIN T开始
 upload image,upload image,上传图片
 generate-nft-header-intro,generate-nft-header-intro,生成-nft-标题-介绍
 smart contract,smart contract,智能合约
@@ -65,7 +61,7 @@ home,home,首页
 management,management,管理
 My Nfts,My Nfts,我的Nfts
 refund,refund,退款
-this action cannot be undone. This will permanently remove this NFT from your wallet and then refund your money.,this action cannot be undone. This will permanently remove this NFT from your wallet and then refund your money.,此操作不能被撤销。这将永久地从你的钱包中删除这个NFT，然后退还ETH到你的钱包。
+refund-notice-info,this action cannot be undone. This will permanently remove this NFT from your wallet and then refund your money.,此操作不能被撤销。这将永久地从你的钱包中删除这个NFT，然后退还ETH到你的钱包。
 "Please type  ""refund""  to confirm","Please type  ""refund""  to confirm","请输入 “refund""来确认"
 Refund NFT ID,Refund NFT ID,退款NFT ID
 "please type ""refund"" to confirm","please type ""refund"" to confirm","请输入 ""refund""以确认"
@@ -82,15 +78,15 @@ not connect wallet yet,not connect wallet yet,还没有连接钱包
 you are in whitelist,you are in whitelist,你在白名单中
 you are not in whitelist,you are not in whitelist,你不在白名单中
 add to google calendar,add to google calendar,添加到谷歌日历
-live now,live now,现在直播
+live now,live now,正在展示
 minted / total supply,minted / total supply,已铸币/总供应量
 whitelist supply,whitelist supply,白名单供应
-the maximum number of Mint has been reached,the maximum number of Mint has been reached,已达到薄荷糖的最大数量
+the maximum number of Mint has been reached,the maximum number of Mint has been reached,已达到MINT的最大数量
 whitelist check,whitelist check,白名单检查
 basic,basic,基本
-collection size,collection size,收藏规模
-contract address,contract address,合同地址
-network,network,网络
+collection size,collection size,合集NFT数量
+contract address,contract address,合约地址
+network,network,ETH网络
 reveal in,reveal in,开图时间
 whitelist spot,whitelist spot,白名单现货
 whitelist mint time,whitelist mint time,白名单上mint时间
@@ -101,12 +97,12 @@ roadmap,roadmap,路线图
 locked ends in,locked ends in,锁定结束
 refundable rate,refundable rate,退款率
 refund introduction,refund introduction,退款介绍
-mint NFT success,mint NFT success,铸币NFT成功
-minting nft,minting nft,铸币厂NFT
-mint tx sent,mint tx sent,已发送的铸币税
-mint tx successful,mint tx successful,mint tx成功
+mint NFT success,mint NFT success,铸造NFT成功
+minting nft,minting nft,minting NFT
+mint tx sent,mint tx sent,已发送的铸造NFT交易
+mint tx successful,mint tx successful,mint交易成功
 waiting for the transaction to be executed,waiting for the transaction to be executed,等待交易的执行
-tx failed,tx failed,tx失败
+tx failed,tx failed,交易失败
 fast,fast,快速
 average,average,平均
 low,low,慢速
