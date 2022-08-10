@@ -18,6 +18,7 @@ import {withTranslate} from 'hocs/index'
 
 import DarkmodeSwitch from './common/darkmode_switch';
 import {MenuIcon} from '@heroicons/react/outline'   
+import Logo from 'public/img/logo/manespace.svg'
 
 import config from 'helper/config'
 
@@ -71,12 +72,10 @@ class PageWrapper extends React.Component {
                     <div className='header-bg dark:bg-[#22252b] mb-8 fixed w-full top-0 shadow-sm'>
                         <div className="flex justify-between h-16 w-full max-w-screen-xl mx-auto px-4 lg:px-0">
 
-                            <div className='flex justify-start'>
+                            <div className='flex justify-start items-center'>
 
                                 <Link href="/">
-                                    <a className="logo">
-                                        Mane<span className="text-primary">SPACE</span>
-                                    </a>
+                                    <Logo className="h-10" />
                                 </Link>
 
                                 <div className='ml-4 hidden lg:flex lg:items-center'>
