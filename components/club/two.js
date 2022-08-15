@@ -48,6 +48,7 @@ class clubOne extends React.Component {
     getWlHtml(contract) {
         const {t} = this.props.i18n;
         let now_unixtime = getUnixtime();
+        let mint_url = this.getMintUrl();
 
         if (now_unixtime > contract.get('wl_end_time')) {
             return <div className='w-1/2 box-one '>
@@ -131,7 +132,6 @@ class clubOne extends React.Component {
 
         let contract = club.get('contract_info') ? club.get('contract_info') : club.get('contract');
 
-        let mint_url = this.getMintUrl();
         let now_unixtime = getUnixtime();
 
         console.log('contract-gallery',club.get('gallery').toJS());
