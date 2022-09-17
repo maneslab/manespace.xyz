@@ -10,6 +10,9 @@ export default class manestudio extends contract{
     constructor(t = null,network = 'rinkeby') {
 
         console.log('constructor-network',network);
+        if (network == 'mainnet') {
+            network = 'homestead';
+        }
 
         super(t);
         let contract_map = config.get('MANE_CONTRACT');

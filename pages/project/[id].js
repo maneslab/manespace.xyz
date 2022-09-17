@@ -30,8 +30,6 @@ import {myIsNaN} from 'helper/common'
 import Countdown from 'components/common/countdown';
 
 import { StatusOnlineIcon } from '@heroicons/react/outline';
-// import BigNumber from 'bignumber.js';
-// import Countdown from 'react-countdown';
 import config from 'helper/config'
 import { httpRequest } from 'helper/http';
 import message from 'components/common/message';
@@ -203,6 +201,7 @@ class ClubView extends React.Component {
 
             ///获得contract数据
             let contract_data = await this.manenft.contract.getAll();
+
             let isForceRefundable = await this.manenft.contract.isForceRefundable();
 
             // console.log('debug01,contract_data',contract_data)
@@ -255,7 +254,7 @@ class ClubView extends React.Component {
             'reserve_count'         : Number(contract_data[0].toString()),
             'max_supply'            : Number(contract_data[1].toString()),
             'presale_max_supply'    :   Number(contract_data[2].toString()),
-            'club_id'               :   Number(contract_data[3].toString()),
+            // 'club_id'               :   Number(contract_data[3].toString()),
             'presale_start_time'    :   Number(contract_data[4].toString()),
             'presale_end_time'      :   Number(contract_data[5].toString()),
             'sale_start_time'       :   Number(contract_data[6].toString()),
@@ -787,7 +786,7 @@ class ClubView extends React.Component {
         const {deploy_contract_address,is_fetching_contract_data,contract_data,contract_data_from_server,mint_count,is_fetching,is_paused} = this.state;
         const {club,wallet,network,club_data} = this.props;
 
-        console.log('is_paused',is_paused)
+        // console.log('is_paused',is_paused)
 
         let club_id = this.getClubId();
 
@@ -817,6 +816,7 @@ class ClubView extends React.Component {
         let merged_data = Object.assign({},contract_data_from_server,contract_data);
 
         if (!merged_data['club_id']) {
+            console.log('debug-003',merged_data,contract_data_from_server,contract_data);
             return null
         }
 

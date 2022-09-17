@@ -6,7 +6,7 @@
     
     "WEBSITE"           : "http://127.0.0.1:3000",
     
-    "API"               : "http://dev.api.manestudio.com",
+    "API"               : "https://api.manestudio.xyz",
 
     "MANASTUDIO_WEBSITE"    : "http://127.0.0.1:3001",
 
@@ -18,10 +18,10 @@
 
     "NEXTID_ENV"        : "develop",
 
-    "ETH_NETWORK"       :   "rinkeby",
+    "ETH_NETWORK"       :   "mainnet",
 
     "MANE_CONTRACT"     : {
-        "rinkeby"   :   "0x2b87F7B6CA3664Efa9a96930B2A5DcF1a22489DA",
-        "mainnet"   :   ""
+        "rinkeby"       :   "0x2b87F7B6CA3664Efa9a96930B2A5DcF1a22489DA",
+        "homestead"     :   "0x5Baf93D823328EdDca6C3020B9105363A5b26B1A"
     }
 }
