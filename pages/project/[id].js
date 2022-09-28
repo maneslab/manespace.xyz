@@ -444,15 +444,12 @@ class ClubView extends React.Component {
         const mint_price_in_wei = ethers.utils.parseEther(sign.wl_price);
         const total_mint_value = mint_price_in_wei.mul(sign.count)
 
-        let gas_limit = 200000
-        if (sign.count > 1) {
-            gas_limit = 150000 * sign.count;
-        }else {
-            gas_limit = 200000;
-        }
+
+        ///通过合约去预估gas
+        let gas_estimate = await  this.manenft.estimateGasMint(wallet.address,mint_price_in_wei,sign.count,sign.deadline,sign.sign.r,sign.sign.s,sign.sign.v);
 
         let params_options = {
-            'gasLimit': gas_limit,
+            'gasLimit': gas_estimate['gasLimit'].toString(),
             'value' : total_mint_value
         }
 
@@ -540,10 +537,18 @@ class ClubView extends React.Component {
         let empty_bytes_32 = ethers.utils.formatBytes32String("")
         const total_mint_value = mint_price_in_wei.mul(mcount)
 
+    
+        let gas_estimate = await  this.manenft.estimateGasMint(wallet.address,mint_price_in_wei,mcount,0,empty_bytes_32,empty_bytes_32,0);
+
         let params_options = {
-            'gasLimit': 200000,
+            'gasLimit': gas_estimate['gasLimit'].toString(),
             'value' : total_mint_value
         }
+
+        // let params_options = {
+        //     'gasLimit': 200000,
+        //     'value' : total_mint_value
+        // }
 
         var that = this;
 
