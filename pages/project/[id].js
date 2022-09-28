@@ -794,7 +794,8 @@ class ClubView extends React.Component {
 
         // console.log('is_paused',is_paused)
 
-        // console.log('contract_data_from_server',contract_data_from_server)
+        console.log('contract_data_from_server',contract_data_from_server)
+        console.log('debug-club',club.toJS())
 
         let club_id = this.getClubId();
 
@@ -842,6 +843,8 @@ class ClubView extends React.Component {
                 can_mint_count = merged_data['sale_per_wallet_count'] - minted;
             }
         }
+
+        let has_whitelist_stage = merged_data['presale_start_time'] > 0 && merged_data['presale_end_time'] > 1;
 
 
         let is_allow_refundable = this.isAllowRefundable(contract.get('refund'),merged_data['is_force_refundable']);
@@ -928,8 +931,14 @@ class ClubView extends React.Component {
                                                 {
                                                     (merged_data && merged_data.hasOwnProperty('sale_price'))
                                                     ? <>
-                                                        <span>{removeSuffixZero(merged_data['sale_price'])}</span>
-                                                        <span className='text-base ml-2'>ETH</span>
+                                                        {
+                                                            (merged_data['sale_price'] == 0) 
+                                                            ? <span>{'Free Mint'}</span>
+                                                            : <>
+                                                                <span>{removeSuffixZero(merged_data['sale_price'])}</span>
+                                                                <span className='text-base ml-2'>ETH</span>
+                                                            </>
+                                                        }
                                                     </>
                                                     : 'not set yet'
                                                 }
@@ -1004,13 +1013,19 @@ class ClubView extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className='mb-8 w-full p-6 d-bg-c-1'>
-                        <div className='block-title'>{t('allowlist eligibility')}</div>
-                        <div className='grid lg:grid-cols-2 lg:gap-8'>
-                            <WhitelistCheckAuto club_id={club_id} wallet={wallet}/>
-                            <WhitelistCheck club_id={club_id}/>
+
+                    {
+                        (has_whitelist_stage)
+                        ?  <div className='mb-8 w-full p-6 d-bg-c-1'>
+                            <div className='block-title'>{t('allowlist eligibility')}</div>
+                            <div className='grid lg:grid-cols-2 lg:gap-8'>
+                                <WhitelistCheckAuto club_id={club_id} wallet={wallet}/>
+                                <WhitelistCheck club_id={club_id}/>
+                            </div>
                         </div>
-                    </div>
+                        : null
+                    }
+                   
                     <div className='mb-8 w-full p-6 d-bg-c-1'>
                         <div className='block-title'>{t('about')}</div>
 

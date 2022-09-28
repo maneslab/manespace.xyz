@@ -146,10 +146,13 @@ class clubOne extends React.Component {
             has_refund = true;
         }
 
+        let has_whitelist_stage = club.getIn(['contract_info','wl_enable']);
+
+
         // is_whitelist = true;
         return <div>
             <Link href={"/project/"+club.get('id')}>
-            <div className='p-6 d-bg-c-1 mb-8 flex justify-start flex-col lg:flex-row border-4 border-black dark:border-[#999]'>
+            <div className='p-6 d-bg-c-1 mb-8 flex justify-start flex-col lg:flex-row border-4 border-black dark:border-[#999] cursor-pointer'>
                 <div className='lg:w-96 lg:h-96 overflow-hidden lg:mr-6'>
                     {
                         (club.getIn(['gallery',0,'img','image_urls','url']))
@@ -168,7 +171,7 @@ class clubOne extends React.Component {
                             }
                         </div>
                         {
-                            (contract && contract.get('wl_enable'))
+                            (has_whitelist_stage)
                             ?   <div className='flex justify-between '>
                                 {this.getWlHtml(contract)}
                                 <div className='w-1/2 box-one'>
@@ -189,10 +192,22 @@ class clubOne extends React.Component {
                         }
                         <div className='flex justify-between '>
                             <div className='w-1/2 box-one '>
-                                <div className='lb'>{t('minted')} / {t('allowlist supply')}</div>
-                                <div className='ma flex justify-start items-center'>
-                                    {contract.get('total_supply') ? contract.get('total_supply') : 0} / {contract.get('wl_max_supply')}
-                                </div>
+                                {
+                                    (has_whitelist_stage)
+                                    ? <div className='lb'>{t('minted')} / {t('allowlist supply')}</div>
+                                    : <div className='lb'>{t('minted')}</div>
+                                }
+                                {
+                                    (has_whitelist_stage)
+                                    ? <div className='ma flex justify-start items-center'>
+                                        {contract.get('total_supply') ? contract.get('total_supply') : 0} / {contract.get('wl_max_supply')}
+                                    </div>
+                                    : <div className='ma flex justify-start items-center'>
+                                        {contract.get('total_supply') ? contract.get('total_supply') : 0}
+                                    </div>
+                                }
+                                
+                                
                             </div>
                             <div className='w-1/2 box-one '>
                                 <div className='lb'>{t('total supply')}</div>
@@ -237,21 +252,23 @@ class clubOne extends React.Component {
                             </div>
                         }
                         
-
-                        <div className='py-4 border-t d-border-c-3'>
-                            <div className='text-gray-500 capitalize text-sm mb-2 text-left'>{t('allowlist eligibility')}</div>
-                            {
-                                (is_whitelist)
-                                ? <div className='text-green-500 uppercase flex justify-start items-center font-bold text-left'> 
-                                    <CheckCircleIcon className='icon-sm mr-2'/> {t('allowlisted')} :)
-                                </div>
-                                : <div className='font-bold text-gray-500 capitalize text-left'>
-                                    {t('not allowlisted')} :(
-                                </div>
-                            }
-                            
-                        </div>
-
+                        {
+                            (has_whitelist_stage)
+                            ? <div className='py-4 border-t d-border-c-3'>
+                                <div className='text-gray-500 capitalize text-sm mb-2 text-left'>{t('allowlist eligibility')}</div>
+                                {
+                                    (is_whitelist)
+                                    ? <div className='text-green-500 uppercase flex justify-start items-center font-bold text-left'> 
+                                        <CheckCircleIcon className='icon-sm mr-2'/> {t('allowlisted')} :)
+                                    </div>
+                                    : <div className='font-bold text-gray-500 capitalize text-left'>
+                                        {t('not allowlisted')} :(
+                                    </div>
+                                }
+                            </div>
+                            : null
+                        }
+                        
                     </div>
                 </div>
             </div>
