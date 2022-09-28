@@ -9,8 +9,7 @@ export default function NftOne({nftid,network,contract_address,openRefundModal,i
 
     const {t} = useTranslation('common');
 
-
-    let api_base = config.get('API');
+    let api_base = config.get('META');
 
     const [is_fetching, setIsFetching] = useState(false);
     const [animation_url, setAnimationUrl] = useState('');

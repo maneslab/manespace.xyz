@@ -8,6 +8,8 @@
     
     "API"               : "https://api.test.manestudio.xyz",
     
+    "META"              : "http://meta.test.manestudio.xyz",
+
     "MANASTUDIO_WEBSITE"    : "http://www.test.manestudio.xyz",
 
     "LOGO"              : "test",

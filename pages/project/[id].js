@@ -141,6 +141,7 @@ class ClubView extends React.Component {
     @autobind
     async getDeployedContractAddress() {
         // const {club_id} = this.props;
+        console.log('debug-getDeployedContractAddress');
 
         let club_id = this.getClubId();
         if (!club_id) {
@@ -148,11 +149,14 @@ class ClubView extends React.Component {
             return;
         }
 
+        console.log('debug-getDeployedContractAddress,club_id:',club_id);
+
         let addr = '0x0';
         try {
             addr = await this.mane.contract.clubMap(club_id);
+            console.log('debug-getDeployedContractAddress,addr:',addr);
         }catch(e) {
-            console.log('getDeployedAddress-e',e)
+            console.log('debug-getDeployedContractAddress,error',e)
         }
         if (hex2Number(addr) != 0) {
             return addr;
@@ -337,6 +341,7 @@ class ClubView extends React.Component {
         const {wallet} = this.props;
         const {contract_data,contract_data_from_server,mint_count} = this.state;
 
+
         let merged_data = Object.assign({},contract_data_from_server,contract_data);
         let {stage,stage_status,minted} = this.getProjectStage(merged_data);
 
@@ -519,7 +524,7 @@ class ClubView extends React.Component {
         const total_mint_value = mint_price_in_wei.mul(mcount)
 
         let params_options = {
-            'gasLimit': 2000000,
+            'gasLimit': 200000,
             'value' : total_mint_value
         }
 
@@ -590,7 +595,8 @@ class ClubView extends React.Component {
         const {deploy_contract_address,is_paused} = this.state;
         let now_unixtime = getUnixtime();
 
-        console.log('merged_data',merged_data)
+        console.log('debug-stage,merged_data',merged_data)
+        console.log('debug-stage,deploy_contract_address',deploy_contract_address)
 
         let stage = 'unstart';          ///stage状态分为:unstart,in_whitelist,in_public,finished
         let status = 'disable';         ///status状态分为:disable,enable,connect_wallet,out_of_limit
@@ -788,6 +794,8 @@ class ClubView extends React.Component {
 
         // console.log('is_paused',is_paused)
 
+        // console.log('contract_data_from_server',contract_data_from_server)
+
         let club_id = this.getClubId();
 
         if (club_data && club_data.get('is_fetched') && !club) {
@@ -918,7 +926,7 @@ class ClubView extends React.Component {
                                             <div className='lb'>{t('public sale price')}</div>
                                             <div className='ma'>
                                                 {
-                                                    (merged_data && merged_data['sale_price'])
+                                                    (merged_data && merged_data.hasOwnProperty('sale_price'))
                                                     ? <>
                                                         <span>{removeSuffixZero(merged_data['sale_price'])}</span>
                                                         <span className='text-base ml-2'>ETH</span>
@@ -979,7 +987,7 @@ class ClubView extends React.Component {
                                             }
                                             {
                                                 (stage_status == 'out_of_limit')
-                                                ? <button className='btn btn-primary btn-wide capitalize' disabled={true}>{t('the maximum number of Mint has been reached')}</button>
+                                                ? <button className='btn btn-primary btn-wide capitalize' disabled={true}>{t('Maximal Mint Limit Pre Wallet Reached')}</button>
                                                 : null
                                             }
                                             {

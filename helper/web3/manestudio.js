@@ -21,7 +21,7 @@ export default class manestudio extends contract{
 
         let contract_address = contract_map[network];
 
-        // console.log('contract_address',contract_address,network)
+        console.log('使用父合约地址是:contract_address',contract_address,network)
 
         this.provider = new ethers.providers.Web3Provider(window.ethereum)
         this.contract = new ethers.Contract(contract_address, manestudio_abi, this.provider.getSigner());

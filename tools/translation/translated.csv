@@ -132,3 +132,4 @@ Refundable Period Until,Refundable Period Until,退款期限
 Refundable Rate,Refundable Rate,退款比例
 About Refund,About Refund,关于退款
 refund-intro,"Refund is an optional function enabled by the creator. You may return the minted NFTs to the creator and get the funds back, depends on the refundable period and rate.",退款是有创作者开启的可选功能。你可在退款期限之内将已铸造的NFT退还给创作者，返还资金视退款比例而定。
+Maximal Mint Limit Pre Wallet Reached,Maximal Mint Limit Pre Wallet Reached,已达到单个地址铸造上限
