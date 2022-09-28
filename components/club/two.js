@@ -16,9 +16,43 @@ import {removeSuffixZero} from 'helper/number'
 import { getUnixtime,formatOverflowUnixtime } from 'helper/time';
 
 import RefundIcon from 'public/img/icons/refund.svg'
+import manenft from 'helper/web3/manenft';
 
 @withTranslate
 class clubOne extends React.Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            total_supply : 0
+        }
+    }   
+
+    componentDidMount() {
+        this.getContractData();
+    }
+
+    @autobind
+    async getContractData() {
+        const {club} = this.props;
+        let contract_address = club.get('contract_address');
+        if (!contract_address) {
+            return;
+        }
+
+        let manenft_instance = new manenft(contract_address,this.props.i18n.t);
+        let total_supply = await manenft_instance.contract.totalSupply();
+        if (total_supply) {
+            total_supply = Number(total_supply.toString());
+        }else {
+            total_supply = 0;
+        }
+
+        this.setState({
+            'total_supply' :total_supply
+        })
+
+    }
 
     @autobind
     getCalendarTitle(time_type = 'whitelist') {
@@ -124,6 +158,7 @@ class clubOne extends React.Component {
 
         const { club } = this.props;
         const {t} = this.props.i18n;
+        const {total_supply} =this.state;
 
         let creator_name_list = [];
         club.get('creator').forEach((one)=>{
@@ -200,10 +235,10 @@ class clubOne extends React.Component {
                                 {
                                     (has_whitelist_stage)
                                     ? <div className='ma flex justify-start items-center'>
-                                        {contract.get('total_supply') ? contract.get('total_supply') : 0} / {contract.get('wl_max_supply')}
+                                        {total_supply} / {contract.get('wl_max_supply')}
                                     </div>
                                     : <div className='ma flex justify-start items-center'>
-                                        {contract.get('total_supply') ? contract.get('total_supply') : 0}
+                                        {total_supply}
                                     </div>
                                 }
                                 

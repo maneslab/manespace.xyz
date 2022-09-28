@@ -110,6 +110,8 @@ class ClubView extends React.Component {
         this.manenft = new manenft(deploy_contract_address,this.props.i18n.t);
     }
 
+
+
     @autobind
     async updateBalanceOf(){
     
@@ -206,12 +208,20 @@ class ClubView extends React.Component {
             ///获得contract数据
             let contract_data = await this.manenft.contract.getAll();
 
+            let total_supply = await this.manenft.contract.totalSupply();
+            if (total_supply) {
+                total_supply = Number(total_supply.toString());
+            }else {
+                total_supply = 0;
+            }
+
             let isForceRefundable = await this.manenft.contract.isForceRefundable();
 
             // console.log('debug01,contract_data',contract_data)
             let formated_data = this.deformatContractData(contract_data);
             // console.log('debug01,formated_data',formated_data)
             formated_data['is_force_refundable'] = (isForceRefundable == 1) ? true : false;
+            formated_data['total_supply'] = total_supply;
 
             this.setState({
                 'contract_data'             : formated_data,
@@ -434,8 +444,15 @@ class ClubView extends React.Component {
         const mint_price_in_wei = ethers.utils.parseEther(sign.wl_price);
         const total_mint_value = mint_price_in_wei.mul(sign.count)
 
+        let gas_limit = 200000
+        if (sign.count > 1) {
+            gas_limit = 150000 * sign.count;
+        }else {
+            gas_limit = 200000;
+        }
+
         let params_options = {
-            'gasLimit': 2000000,
+            'gasLimit': gas_limit,
             'value' : total_mint_value
         }
 
@@ -794,7 +811,7 @@ class ClubView extends React.Component {
 
         // console.log('is_paused',is_paused)
 
-        console.log('contract_data_from_server',contract_data_from_server)
+        console.log('contract_data',contract_data)
         console.log('debug-club',club.toJS())
 
         let club_id = this.getClubId();
@@ -909,7 +926,12 @@ class ClubView extends React.Component {
                                     <div className='w-1/2 box-one '>
                                         <div className='lb'>{t('minted / total supply')}</div>
                                         <div className='ma flex justify-start items-center'>
-                                            {contract.get('total_supply')?contract.get('total_supply'):0} / {merged_data['max_supply']}
+                                            <span className='mr-1'>{
+                                                (contract_data['total_supply'])
+                                                ? contract_data['total_supply']
+                                                : contract.get('total_supply')
+                                            }</span>
+                                            / {merged_data['max_supply']}
                                         </div>
                                     </div>
                                     <div className='w-1/2 box-one '>

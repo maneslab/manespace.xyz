@@ -32,6 +32,9 @@ class clubOne extends React.Component {
         }
         
         // is_whitelist = true;
+        //t('minted')} / 
+        /* {contract.getIn(['total_supply']) ? contract.getIn(['total_supply']) : 0}
+                                <span className='mx-1'>/</span> */
         return <div>
             <Link href={"/project/"+club.get('id')}>
             <div className="cursor-pointer d-bg-c-1">
@@ -101,10 +104,8 @@ class clubOne extends React.Component {
                         (contract)
                         ? <div className='flex justify-between items-center club-one-item'>
                             <div className='w-2/3'>
-                                <label>{t('minted')} / {t('max supply')}</label>
+                                <label>{t('max supply')}</label>
                                 <div className='v'>
-                                {contract.getIn(['total_supply']) ? contract.getIn(['total_supply']) : 0}
-                                <span className='mx-1'>/</span>
                                 {contract.getIn(['max_supply'])}
                                 </div>
                             </div>

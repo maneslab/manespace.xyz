@@ -80,17 +80,20 @@ class GasButton extends React.Component {
             'is_fetching' : true,
         })
 
-        let response = await fetch('https://ethgasstation.info/api/ethgasAPI.json')
+        let response = await fetch('https://api.manestudio.xyz/v1/misc/gas_price')
         let result = await response.json();
 
         console.log('result',result)
+
+        if (result.status == 'success') {
+            this.props.setGasData(result.data.gas.gasPrice);
+        }
 
         this.setState({
             'is_fetching' : false,
             'is_fetched'  : true
         })
 
-        this.props.setGasData(result);
 
     }
 
@@ -106,11 +109,11 @@ class GasButton extends React.Component {
         const {mint_gas_limit} = this.state;
         const {t} = this.props.i18n;
 
-        let mint_gas_estimate = this.getGasEstimate(gas_data.getIn(['data','average']),mint_gas_limit);
+        let mint_gas_estimate = this.getGasEstimate(gas_data.getIn(['data','fast']),mint_gas_limit);
 
-        // if (gas_data) {
-        //     console.log('gas_data',gas_data.toJS())
-        // }
+        if (gas_data) {
+            console.log('gas_data',gas_data.toJS())
+        }
 
         let content = <div className="block-menu w-64">
             {
@@ -118,16 +121,16 @@ class GasButton extends React.Component {
                 ? <div className='gas-wrapper'>
                     <div className='gas-one text-green-500'>
                         <div className='l'>{t('fast')}</div>
-                        <div className='r'>{gas_data.getIn(['data','fast']) / 10}</div>
+                        <div className='r'>{gas_data.getIn(['data','instant'])}</div>
                     </div>
                     <div className='gas-one text-blue-500' >
                         <div className='l'>{t('average')}</div>
-                        <div className='r'>{gas_data.getIn(['data','average']) / 10}</div>
+                        <div className='r'>{gas_data.getIn(['data','fast'])}</div>
 
                     </div>
                     <div className='gas-one text-red-500'>
                         <div className='l'>{t('low')}</div>
-                        <div className='r'>{gas_data.getIn(['data','safeLow']) / 10}</div>
+                        <div className='r'>{gas_data.getIn(['data','standard'])}</div>
                     </div>
                     <div className='border-t d-border-c-2 my-4'/>
                     <div>
