@@ -98,7 +98,7 @@ class GasButton extends React.Component {
     }
 
     getGasEstimate(gas_price,gas_limit) {
-        let gas_estimate = new BigNumber(gas_price).dividedBy(10).times(gas_limit);
+        let gas_estimate = new BigNumber(gas_price).times(gas_limit);
         let gas_estimate_eth = getAmountFromIntAmount(gas_estimate,9);
         return gas_estimate_eth;
     }
