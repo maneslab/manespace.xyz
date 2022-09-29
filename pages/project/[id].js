@@ -939,7 +939,7 @@ class ClubView extends React.Component {
                                             <span className='mr-1'>{
                                                 (contract_data['total_supply'])
                                                 ? contract_data['total_supply']
-                                                : '(plase connect wallet)'
+                                                : '(please connect wallet)'
                                             }</span>
                                             / {merged_data['max_supply']}
                                         </div>
