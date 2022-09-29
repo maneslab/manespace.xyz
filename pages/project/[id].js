@@ -94,6 +94,7 @@ class ClubView extends React.Component {
         if (this.props.wallet && 
             (!prevProps.wallet || this.props.wallet.address != prevProps.wallet.address)) {
             this.updateBalanceOf();
+            this.fetchContractDataInBlockchain();
         }
     } 
 
@@ -842,6 +843,10 @@ class ClubView extends React.Component {
         let contract = club.get('contract_info') ? club.get('contract_info') : club.get('contract');
         let now_unixtime = getUnixtime();
 
+        let is_connect_wallet = true;
+        if (!wallet || !wallet.address) {
+            is_connect_wallet = false;
+        }
 
 
         let merged_data = Object.assign({},contract_data_from_server,contract_data);
@@ -934,7 +939,7 @@ class ClubView extends React.Component {
                                             <span className='mr-1'>{
                                                 (contract_data['total_supply'])
                                                 ? contract_data['total_supply']
-                                                : contract.get('total_supply')
+                                                : '(plase connect wallet)'
                                             }</span>
                                             / {merged_data['max_supply']}
                                         </div>
