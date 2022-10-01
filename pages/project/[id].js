@@ -80,7 +80,7 @@ class ClubView extends React.Component {
 
     componentDidUpdate(prevProps) {
 
-        console.log('debug09,componentDidUpdate',this.props.club,this.props.club.equals(prevProps.club));
+        // console.log('debug09,componentDidUpdate',this.props.club,this.props.club.equals(prevProps.club));
 
         if (this.props.club && !this.props.club.equals(prevProps.club)) {
             
@@ -239,6 +239,9 @@ class ClubView extends React.Component {
 
             //获得我持有的这个合约的NFT数量
             this.updateBalanceOf();
+
+            //更新我可以mint的数量
+            this.setCanMintCount();
         }
 
         this.setState({
@@ -274,7 +277,8 @@ class ClubView extends React.Component {
             'presale_start_time'    :   Number(contract_data[4].toString()),
             'presale_end_time'      :   Number(contract_data[5].toString()),
             'sale_start_time'       :   Number(contract_data[6].toString()),
-            'sale_end_time'         :   Number(contract_data[7].toString()),
+            'sale_end_time'         :   Number(contract_data[7].toString()), 
+            // 'sale_end_time'         :  1665602611,
             'presale_price'         :   Number(contract_data[8].toString()),
             'sale_price'            :   Number(ethers.utils.formatEther(contract_data[9].toString())),
             // 'presale_per_wallet_count'  :   Number(contract_data[10].toString()),
@@ -355,18 +359,8 @@ class ClubView extends React.Component {
 
 
         let merged_data = Object.assign({},contract_data_from_server,contract_data);
-        let {stage,stage_status,minted} = this.getProjectStage(merged_data);
 
-        //计算我现在还可以mint几个nft
-        let can_mint_count = 0
-        if (stage_status == 'enable') {
-            if (stage == 'in_whitelist') {
-                can_mint_count = merged_data['presale_per_wallet_count'] - minted;
-            }else if (stage =='in_public') {
-                can_mint_count = merged_data['sale_per_wallet_count'] - minted;
-            }
-        }
-
+        let can_mint_count = this.getCanMintCount(merged_data);
         let mcount = (can_mint_count > mint_count) ? mint_count : can_mint_count;
 
         let club_id = this.getClubId();
@@ -499,19 +493,9 @@ class ClubView extends React.Component {
 
 
         let merged_data = Object.assign({},contract_data_from_server,contract_data);
-        let {stage,stage_status,minted} = this.getProjectStage(merged_data);
 
         //计算我现在还可以mint几个nft
-        let can_mint_count = 0
-        if (stage_status == 'enable') {
-            if (stage == 'in_whitelist') {
-                can_mint_count = merged_data['presale_per_wallet_count'] - minted;
-                console.log('can_mint_count',can_mint_count)
-            }else if (stage =='in_public') {
-                can_mint_count = merged_data['sale_per_wallet_count'] - minted;
-            }
-        }
-
+        let can_mint_count = this.getCanMintCount(merged_data);
         let mcount = (can_mint_count > mint_count) ? mint_count : can_mint_count;
 
 
@@ -520,8 +504,9 @@ class ClubView extends React.Component {
             return;
         }
     
-        console.log('debug-mint,deploy_contract_address',deploy_contract_address);
-        
+        // console.log('debug-mint,deploy_contract_address',deploy_contract_address);
+        // console.log('debug-mint,mcount',mcount);
+
         if(!deploy_contract_address) {
             message.error('Contract address is not found');
             return;
@@ -811,6 +796,32 @@ class ClubView extends React.Component {
         }
     }
 
+    @autobind
+    getCanMintCount(merged_data) {
+        let {stage,stage_status,minted} = this.getProjectStage(merged_data);
+
+        let can_mint_count = 0
+        if (stage_status == 'enable') {
+            if (stage == 'in_whitelist') {
+                can_mint_count = merged_data['presale_per_wallet_count'] - minted;
+                console.log('can_mint_count',can_mint_count)
+            }else if (stage =='in_public') {
+                can_mint_count = merged_data['sale_per_wallet_count'] - minted;
+            }
+        }
+        return can_mint_count;
+    }
+
+    @autobind
+    setCanMintCount() {
+        const {contract_data_from_server,contract_data} = this.state;
+        let merged_data = Object.assign({},contract_data_from_server,contract_data);
+        let can_mint_count = this.getCanMintCount(merged_data);
+        this.setState({
+            'mint_count' : can_mint_count
+        })
+    }
+
     render() {
         const {t} = this.props.i18n;
         const {deploy_contract_address,is_fetching_contract_data,contract_data,contract_data_from_server,mint_count,is_fetching,is_paused} = this.state;
@@ -861,15 +872,7 @@ class ClubView extends React.Component {
 
 
         //计算我现在还可以mint几个nft
-        let can_mint_count = 0
-        if (stage_status == 'enable') {
-            if (stage == 'in_whitelist') {
-                can_mint_count = merged_data['presale_per_wallet_count'] - minted;
-                console.log('can_mint_count',can_mint_count)
-            }else if (stage =='in_public') {
-                can_mint_count = merged_data['sale_per_wallet_count'] - minted;
-            }
-        }
+        let can_mint_count = this.getCanMintCount(merged_data);
 
         let has_whitelist_stage = merged_data['presale_start_time'] > 0 && merged_data['presale_end_time'] > 1;
 

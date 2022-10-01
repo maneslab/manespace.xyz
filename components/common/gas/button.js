@@ -156,9 +156,9 @@ class GasButton extends React.Component {
             <button className='btn btn-ghost text-blue-500'>
                 <GasIcon className="icon-xs"/>
                 {
-                    (gas_data && gas_data.getIn(['data','average'])) 
+                    (gas_data && gas_data.getIn(['data','fast'])) 
                     ? <span className='ml-2 text-base'>
-                        {gas_data.getIn(['data','average']) / 10}
+                        {gas_data.getIn(['data','fast'])}
                     </span>
                     : null
                 }

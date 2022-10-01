@@ -5,6 +5,9 @@ import useTranslation from 'next-translate/useTranslation'
 import TwitterIcon  from 'public/img/social/default/twitter.svg';
 import InstagramIcon  from 'public/img/social/default/instagram.svg';
 import WebIcon  from 'public/img/social/default/web.svg';
+import DiscordIcon  from 'public/img/social/default/discord.svg';
+
+import {MailIcon} from '@heroicons/react/outline'
 
 export default function SortableItem({creator,club,id}) {
       
@@ -49,11 +52,20 @@ export default function SortableItem({creator,club,id}) {
                             : null
                         }
                         {
+                            (creator.get('discord'))
+                            ? <a href={creator.get('discord')} target="_blank"><DiscordIcon className="w-5" /></a>
+                            : null
+                        }
+                        {
                             (creator.get('link'))
                             ? <a href={link} target="_blank"><WebIcon className="w-5" /></a>
                             : null
                         }
-                        
+                        {
+                            (creator.get('email'))
+                            ? <a href={"mailto:"+creator.get('email')} target="_blank"><MailIcon className="w-6" /></a>
+                            : null
+                        }
                     </div>
                 </div>
                 <div className='text-left flex-grow px-4 g:p-4 text-gray-500'>

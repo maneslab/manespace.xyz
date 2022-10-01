@@ -829,3 +829,8 @@ input{outline:none;}
 .mobile-menu .mobile-menu-one .lang-btn.press-down {
     @apply bg-transparent shadow-none;
 }
+
+
+body .bf-container .public-DraftEditor-content {
+    word-break: break-word;
+}
