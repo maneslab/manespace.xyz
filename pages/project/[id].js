@@ -779,18 +779,18 @@ class ClubView extends React.Component {
                     <Countdown unixtime={merged_data['sale_end_time']} />
                 </div>
             </div>
-        }else if (now_unixtime > merged_data['presale_end_time']) {
+        }else if (now_unixtime > merged_data['sale_end_time']) {
             return <div className='w-1/2 box-one '>
                 <div className='lb'>{t('public sale start in')}</div>
                 <div className='ma flex justify-start items-center'>
-                    <Countdown unixtime={merged_data['presale_start_time']} />
+                    <Countdown unixtime={merged_data['sale_start_time']} />
                 </div>
             </div>
         }else {
             return <div className='w-1/2 box-one '>
                 <div className='lb'>{t('public sale start in')}</div>
                 <div className='ma flex justify-start items-center'>
-                    <Showtime unixtime={merged_data['presale_start_time']}  />
+                    <Showtime unixtime={merged_data['sale_start_time']}  />
                 </div>
             </div>
         }
