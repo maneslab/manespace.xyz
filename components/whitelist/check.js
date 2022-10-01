@@ -83,13 +83,13 @@ class CheckWhitelist extends React.Component {
                     ? <div className='mt-4 text-bold text-base capitalize'>
                         {
                             (result[address])
-                            ? <span className='text-green-500 flex justify-start items-center '>
+                            ? <span className='text-green-500 flex justify-start items-center normal-case'>
                                 <EmojiHappyIcon className="icon-sm mr-2" />
-                                {t('this address is in whitelist')}
+                                {t('this address is in allowlist')}
                             </span>
-                            : <span className='text-gray-700 flex justify-start items-center'>
+                            : <span className='text-gray-700 flex justify-start items-center normal-case'>
                                 <EmojiSadIcon className="icon-sm mr-2" />
-                                {t('this address is not in whitelist')}
+                                {t('this address is not in allowlist')}
                             </span>
                         }
                     </div>

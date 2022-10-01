@@ -12,6 +12,13 @@ export default function SortableItem({creator,club,id}) {
     const {t} = useTranslation('common');
     let is_empty = (!creator['name'] && !creator['title']);
 
+    let link = creator.get('link');
+
+    //如果link不是https://开头,则自动加上https://
+    if (link && link.indexOf('https://') !== 0) {
+        link = 'https://'+link;
+    }
+
     return (
         <div className={classNames('z-10')}  >
             <div className='flex justify-between'>
@@ -43,7 +50,7 @@ export default function SortableItem({creator,club,id}) {
                         }
                         {
                             (creator.get('link'))
-                            ? <a href={creator.get('link')} target="_blank"><WebIcon className="w-5" /></a>
+                            ? <a href={link} target="_blank"><WebIcon className="w-5" /></a>
                             : null
                         }
                         

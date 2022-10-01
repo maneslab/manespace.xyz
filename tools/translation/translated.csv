@@ -5,16 +5,16 @@ back,back,返回
 next up,next up,即将开始
 more upcoming drops,more upcoming drops,更多即将开始的项目
 all,all,所有
-whitelist,whitelist,白名单
+allowlist,allowlist,白名单
 are you sure you want to delete this item?,are you sure you want to delete this item?,你确定要删除这个项目吗？
 can not less then {{count}} character,can not less then {{count}} character,不能少于{{count}}字符
 no more than {{count}} character,no more than {{count}} character,不能多于{{count}}个字符
-WL presale start,WL presale start,白名单预售开始
-WL mint price,WL mint price,白名单mint价格
+presale start,presale start,白名单预售开始
+presale price,presale price,白名单mint价格
 public sale start,public sale start,公开销售开始
 public price,public price,公开价格
 minted,minted,已Mint
-max supply,max supply,最大供应量
+max supply,MAX. Supply,最大供应量
 no any project yet,no any project yet,尚无任何项目
 creating a community is the first step to riches,creating a community is the first step to riches,创建一个社区是致富的第一步
 add club,add club,添加俱乐部
@@ -23,21 +23,21 @@ no upcoming NFT drops,no upcoming NFT drops,没有即将到来的NFT下降
 setting,setting,设置
 generate NFT,generate NFT,产生NFT
 next,next,下一个
-whitelist presale,whitelist presale,白名单预售
+allowlist presale,allowlist presale,白名单预售
 finished,finished,完成
-whitelist presale end in,whitelist presale end in,白名单预售结束于
-whitelist presale start in,whitelist presale start in,白名单预售开始于
+allowlist presale end in,allowlist presale end in,白名单预售结束于
+allowlist presale start in,allowlist presale start in,白名单预售开始于
 public sale,public sale,公开销售
 public sale end in,public sale end in,公开销售结束
 public sale start in,public sale start in,公开销售开始于
 refundable,refundable,可退款
-whitelist presale price,whitelist presale price,白名单预售价格
+allowlist presale price,allowlist presale price,白名单预售价格
 total supply,total supply,总供应量
 public sale price,public sale price,公售价格
 public sale starts in,public sale starts in,公开销售开始于
 not set yet,not set yet,尚未确定
 mint price,mint price,铸币价格
-whitelist mint begin,whitelist mint begin,白名单上的MINT开始
+allowlist mint begin,allowlist mint begin,白名单上的MINT开始
 public mint begin,public mint begin,公众的MIN T开始
 upload image,upload image,上传图片
 generate-nft-header-intro,generate-nft-header-intro,生成-nft-标题-介绍
@@ -70,26 +70,26 @@ refund NFT success,refund NFT success,退款NFT成功
 refunding,refunding,退款
 refund tx sent,refund tx sent,已发送退款Tx
 refund tx successful,refund tx successful,退款成功
-this address is in whitelist,this address is in whitelist,此地址在白名单中
-this address is not in whitelist,this address is not in whitelist,该地址不在白名单中
+this address is in allowlist,This address is in allowlist,此地址在白名单中
+this address is not in allowlist,This address is not in allowlist,该地址不在白名单中
 address,address,地址
 eth wallet address,eth wallet address,eth钱包地址
 check,check,检查
 not connect wallet yet,not connect wallet yet,还没有连接钱包
-you are in whitelist,you are in whitelist,你在白名单中
-you are not in whitelist,you are not in whitelist,你不在白名单中
+you are in allowlist,You are in allowlist,你在白名单中
+you are not in allowlist,You are not in allowlist,你不在白名单中
 add to google calendar,add to google calendar,添加到谷歌日历
 live now,live now,正在展示
 minted / total supply,minted / total supply,已铸币/总供应量
-whitelist supply,whitelist supply,白名单供应
+allowlist supply,allowlist supply,白名单供应
 the maximum number of Mint has been reached,the maximum number of Mint has been reached,已达到MINT的最大数量
-whitelist check,whitelist check,白名单检查
+allowlist check,allowlist check,白名单检查
 basic,basic,基本
 collection size,collection size,NFT合集数量
 contract address,contract address,合约地址
 network,network,ETH网络
 reveal in,reveal in,开图时间
-whitelist spot,whitelist spot,白名单现货
+allowlist spot,allowlist spot,白名单现货
 allowlist mint time,allowlist mint time window,白名单预售时间窗口
 public mint time,Public Sale Time Window,公售时间窗口
 (no end time),(no end time),(没有结束时间)
@@ -133,3 +133,5 @@ Refundable Rate,Refundable Rate,退款比例
 About Refund,About Refund,关于退款
 refund-intro,"Refund is an optional function enabled by the creator. You may return the minted NFTs to the creator and get the funds back, depends on the refundable period and rate.",退款是有创作者开启的可选功能。你可在退款期限之内将已铸造的NFT退还给创作者，返还资金视退款比例而定。
 Maximal Mint Limit Pre Wallet Reached,Maximal Mint Limit Pre Wallet Reached,已达到单个地址铸造上限
+free mint,free mint,免费铸造
+connect wallet to check eligibility,connect wallet to check eligibility,请连接钱包已查看白名单状态

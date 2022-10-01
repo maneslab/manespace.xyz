@@ -10,6 +10,7 @@ import PageWrapper from 'components/pagewrapper'
 
 import withTranslate from 'hocs/translate';
 import CountBtn from 'components/common/count_btn'
+import Price from 'components/misc/price'
 
 import EditorView from 'components/common/editorview'
 import Loading from 'components/common/loading'
@@ -316,7 +317,7 @@ class ClubView extends React.Component {
         const {t} =  this.props.i18n;
         switch(time_type) {
             case 'whitelist':
-                return club.get('name') + ' ' + t('whitelist mint begin');
+                return club.get('name') + ' ' + t('allowlist mint begin');
             case 'public':
                 return club.get('name') + ' ' + t('public mint begin');
             default:
@@ -723,7 +724,7 @@ class ClubView extends React.Component {
 
         if (now_unixtime > merged_data['presale_end_time']) {
             return <div className='w-1/2 box-one '>
-                <div className='lb'>{t('whitelist presale')}</div>
+                <div className='lb'>{t('allowlist presale')}</div>
                 <div className='ma flex justify-start items-center'>
                     {t('finished')}
                 </div>
@@ -733,14 +734,14 @@ class ClubView extends React.Component {
 
         if (now_unixtime > merged_data['presale_start_time']) {
             return  <div className='w-1/2 box-one '>
-                <div className='lb'>{t('whitelist presale end in')}</div>
+                <div className='lb'>{t('allowlist presale end in')}</div>
                 <div className='ma flex justify-start items-center'>
                     <Countdown unixtime={merged_data['presale_end_time']} />
                 </div>
             </div>
         }else {
             return  <div className='w-1/2 box-one '>
-                <div className='lb'>{t('whitelist presale start in')}</div>
+                <div className='lb'>{t('allowlist presale start in')}</div>
                 <div className='ma flex justify-start items-center'>
                     <Countdown unixtime={merged_data['presale_start_time']} />
                     <span className='ml-4 flex-item-center'>
@@ -816,9 +817,8 @@ class ClubView extends React.Component {
         const {club,wallet,network,club_data} = this.props;
 
         // console.log('is_paused',is_paused)
-
-        console.log('contract_data',contract_data)
-        console.log('debug-club',club.toJS())
+        // console.log('contract_data',contract_data)
+        // console.log('debug-club',club.toJS())
 
         let club_id = this.getClubId();
 
@@ -917,14 +917,11 @@ class ClubView extends React.Component {
                                         }
                                         
                                         <div className='w-1/2 box-one'>
-                                            <div className='lb'>{t('whitelist presale price')}</div>
+                                            <div className='lb'>{t('allowlist presale price')}</div>
                                             <div className='ma'>
                                                 {
                                                     (contract.get('wl_price'))
-                                                    ? <>
-                                                        <span>{removeSuffixZero(contract.get('wl_price'))}</span>
-                                                        <span className='text-base ml-2'>ETH</span>
-                                                    </>
+                                                    ? <Price price={contract.get('wl_price')} />
                                                     : t('not set yet')
                                                 }
                                             </div>
@@ -945,7 +942,7 @@ class ClubView extends React.Component {
                                         </div>
                                     </div>
                                     <div className='w-1/2 box-one '>
-                                        <div className='lb'>{t('whitelist supply')}</div>
+                                        <div className='lb'>{t('allowlist supply')}</div>
                                         <div className='ma flex justify-start items-center'>
                                             {merged_data['presale_max_supply']}
                                         </div>
@@ -962,16 +959,7 @@ class ClubView extends React.Component {
                                             <div className='ma'>
                                                 {
                                                     (merged_data && merged_data.hasOwnProperty('sale_price'))
-                                                    ? <>
-                                                        {
-                                                            (merged_data['sale_price'] == 0) 
-                                                            ? <span>{'Free Mint'}</span>
-                                                            : <>
-                                                                <span>{removeSuffixZero(merged_data['sale_price'])}</span>
-                                                                <span className='text-base ml-2'>ETH</span>
-                                                            </>
-                                                        }
-                                                    </>
+                                                    ? <Price price={merged_data['sale_price']} />
                                                     : 'not set yet'
                                                 }
                                             </div>

@@ -6,6 +6,7 @@ import GalleryBlank from 'components/gallery/blank';
 // import Countdown from 'react-countdown';
 import Countdown from 'components/common/countdown';
 import Cal from 'components/time/cal'
+import Price from 'components/misc/price'
 
 import {CheckCircleIcon} from '@heroicons/react/outline'
 // import { t } from 'helper/translate';
@@ -14,6 +15,7 @@ import withTranslate from 'hocs/translate';
 import config from 'helper/config'
 import {removeSuffixZero} from 'helper/number'
 import { getUnixtime,formatOverflowUnixtime } from 'helper/time';
+import {showPrice}  from 'helper/misc'
 
 import RefundIcon from 'public/img/icons/refund.svg'
 import manenft from 'helper/web3/manenft';
@@ -40,17 +42,22 @@ class clubOne extends React.Component {
             return;
         }
 
-        let manenft_instance = new manenft(contract_address,this.props.i18n.t);
-        let total_supply = await manenft_instance.contract.totalSupply();
-        if (total_supply) {
-            total_supply = Number(total_supply.toString());
-        }else {
-            total_supply = 0;
-        }
+        try {
+            let manenft_instance = new manenft(contract_address,this.props.i18n.t);
+            let total_supply = await manenft_instance.contract.totalSupply();
+            if (total_supply) {
+                total_supply = Number(total_supply.toString());
+            }else {
+                total_supply = 0;
+            }
 
-        this.setState({
-            'total_supply' :total_supply
-        })
+            this.setState({
+                'total_supply' :total_supply
+            })
+
+        }catch(e) {
+            console.log(e);
+        }
 
     }
 
@@ -156,7 +163,7 @@ class clubOne extends React.Component {
 
     render() {
 
-        const { club } = this.props;
+        const { club,wallet } = this.props;
         const {t} = this.props.i18n;
         const {total_supply} =this.state;
 
@@ -214,10 +221,7 @@ class clubOne extends React.Component {
                                     <div className='ma'>
                                         {
                                             (contract.get('wl_price'))
-                                            ? <>
-                                                <span>{removeSuffixZero(contract.get('wl_price'))}</span>
-                                                <span className='text-base ml-2'>ETH</span>
-                                            </>
+                                            ? <Price price={contract.get('wl_price')}/>
                                             : t('not set yet')
                                         }
                                     </div>
@@ -238,7 +242,11 @@ class clubOne extends React.Component {
                                         {total_supply} / {contract.get('wl_max_supply')}
                                     </div>
                                     : <div className='ma flex justify-start items-center'>
-                                        {total_supply}
+                                        {
+                                            (wallet && wallet.address) 
+                                            ? <span>{total_supply}</span>
+                                            : '(connect wallet)'
+                                        }
                                     </div>
                                 }
                                 
@@ -262,10 +270,7 @@ class clubOne extends React.Component {
                                     <div className='ma'>
                                         {
                                             (contract.get('pb_price'))
-                                            ? <>
-                                                <span>{removeSuffixZero(contract.get('pb_price'))}</span>
-                                                <span className='text-base ml-2'>ETH</span>
-                                            </>
+                                            ? <Price price={contract.get('pb_price')}/>
                                             : 'not set yet'
                                         }
                                     </div>

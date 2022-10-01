@@ -74,8 +74,8 @@ class CheckWhitelist extends React.Component {
         const {t} = this.props.i18n;
 
         if (!wallet) {
-            return <div className='py-4 text-center flex items-center justify-center text-gray-500'>
-                {t('not connect wallet yet')}
+            return <div className='py-4 text-center flex items-center justify-center text-gray-500 normal-case'>
+                {t('connect wallet to check eligibility')}
             </div>
         }
 
@@ -92,13 +92,13 @@ class CheckWhitelist extends React.Component {
                     <div className="capitalize">
                     {
                         (result)
-                        ? <span className='text-green-500 flex justify-start items-center font-bold '>
+                        ? <span className='text-green-500 flex justify-start items-center font-bold normal-case'>
                             <EmojiHappyIcon className="icon-sm mr-2" />
-                            {t('you are in whitelist')}
+                            {t('you are in allowlist')}
                         </span>
-                        : <span className='text-gray-700 flex justify-start items-center font-bold'>
+                        : <span className='text-gray-700 flex justify-start items-center font-bold normal-case'>
                             <EmojiSadIcon className="icon-sm mr-2" />
-                            {t('you are not in whitelist')}
+                            {t('you are not in allowlist')}
                         </span>
                     }
                     </div>

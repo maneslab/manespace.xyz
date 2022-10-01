@@ -18,7 +18,9 @@ import {withTranslate} from 'hocs/index'
 import { Carousel } from 'react-responsive-carousel';
 import { EmojiSadIcon } from '@heroicons/react/outline';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import withWallet from 'hocs/wallet';
 
+@withWallet
 @withTranslate
 class RecommendClubList extends React.Component {
 
@@ -30,7 +32,7 @@ class RecommendClubList extends React.Component {
 
     render() {
 
-        let {list_data,entities} = this.props;
+        let {list_data,entities,wallet} = this.props;
         const {t} = this.props.i18n;
 
         let list_data_one =  this.props.getListData(list_data)
@@ -56,7 +58,7 @@ class RecommendClubList extends React.Component {
             {
                 list_rows.map((one)=>{
                     return <div className='px-2 lg:px-0' key={one.get('id')} >
-                        <ClubTwo club={one} />
+                        <ClubTwo club={one} wallet={wallet}/>
                     </div>
                 })
             }

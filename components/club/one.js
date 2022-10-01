@@ -66,13 +66,13 @@ class clubOne extends React.Component {
                         (contract.getIn(['wl_enable']))
                         ? <div className='flex justify-between items-center club-one-item'>
                             <div className='w-3/5'>
-                                <label>{t('WL presale start')}</label>
+                                <label className="capitalize">{t('presale start')}</label>
                                 <div className='v'>
                                     <Showtime unixtime={contract.getIn(['wl_start_time'])} timezone={false}/>
                                 </div>
                             </div>
                             <div className='w-2/5'>
-                                <label>{t('WL mint price')}</label>
+                                <label className="capitalize">{t('presale price')}</label>
                                 <div className='v'>
                                     {removeSuffixZero(contract.getIn(['wl_price']))} ETH
                                 </div>
@@ -85,13 +85,13 @@ class clubOne extends React.Component {
                         (contract.getIn(['pb_enable']))
                         ? <div className='flex justify-between items-center club-one-item'>
                             <div className='w-3/5'>
-                                <label>{t('public sale start')}</label>
+                                <label className="capitalize">{t('public sale start')}</label>
                                 <div className='v'>
                                     <Showtime unixtime={contract.getIn(['pb_start_time'])} timezone={false}/>
                                 </div>
                             </div>
                             <div className='w-2/5'>
-                                <label>{t('public price')}</label>
+                                <label className="capitalize">{t('public price')}</label>
                                 <div className='v'>
                                     {removeSuffixZero(contract.getIn(['pb_price']))} ETH
                                 </div>

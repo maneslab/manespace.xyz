@@ -1,6 +1,7 @@
 
 import getConfig from 'next/config'
 import Cookies from 'universal-cookie';
+import {removeSuffixZero} from 'helper/number'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -129,4 +130,12 @@ export const showTime = (timestamp) => {
     };  
 
     return d.toLocaleString("en-us", options);
+}
+
+export const showPrice = (price) => {
+    if (price > 0) {
+        return removeSuffixZero(price)
+    }else {
+        return 'free mint'
+    }
 }
