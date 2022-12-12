@@ -75,7 +75,9 @@ class PageWrapper extends React.Component {
                             <div className='flex justify-start items-center'>
 
                                 <Link href="/">
+                                    <div>
                                     <Logo className="h-10" />
+                                    </div>
                                 </Link>
 
                                 <div className='ml-4 hidden lg:flex lg:items-center'>

@@ -6,7 +6,7 @@
     
     "WEBSITE"           : "http://127.0.0.1:3000",
     
-    "API"              : "https://api.manestudio.xyz",
+    "API"              : "http://dev.api.manestudio.com",
 
     "META"              : "http://dev.api.manestudio.com",
 
@@ -20,10 +20,16 @@
 
     "NEXTID_ENV"        : "develop",
 
-    "ETH_NETWORK"       :   "mainnet",
+    "ETH_NETWORK"       :   "goerli",
 
     "MANE_CONTRACT"     : {
-        "rinkeby"       :   "0x2b87F7B6CA3664Efa9a96930B2A5DcF1a22489DA",
+        "goerli"        :   "0xa1e8b24ebee5d1ddd8e5cd4085deddb45f9329b2",
         "homestead"     :   "0x5Baf93D823328EdDca6C3020B9105363A5b26B1A"
+    },
+
+    "MANE_CONTRACT_V2"  : {
+        "homestead"     :   "0x5Baf93D823328EdDca6C3020B9105363A5b26B1A",
+        "goerli"        :   "0xa1e8b24ebee5d1ddd8e5cd4085deddb45f9329b2",
+        "begin_club_id" :   100
     }
 }

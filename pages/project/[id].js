@@ -46,6 +46,7 @@ import ConnectWalletButton from 'components/wallet/connect_button';
 import { setNftBalance } from 'redux/reducer/nft';
 
 import Error404 from 'pages/404'
+import { getParentContractVersion } from 'helper/web3/tools';
 
 @withTranslate
 @withClubView
@@ -74,6 +75,7 @@ class ClubView extends React.Component {
         if (this.props.club) {
             ///把club里面对应的contract数据放入state中
             let contract = this.props.club.get('contract_info') ? this.props.club.get('contract_info') : this.props.club.get('contract')
+            console.log('debug-contract',this.props.club.toJS());
             this.setContractDataInServer(contract);
         }
     }
@@ -109,10 +111,21 @@ class ClubView extends React.Component {
     @autobind
     setManeNftInstance() {
         const {deploy_contract_address} = this.state;
-        this.manenft = new manenft(deploy_contract_address,this.props.i18n.t);
+        const {club,network} = this.props;
+        const {t} = this.props.i18n;
+
+        if (!deploy_contract_address) {
+            return null;
+        }
+
+        let contract_version = 'v2';
+        if (club) {
+            let club_id = club.get('id');
+            contract_version = getParentContractVersion(club_id);
+        }
+
+        this.manenft = new manenft(t,network,deploy_contract_address,contract_version);
     }
-
-
 
     @autobind
     async updateBalanceOf(){
@@ -133,12 +146,14 @@ class ClubView extends React.Component {
         let presale_mint_count = await this.manenft.contract.presaleMintCountByAddress(address);
         let sale_mint_count = await this.manenft.contract.saleMintCountByAddress(address);
 
+
+
         this.props.setNftBalance({
             'address'            : this.props.wallet.address,
             'contract_address'   : this.state.deploy_contract_address,
             'balance'            : Number(result.toString()),
             'presale_mint_count' : Number(presale_mint_count.toString()),
-            'sale_mint_count'    : Number(sale_mint_count.toString())
+            'sale_mint_count'    : Number(sale_mint_count.toString()),
         })
     }
 
@@ -172,14 +187,14 @@ class ClubView extends React.Component {
     @autobind
     async fetchContractDataInBlockchain() {
 
-        console.log('debug-fetchContractDataInBlockchain')
+        console.group('debug-fetchContractDataInBlockchain')
 
-        const {wallet} = this.props;
+        const {wallet,club_id} = this.props;
         if (!wallet) {
             return;
         }
 
-        this.mane = new mane(this.props.i18n.t,this.props.network);
+        this.mane = new mane(this.props.i18n.t,this.props.network,this.props.club_id);
 
         ///一开始需要设置is_fetching
         this.setState({
@@ -199,6 +214,7 @@ class ClubView extends React.Component {
 
             //设置基础的manenft的instance
             this.setManeNftInstance()
+            console.log('设置NFT实例完成',this.manenft);
 
             ///开始通过方法去获得合约的数据
             this.setState({
@@ -206,7 +222,7 @@ class ClubView extends React.Component {
                 'is_fetched_contract_data'  : false
             })
 
-
+            console.log('准备尝试拿到合约内数据');
             ///获得contract数据
             let contract_data = await this.manenft.contract.getAll();
 
@@ -224,6 +240,20 @@ class ClubView extends React.Component {
             // console.log('debug01,formated_data',formated_data)
             formated_data['is_force_refundable'] = (isForceRefundable == 1) ? true : false;
             formated_data['total_supply'] = total_supply;
+
+
+            //把is_opensea_enforcement写入合约数据
+            let is_opensea_enforcement = 0;
+            console.log('准备获得opensea的状态',this.manenft.contract.openseaEnforcement );
+
+            if (typeof this.manenft.contract.openseaEnforcement == 'function') {
+                console.log('当前合约是新的合约');
+                is_opensea_enforcement = await this.manenft.contract.openseaEnforcement();
+                console.log('is_opensea_enforcement',is_opensea_enforcement);
+                is_opensea_enforcement = is_opensea_enforcement.toNumber();
+            }
+            formated_data['is_opensea_enforcement'] = is_opensea_enforcement
+    
 
             this.setState({
                 'contract_data'             : formated_data,
@@ -247,10 +277,13 @@ class ClubView extends React.Component {
         this.setState({
             'is_fetching' : false
         })
+
+        console.groupEnd();
     }
 
 
     deformatContractDataFromServerContract(contract) {
+        // console.log('deformatContractDataFromServerContract',contract);
         let contract_data_formatted = {
             'reserve_count'         : Number(contract.get('reserve_count')),
             'max_supply'            : Number(contract.get('max_supply')),
@@ -280,10 +313,16 @@ class ClubView extends React.Component {
             'sale_end_time'         :   Number(contract_data[7].toString()), 
             // 'sale_end_time'         :  1665602611,
             'presale_price'         :   Number(contract_data[8].toString()),
-            'sale_price'            :   Number(ethers.utils.formatEther(contract_data[9].toString())),
+            'sale_price'            :   Number(contract_data[9].toString()),
             // 'presale_per_wallet_count'  :   Number(contract_data[10].toString()),
             // 'sale_per_wallet_count'     :   Number(contract_data[11].toString()),
         };
+
+        //把sale_price和presale_price改为ethers.BigNumber的表达方式
+        //需要注意sale_price和presale_price有可能是用科学计数法表示的数字,因此要先把他们转换为非科学计数法的string表达,最多的小数是18位
+        contract_data_formatted['sale_price'] = ethers.utils.parseUnits(contract_data_formatted['sale_price'].toFixed(18).toString(),'wei');
+        contract_data_formatted['presale_price'] = ethers.utils.parseUnits(contract_data_formatted['presale_price'].toFixed(18).toString(),'wei');
+
         return contract_data_formatted
     }
     
@@ -518,18 +557,24 @@ class ClubView extends React.Component {
         }
 
 
-        const mint_price_in_wei = ethers.utils.parseEther(String(contract_data['sale_price']));
+        console.log('NFT公售价格',contract_data['sale_price']);
+        const mint_price_in_wei = contract_data['sale_price'];
+        
+        console.log('NFT公售价格转换wei',mint_price_in_wei);
+
         // const deadline = 0
 
         let empty_bytes_32 = ethers.utils.formatBytes32String("")
         const total_mint_value = mint_price_in_wei.mul(mcount)
 
     
+        console.log('total_mint_value',total_mint_value.toString());
+
         let gas_estimate = await  this.manenft.estimateGasMint(wallet.address,mint_price_in_wei,mcount,0,empty_bytes_32,empty_bytes_32,0);
 
         let params_options = {
-            'gasLimit': gas_estimate['gasLimit'].toString(),
-            'value' : total_mint_value
+            'gasLimit'  : gas_estimate['gasLimit'].toString(),
+            'value'     : total_mint_value
         }
 
         // let params_options = {
@@ -890,7 +935,7 @@ class ClubView extends React.Component {
         // console.log('contract_data',contract_data)
         console.log('stage_status',stage_status)
         console.log('can_mint_count',can_mint_count,mint_count);
-        console.log('merged_data',merged_data)
+        console.log('debug,merged_data',merged_data)
 
         return <PageWrapper>
             <Head>
@@ -1117,6 +1162,8 @@ class ClubView extends React.Component {
                                             : null
                                         }
 
+                                        
+
                                     </tbody>
                                 </table>
                                 {
@@ -1233,7 +1280,7 @@ class ClubView extends React.Component {
                                         <tbody>
                                             {
                                                 (contract.get('revenue_share').map((one,index) => {
-                                                    return <tr>
+                                                    return <tr key={'index-'+index}>
                                                         <td className='lttd'>
                                                             {one.get('address')}
                                                         </td>
@@ -1249,6 +1296,20 @@ class ClubView extends React.Component {
                                     : null
                                 }
 
+                                <div className='flex justify-start items-center'>
+                                    <div className='mr-4'>
+                                        {t('Opensea Creator Fee Support')}
+                                    </div>
+                                    <div>
+                                       
+                                        {
+                                            (merged_data['is_opensea_enforcement'])
+                                            ? <span className='badge badge-success'>{t('supported')}</span>
+                                            : <span className='badge'>{t('not support')}</span>
+                                        }
+                                    </div>
+                                </div>
+
 
                             </div>
                             <div className="col-span-6">
@@ -1263,12 +1324,14 @@ class ClubView extends React.Component {
                         ? <div className='p-6 pt-4 d-bg-c-1 mb-8'>
                             <div className='block-title'>{t('creator')}</div>
                             <div className='grid lg:grid-cols-2 gap-16'>
-                                {club.get('creator').map((one,index) => <CreatorOne 
-                                    key={one.id} 
-                                    id={index}
-                                    club={club}
-                                    creator={one}
-                                />)}
+                                {club.get('creator').map((one,index) => {
+                                    return <CreatorOne 
+                                        key={one.get('id')} 
+                                        id={index}
+                                        club={club}
+                                        creator={one}
+                                    />
+                                })}
                             </div>
                         </div>
                         : null
@@ -1280,7 +1343,7 @@ class ClubView extends React.Component {
                             <div className='block-title'>{t('roadmap')}</div>
                             <div>
                                 {club.get('roadmap').map((one,index) => <RoadmapOne 
-                                    key={one.id} 
+                                    key={one.get('id')} 
                                     id={index}
                                     roadmap={one}
                                 />)}

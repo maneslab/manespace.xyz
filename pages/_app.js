@@ -30,10 +30,11 @@ import { publicProvider } from 'wagmi/providers/public';
 //rainbowkit导入结束
 
 let network = config.get('ETH_NETWORK');
+let alchemy_id = config.get('ALCHEMY_ID');
 
 let net_arr = [];
-if (network == 'kovan') {
-    net_arr.push(chain.kovan)
+if (network == 'goerli') {
+    net_arr.push(chain.goerli)
 }else if (network == 'mainnet') {
     net_arr.push(chain.mainnet)
 }else if (network == 'rinkeby') {
@@ -43,7 +44,7 @@ if (network == 'kovan') {
 const { chains, provider } = configureChains(
     net_arr,
     [
-        alchemyProvider({ alchemyId: config.get('ALCHEMY_ID') }),
+        alchemyProvider({ alchemyId: alchemy_id}),
         publicProvider()
     ]
 );

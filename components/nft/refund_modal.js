@@ -11,6 +11,7 @@ import autobind from 'autobind-decorator';
 import { ExclamationIcon } from '@heroicons/react/outline';
 import message from 'components/common/message'
 import manenft from 'helper/web3/manenft';
+import config from 'helper/config'
 
 @withTranslate
 class RefundModal extends React.Component {
@@ -38,9 +39,8 @@ class RefundModal extends React.Component {
             'is_refunding' : true
         });
 
-
-        let manenft_interface = new manenft(contract_address,t);
-        // manenft_interface.contract.refund(nft_id)
+        let network = config.get('ETH_NETWORK');
+        let manenft_interface = new manenft(t,network,contract_address,'v2');
 
         var that = this;
 

@@ -10,8 +10,6 @@ import {removeValueEmpty,defaultListData} from 'helper/common'
 import {withPageList,withTranslate} from 'hocs/index'
 
 import {loadNftList} from 'redux/reducer/nft'
-import {denormalize} from 'normalizr'
-import {nftListSchema} from 'redux/schema/index'
 import Pager  from 'components/common/pager';
 
 @withTranslate
@@ -20,22 +18,7 @@ class NftList extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            total : 0
         }
-        this.manenft = null;
-    }
-
-    componentDidMount() {
-        // this.getTotalBalance();
-    }
-
-    async getTotalBalance() {
-        this.manenft = new manenft();
-        let total = await this.manenft.contract.totalSupply();
-        console.log('total',total);
-        this.setState({
-            'total' : Number(total.toString())
-        })
     }
  
     render() {

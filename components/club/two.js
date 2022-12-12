@@ -3,22 +3,19 @@ import autobind from 'autobind-decorator';
 
 import Link from 'next/link'
 import GalleryBlank from 'components/gallery/blank';
-// import Countdown from 'react-countdown';
 import Countdown from 'components/common/countdown';
 import Cal from 'components/time/cal'
 import Price from 'components/misc/price'
 
 import {CheckCircleIcon} from '@heroicons/react/outline'
-// import { t } from 'helper/translate';
 import Showtime from 'components/time/showtime';
 import withTranslate from 'hocs/translate';
 import config from 'helper/config'
-import {removeSuffixZero} from 'helper/number'
-import { getUnixtime,formatOverflowUnixtime } from 'helper/time';
-import {showPrice}  from 'helper/misc'
+import { getUnixtime } from 'helper/time';
 
 import RefundIcon from 'public/img/icons/refund.svg'
 import manenft from 'helper/web3/manenft';
+import { getParentContractVersion } from 'helper/web3/tools';
 
 @withTranslate
 class clubOne extends React.Component {
@@ -37,13 +34,18 @@ class clubOne extends React.Component {
     @autobind
     async getContractData() {
         const {club} = this.props;
+        const {t} = this.props.i18n;
+        const newwork = config.get('ETH_NETWORK');
+        const version = getParentContractVersion(club.get('id'));
+
         let contract_address = club.get('contract_address');
         if (!contract_address) {
             return;
         }
 
         try {
-            let manenft_instance = new manenft(contract_address,this.props.i18n.t);
+            console.log('debug05,在club one中获得数据');
+            let manenft_instance = new manenft(t,newwork,contract_address,version);
             let total_supply = await manenft_instance.contract.totalSupply();
             if (total_supply) {
                 total_supply = Number(total_supply.toString());

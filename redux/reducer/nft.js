@@ -6,6 +6,7 @@ import { nftListSchema ,nftSchema } from 'redux/schema/index'
 import manenft  from 'helper/web3/manenft';
 // import { object } from 'yup';
 import {createAction} from 'helper/common'
+import config from 'helper/config'
 
 // function formatNftOne(one) {
 //     return {
@@ -54,7 +55,7 @@ export function loadNftList(condition) {
         callAPI: () => {
 
             console.log('debug05,发起nftlist请求:',condition.address,condition.limit,condition.offset,condition.contract_address);
-            let manenft_instance = new manenft(condition.contract_address);
+            let manenft_instance = new manenft(null,config.get('ETH_NETWORK'),condition.contract_address,'v2');
             return manenft_instance.contract.getTokenIDsByHolder(condition.address,condition.offset,condition.limit)
         },
 
