@@ -196,12 +196,16 @@ class ClubView extends React.Component {
 
         console.group('debug-fetchContractDataInBlockchain')
 
-        const {wallet,club_id} = this.props;
+        const {wallet,club} = this.props;
         if (!wallet) {
             return;
         }
 
-        this.mane = new mane(this.props.i18n.t,this.props.network,this.props.club_id);
+        if (!club) {
+            return;
+        }
+
+        this.mane = new mane(this.props.i18n.t,this.props.network,this.props.club.get('id'));
 
         ///一开始需要设置is_fetching
         this.setState({
@@ -675,6 +679,10 @@ class ClubView extends React.Component {
 
     @autobind
     getProjectStage(merged_data) {
+
+
+        console.group('debug-stage');
+
         const {club,wallet} = this.props;
         const {deploy_contract_address,is_paused} = this.state;
         let now_unixtime = getUnixtime();
@@ -751,6 +759,8 @@ class ClubView extends React.Component {
                     
             }
         }
+
+        console.groupEnd();
 
         return {
             'stage'         : stage,
@@ -967,6 +977,9 @@ class ClubView extends React.Component {
         console.log('can_mint_count',can_mint_count,mint_count);
         console.log('debug,merged_data',merged_data)
 
+        console.log('debug_contract_data',contract_data);
+
+
         return <PageWrapper>
             <Head>
                 <title>{'Drop details'}</title>
@@ -1012,7 +1025,7 @@ class ClubView extends React.Component {
                                         <div className='lb'>{t('minted / total supply')}</div>
                                         <div className='ma flex justify-start items-center'>
                                             <span className='mr-1'>{
-                                                (contract_data['total_supply'])
+                                                (wallet && wallet.address)
                                                 ? contract_data['total_supply']
                                                 : '(please connect wallet)'
                                             }</span>
