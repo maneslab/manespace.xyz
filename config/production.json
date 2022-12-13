@@ -28,9 +28,9 @@
     },
 
     "MANE_CONTRACT_V2"  : {
-        "homestead"     :   "0x5Baf93D823328EdDca6C3020B9105363A5b26B1A",
-        "goerli"        :   "0xa1e8b24ebee5d1ddd8e5cd4085deddb45f9329b2",
-        "begin_club_id" :   100
+        "homestead"     :   "0x82bde11f8E556C8bBfaff7267B181674F4eFe188",
+        "goerli"        :   "0x9927a443105d01743B1F74f233E16cDf839e282b",
+        "begin_club_id" :   269
     }
     
 }

@@ -2,6 +2,7 @@ import {  ethers } from "ethers";
 import contract from "helper/web3/contract";
 import manenft_v1_abi from 'helper/web3/abi/manenft_v1' 
 import manenft_v2_abi from 'helper/web3/abi/manenft_v2' 
+import {getAmountFromValueAndDecimals} from 'helper/web3/number'
 
 export default class manenft extends contract{
 
@@ -37,7 +38,7 @@ export default class manenft extends contract{
 
     async estimateGasMint(...params) {
 
-        console.group('estimateGasMint');
+        // console.group('estimateGasMint');
 
         console.log('estimateGasMint调度的请求是：',params);
 
@@ -48,7 +49,7 @@ export default class manenft extends contract{
         let gasPrice = await this.provider.getGasPrice()
         console.log('estimateGasDepositToken得到的gasLimit是：',gasPrice);
 
-        console.endGroup();
+        // console.endGroup();
         let gasFee = gasLimit.mul(gasPrice);
         return {
             gasLimit : gasLimit,

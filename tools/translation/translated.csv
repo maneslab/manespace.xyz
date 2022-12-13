@@ -135,3 +135,10 @@ refund-intro,"Refund is an optional function enabled by the creator. You may ret
 Maximal Mint Limit Pre Wallet Reached,Maximal Mint Limit Pre Wallet Reached,已达到单个地址铸造上限
 free mint,free mint,免费铸造
 connect wallet to check eligibility,connect wallet to check eligibility,请连接钱包已查看白名单状态
+whitelist mint begin,whitelist mint begin,白名单预售开始时间
+you are in whitelist,you are in whitelist,你在白名单中
+you are not in whitelist,you are not in whitelist,你不在白名单中
+Opensea Creator Fee Support,Creator Royalty Support on Marketplaces ,二级市场创作者版税支持
+supported,Enable,开启
+not support,Disable,关闭
+Create Generative Collection,Create Generative Collection,创建拼图合集

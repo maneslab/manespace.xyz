@@ -65,6 +65,9 @@ class ClubView extends React.Component {
             is_paused                   : false,        //是否暂停
             mint_count                  : 2,
 
+        
+            contract_version            : 'v1',
+
             refund_nft_id : null
         }
         this.nftlistRef  = React.createRef();
@@ -123,6 +126,10 @@ class ClubView extends React.Component {
             let club_id = club.get('id');
             contract_version = getParentContractVersion(club_id);
         }
+
+        this.setState({
+            'contract_version' : contract_version
+        })
 
         this.manenft = new manenft(t,network,deploy_contract_address,contract_version);
     }
@@ -283,7 +290,7 @@ class ClubView extends React.Component {
 
 
     deformatContractDataFromServerContract(contract) {
-        // console.log('deformatContractDataFromServerContract',contract);
+        console.log('deformatContractDataFromServerContract',contract.toJS());
         let contract_data_formatted = {
             'reserve_count'         : Number(contract.get('reserve_count')),
             'max_supply'            : Number(contract.get('max_supply')),
@@ -297,6 +304,7 @@ class ClubView extends React.Component {
             'sale_price'            : Number(contract.get('pb_price')),
             'presale_per_wallet_count'  : Number(contract.get('wl_per_address')),
             'sale_per_wallet_count'     : Number(contract.get('pb_per_address')),
+            'is_opensea_enforcement'    : Number(contract.get('is_opensea_enforcement')),
         };
         return contract_data_formatted
     }
@@ -480,8 +488,21 @@ class ClubView extends React.Component {
         const total_mint_value = mint_price_in_wei.mul(sign.count)
 
 
+        let estimate_params_options = {
+            'value' : total_mint_value
+        }
+
         ///通过合约去预估gas
-        let gas_estimate = await  this.manenft.estimateGasMint(wallet.address,mint_price_in_wei,sign.count,sign.deadline,sign.sign.r,sign.sign.s,sign.sign.v);
+        let gas_estimate = await  this.manenft.estimateGasMint(
+            wallet.address,
+            mint_price_in_wei,
+            sign.count,
+            sign.deadline,
+            sign.sign.r,
+            sign.sign.s,
+            sign.sign.v,
+            estimate_params_options
+        );
 
         let params_options = {
             'gasLimit': gas_estimate['gasLimit'].toString(),
@@ -570,17 +591,26 @@ class ClubView extends React.Component {
     
         console.log('total_mint_value',total_mint_value.toString());
 
-        let gas_estimate = await  this.manenft.estimateGasMint(wallet.address,mint_price_in_wei,mcount,0,empty_bytes_32,empty_bytes_32,0);
+        let estimate_params_options = {
+            'value' : total_mint_value
+        }
+
+        let gas_estimate = await this.manenft.estimateGasMint(
+            wallet.address,
+            mint_price_in_wei,
+            mcount,
+            0,
+            empty_bytes_32,
+            empty_bytes_32,
+            0,
+            estimate_params_options
+        );
 
         let params_options = {
             'gasLimit'  : gas_estimate['gasLimit'].toString(),
             'value'     : total_mint_value
         }
 
-        // let params_options = {
-        //     'gasLimit': 200000,
-        //     'value' : total_mint_value
-        // }
 
         var that = this;
 
@@ -869,7 +899,7 @@ class ClubView extends React.Component {
 
     render() {
         const {t} = this.props.i18n;
-        const {deploy_contract_address,is_fetching_contract_data,contract_data,contract_data_from_server,mint_count,is_fetching,is_paused} = this.state;
+        const {deploy_contract_address,is_fetching_contract_data,contract_data,contract_data_from_server,mint_count,is_fetching,is_paused,contract_version} = this.state;
         const {club,wallet,network,club_data} = this.props;
 
         // console.log('is_paused',is_paused)
@@ -1296,19 +1326,25 @@ class ClubView extends React.Component {
                                     : null
                                 }
 
-                                <div className='flex justify-start items-center'>
-                                    <div className='mr-4'>
-                                        {t('Opensea Creator Fee Support')}
+                                {
+                                    (contract_version == 'v2')
+                                    ? <div className='flex justify-start items-center'>
+                                        <div className='mr-4'>
+                                            {t('Opensea Creator Fee Support')}
+                                        </div>
+                                        <div>
+                                        
+                                            {
+                                                (merged_data['is_opensea_enforcement'])
+                                                ? <span className='badge badge-success'>{t('supported')}</span>
+                                                : <span className='badge'>{t('not support')}</span>
+                                            }
+                                        </div>
                                     </div>
-                                    <div>
-                                       
-                                        {
-                                            (merged_data['is_opensea_enforcement'])
-                                            ? <span className='badge badge-success'>{t('supported')}</span>
-                                            : <span className='badge'>{t('not support')}</span>
-                                        }
-                                    </div>
-                                </div>
+                                    : null
+                                }
+
+                                
 
 
                             </div>
