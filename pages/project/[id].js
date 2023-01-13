@@ -1,143 +1,144 @@
-import React from 'react';
+import React from "react";
 
 import { connect } from "react-redux";
-import {wrapper} from 'redux/store';
-import Head from 'next/head'
-import autobind from 'autobind-decorator'
-import {ethers} from 'ethers';
+import { wrapper } from "redux/store";
+import Head from "next/head";
+import autobind from "autobind-decorator";
+import { ethers } from "ethers";
 
-import PageWrapper from 'components/pagewrapper'
+import PageWrapper from "components/pagewrapper";
 
-import withTranslate from 'hocs/translate';
-import CountBtn from 'components/common/count_btn'
-import Price from 'components/misc/price'
+import withTranslate from "hocs/translate";
+import CountBtn from "components/common/count_btn";
+import Price from "components/misc/price";
 
-import EditorView from 'components/common/editorview'
-import Loading from 'components/common/loading'
+import EditorView from "components/common/editorview";
+import Loading from "components/common/loading";
 
-import GalleryView from 'components/gallery/view'
-import RoadmapOne from 'components/roadmap/one'
-import CreatorOne from 'components/creator/one'
-import Cal from 'components/time/cal'
-import Button from 'components/common/button'
+import GalleryView from "components/gallery/view";
+import RoadmapOne from "components/roadmap/one";
+import CreatorOne from "components/creator/one";
+import Cal from "components/time/cal";
+import Button from "components/common/button";
 
-import withClubView from 'hocs/clubview'
-import WhitelistCheck from 'components/whitelist/check'
-import WhitelistCheckAuto from 'components/whitelist/check_auto'
-import RefundModal from 'components/nft/refund_modal'
-import NftList from 'components/nft/list'
+import withClubView from "hocs/clubview";
+import WhitelistCheck from "components/whitelist/check";
+import WhitelistCheckAuto from "components/whitelist/check_auto";
+import RefundModal from "components/nft/refund_modal";
+import NftList from "components/nft/list";
 
-import {myIsNaN} from 'helper/common'
-import Countdown from 'components/common/countdown';
+import { myIsNaN } from "helper/common";
+import Countdown from "components/common/countdown";
 
-import { StatusOnlineIcon } from '@heroicons/react/outline';
-import config from 'helper/config'
-import { httpRequest } from 'helper/http';
-import message from 'components/common/message';
+import { StatusOnlineIcon } from "@heroicons/react/outline";
+import config from "helper/config";
+import { httpRequest } from "helper/http";
+import message from "components/common/message";
 
-import {removeSuffixZero,percentDecimal,hex2Number} from 'helper/number'
-import Showtime from 'components/time/showtime'
-import { getUnixtime,formatOverflowUnixtime } from 'helper/time';
+import { removeSuffixZero, percentDecimal, hex2Number } from "helper/number";
+import Showtime from "components/time/showtime";
+import { getUnixtime, formatOverflowUnixtime } from "helper/time";
 
-import withWallet from 'hocs/wallet';
-import mane from 'helper/web3/manestudio';
-import manenft from 'helper/web3/manenft';
-import ConnectWalletButton from 'components/wallet/connect_button';
-import { setNftBalance } from 'redux/reducer/nft';
+import withWallet from "hocs/wallet";
+import mane from "helper/web3/manestudio";
+import manenft from "helper/web3/manenft";
+import ConnectWalletButton from "components/wallet/connect_button";
+import { setNftBalance } from "redux/reducer/nft";
 
-import Error404 from 'pages/404'
-import { getParentContractVersion } from 'helper/web3/tools';
+import Error404 from "pages/404";
+import { getParentContractVersion } from "helper/web3/tools";
 
 @withTranslate
 @withClubView
 @withWallet
 class ClubView extends React.Component {
-
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            is_fetching             : false,
-            show_refund_modal       : false,
+            is_fetching: false,
+            show_refund_modal: false,
 
-            deploy_contract_address     : null,
-            contract_data_from_server   : {},
-            contract_data               : {},
-            is_paused                   : false,        //是否暂停
-            mint_count                  : 2,
+            deploy_contract_address: null,
+            contract_data_from_server: {},
+            contract_data: {},
+            is_paused: false, //是否暂停
+            mint_count: 2,
 
-        
-            contract_version            : 'v1',
+            contract_version: "v1",
 
-            refund_nft_id : null
-        }
-        this.nftlistRef  = React.createRef();
+            refund_nft_id: null,
+        };
+        this.nftlistRef = React.createRef();
     }
 
     componentDidMount() {
         this.fetchContractDataInBlockchain();
         if (this.props.club) {
             ///把club里面对应的contract数据放入state中
-            let contract = this.props.club.get('contract_info') ? this.props.club.get('contract_info') : this.props.club.get('contract')
-            console.log('debug-contract',this.props.club.toJS());
+            let contract = this.props.club.get("contract_info")
+                ? this.props.club.get("contract_info")
+                : this.props.club.get("contract");
+            console.log("debug-contract", this.props.club.toJS());
             this.setContractDataInServer(contract);
         }
     }
 
     componentDidUpdate(prevProps) {
-
         // console.log('debug09,componentDidUpdate',this.props.club,this.props.club.equals(prevProps.club));
 
         if (this.props.club && !this.props.club.equals(prevProps.club)) {
-            
             this.fetchContractDataInBlockchain();
 
             ///把club里面对应的contract数据放入state中
-            let contract = this.props.club.get('contract_info') ? this.props.club.get('contract_info') : this.props.club.get('contract')
-            
+            let contract = this.props.club.get("contract_info")
+                ? this.props.club.get("contract_info")
+                : this.props.club.get("contract");
+
             this.setContractDataInServer(contract);
         }
 
-        if (this.props.wallet && 
-            (!prevProps.wallet || this.props.wallet.address != prevProps.wallet.address)) {
+        if (
+            this.props.wallet &&
+            (!prevProps.wallet || this.props.wallet.address != prevProps.wallet.address)
+        ) {
             this.updateBalanceOf();
             this.fetchContractDataInBlockchain();
         }
-    } 
+    }
 
     @autobind
     setContractDataInServer(contract) {
         this.setState({
-            contract_data_from_server : this.deformatContractDataFromServerContract(contract)
-        })
+            contract_data_from_server: this.deformatContractDataFromServerContract(contract),
+        });
     }
 
     @autobind
     setManeNftInstance() {
-        const {deploy_contract_address} = this.state;
-        const {club,network} = this.props;
-        const {t} = this.props.i18n;
+        const { deploy_contract_address } = this.state;
+        const { club, network } = this.props;
+        const { t } = this.props.i18n;
 
         if (!deploy_contract_address) {
             return null;
         }
 
-        let contract_version = 'v2';
+        let contract_version = "v2";
         if (club) {
-            let club_id = club.get('id');
+            let club_id = club.get("id");
             contract_version = getParentContractVersion(club_id);
         }
 
         this.setState({
-            'contract_version' : contract_version
-        })
+            contract_version: contract_version,
+        });
 
-        this.manenft = new manenft(t,network,deploy_contract_address,contract_version);
+        this.manenft = new manenft(t, network, deploy_contract_address, contract_version);
     }
 
     @autobind
-    async updateBalanceOf(){
-    
-        const {wallet} = this.props;
+    async updateBalanceOf() {
+        const { wallet } = this.props;
 
         if (!wallet || !wallet.address) {
             return;
@@ -153,50 +154,51 @@ class ClubView extends React.Component {
         let presale_mint_count = await this.manenft.contract.presaleMintCountByAddress(address);
         let sale_mint_count = await this.manenft.contract.saleMintCountByAddress(address);
 
-
-
         this.props.setNftBalance({
-            'address'            : this.props.wallet.address,
-            'contract_address'   : this.state.deploy_contract_address,
-            'balance'            : Number(result.toString()),
-            'presale_mint_count' : Number(presale_mint_count.toString()),
-            'sale_mint_count'    : Number(sale_mint_count.toString()),
-        })
+            address: this.props.wallet.address,
+            contract_address: this.state.deploy_contract_address,
+            balance: Number(result.toString()),
+            presale_mint_count: Number(presale_mint_count.toString()),
+            sale_mint_count: Number(sale_mint_count.toString()),
+        });
     }
 
     @autobind
     async getDeployedContractAddress() {
         // const {club_id} = this.props;
-        console.log('debug-getDeployedContractAddress');
+        console.group("debug-getDeployedContractAddress");
 
         let club_id = this.getClubId();
         if (!club_id) {
-            console.log('debug-error:准备getDeployedContractAddress的时候发现club_id为空');
+            console.log("debug-error:准备getDeployedContractAddress的时候发现club_id为空");
             return;
         }
 
-        console.log('debug-getDeployedContractAddress,club_id:',club_id);
+        console.log("debug-getDeployedContractAddress,club_id:", club_id);
 
-        let addr = '0x0';
+        let addr = "0x0";
         try {
             addr = await this.mane.contract.clubMap(club_id);
-            console.log('debug-getDeployedContractAddress,addr:',addr);
-        }catch(e) {
-            console.log('debug-getDeployedContractAddress,error',e)
+            console.log("debug-getDeployedContractAddress,addr:", addr);
+        } catch (e) {
+            console.log("debug-getDeployedContractAddress,error", e);
         }
+
+        console.log("debug-getDeployedContractAddress:end");
+        console.groupEnd();
+
         if (hex2Number(addr) != 0) {
             return addr;
-        }else {
+        } else {
             return null;
         }
     }
 
     @autobind
     async fetchContractDataInBlockchain() {
+        console.group("debug-fetchContractDataInBlockchain");
 
-        console.group('debug-fetchContractDataInBlockchain')
-
-        const {wallet,club} = this.props;
+        const { wallet, club } = this.props;
         if (!wallet) {
             return;
         }
@@ -205,42 +207,41 @@ class ClubView extends React.Component {
             return;
         }
 
-        this.mane = new mane(this.props.i18n.t,this.props.network,this.props.club.get('id'));
+        this.mane = new mane(this.props.i18n.t, this.props.network, this.props.club.get("id"));
 
         ///一开始需要设置is_fetching
         this.setState({
-            'is_fetching' : true
-        })
+            is_fetching: true,
+        });
 
         let addr = await this.getDeployedContractAddress();
 
         this.setState({
-            'deploy_contract_address'   : addr,
-        })
+            deploy_contract_address: addr,
+        });
 
-        console.log('debug获得部署的合约地址是:',addr);
+        console.log("debug获得部署的合约地址是:", addr);
 
         ///如果检查到了已经部署的合约
         if (addr) {
-
             //设置基础的manenft的instance
-            this.setManeNftInstance()
-            console.log('设置NFT实例完成',this.manenft);
+            this.setManeNftInstance();
+            console.log("设置NFT实例完成", this.manenft);
 
             ///开始通过方法去获得合约的数据
             this.setState({
-                'is_fetching_contract_data' : true,
-                'is_fetched_contract_data'  : false
-            })
+                is_fetching_contract_data: true,
+                is_fetched_contract_data: false,
+            });
 
-            console.log('准备尝试拿到合约内数据');
+            console.log("准备尝试拿到合约内数据");
             ///获得contract数据
             let contract_data = await this.manenft.contract.getAll();
 
             let total_supply = await this.manenft.contract.totalSupply();
             if (total_supply) {
                 total_supply = Number(total_supply.toString());
-            }else {
+            } else {
                 total_supply = 0;
             }
 
@@ -249,34 +250,32 @@ class ClubView extends React.Component {
             // console.log('debug01,contract_data',contract_data)
             let formated_data = this.deformatContractData(contract_data);
             // console.log('debug01,formated_data',formated_data)
-            formated_data['is_force_refundable'] = (isForceRefundable == 1) ? true : false;
-            formated_data['total_supply'] = total_supply;
-
+            formated_data["is_force_refundable"] = isForceRefundable == 1 ? true : false;
+            formated_data["total_supply"] = total_supply;
 
             //把is_opensea_enforcement写入合约数据
             let is_opensea_enforcement = 0;
-            console.log('准备获得opensea的状态',this.manenft.contract.openseaEnforcement );
+            console.log("准备获得opensea的状态", this.manenft.contract.openseaEnforcement);
 
-            if (typeof this.manenft.contract.openseaEnforcement == 'function') {
-                console.log('当前合约是新的合约');
+            if (typeof this.manenft.contract.openseaEnforcement == "function") {
+                console.log("当前合约是新的合约");
                 is_opensea_enforcement = await this.manenft.contract.openseaEnforcement();
-                console.log('is_opensea_enforcement',is_opensea_enforcement);
+                console.log("is_opensea_enforcement", is_opensea_enforcement);
                 is_opensea_enforcement = is_opensea_enforcement.toNumber();
             }
-            formated_data['is_opensea_enforcement'] = is_opensea_enforcement
-    
+            formated_data["is_opensea_enforcement"] = is_opensea_enforcement;
 
             this.setState({
-                'contract_data'             : formated_data,
-                'is_fetching_contract_data' : false,
-                'is_fetched_contract_data'  : true
-            })
+                contract_data: formated_data,
+                is_fetching_contract_data: false,
+                is_fetched_contract_data: true,
+            });
 
             //获得合约是否暂停
             let paused = await this.manenft.contract.paused();
             this.setState({
-                is_paused : (paused == 1) ? true : false
-            })
+                is_paused: paused == 1 ? true : false,
+            });
 
             //获得我持有的这个合约的NFT数量
             this.updateBalanceOf();
@@ -286,58 +285,62 @@ class ClubView extends React.Component {
         }
 
         this.setState({
-            'is_fetching' : false
-        })
+            is_fetching: false,
+        });
 
         console.groupEnd();
     }
 
-
     deformatContractDataFromServerContract(contract) {
-        console.log('deformatContractDataFromServerContract',contract.toJS());
+        console.log("deformatContractDataFromServerContract", contract.toJS());
         let contract_data_formatted = {
-            'reserve_count'         : Number(contract.get('reserve_count')),
-            'max_supply'            : Number(contract.get('max_supply')),
-            'presale_max_supply'    : Number(contract.get('wl_max_supply')),
-            'club_id'               : Number(contract.get('club_id')),
-            'presale_start_time'    : Number(contract.get('wl_start_time')),
-            'presale_end_time'      : Number(contract.get('wl_end_time')),
-            'sale_start_time'       : Number(contract.get('pb_start_time')),
-            'sale_end_time'         : Number(contract.get('pb_end_time')),
-            'presale_price'         : Number(contract.get('wl_price')),
-            'sale_price'            : Number(contract.get('pb_price')),
-            'presale_per_wallet_count'  : Number(contract.get('wl_per_address')),
-            'sale_per_wallet_count'     : Number(contract.get('pb_per_address')),
-            'is_opensea_enforcement'    : Number(contract.get('is_opensea_enforcement')),
+            reserve_count: Number(contract.get("reserve_count")),
+            max_supply: Number(contract.get("max_supply")),
+            presale_max_supply: Number(contract.get("wl_max_supply")),
+            club_id: Number(contract.get("club_id")),
+            presale_start_time: Number(contract.get("wl_start_time")),
+            presale_end_time: Number(contract.get("wl_end_time")),
+            sale_start_time: Number(contract.get("pb_start_time")),
+            sale_end_time: Number(contract.get("pb_end_time")),
+            presale_price: Number(contract.get("wl_price")),
+            sale_price: Number(contract.get("pb_price")),
+            presale_per_wallet_count: Number(contract.get("wl_per_address")),
+            sale_per_wallet_count: Number(contract.get("pb_per_address")),
+            is_opensea_enforcement: Number(contract.get("is_opensea_enforcement")),
         };
-        return contract_data_formatted
+        return contract_data_formatted;
     }
 
     deformatContractData(contract_data) {
         let contract_data_formatted = {
-            'reserve_count'         : Number(contract_data[0].toString()),
-            'max_supply'            : Number(contract_data[1].toString()),
-            'presale_max_supply'    :   Number(contract_data[2].toString()),
+            reserve_count: Number(contract_data[0].toString()),
+            max_supply: Number(contract_data[1].toString()),
+            presale_max_supply: Number(contract_data[2].toString()),
             // 'club_id'               :   Number(contract_data[3].toString()),
-            'presale_start_time'    :   Number(contract_data[4].toString()),
-            'presale_end_time'      :   Number(contract_data[5].toString()),
-            'sale_start_time'       :   Number(contract_data[6].toString()),
-            'sale_end_time'         :   Number(contract_data[7].toString()), 
+            presale_start_time: Number(contract_data[4].toString()),
+            presale_end_time: Number(contract_data[5].toString()),
+            sale_start_time: Number(contract_data[6].toString()),
+            sale_end_time: Number(contract_data[7].toString()),
             // 'sale_end_time'         :  1665602611,
-            'presale_price'         :   Number(contract_data[8].toString()),
-            'sale_price'            :   Number(contract_data[9].toString()),
+            presale_price: Number(contract_data[8].toString()),
+            sale_price: Number(contract_data[9].toString()),
             // 'presale_per_wallet_count'  :   Number(contract_data[10].toString()),
             // 'sale_per_wallet_count'     :   Number(contract_data[11].toString()),
         };
 
         //把sale_price和presale_price改为ethers.BigNumber的表达方式
         //需要注意sale_price和presale_price有可能是用科学计数法表示的数字,因此要先把他们转换为非科学计数法的string表达,最多的小数是18位
-        contract_data_formatted['sale_price'] = ethers.utils.parseUnits(contract_data_formatted['sale_price'].toFixed(18).toString(),'wei');
-        contract_data_formatted['presale_price'] = ethers.utils.parseUnits(contract_data_formatted['presale_price'].toFixed(18).toString(),'wei');
+        contract_data_formatted["sale_price"] = ethers.utils.parseUnits(
+            contract_data_formatted["sale_price"].toFixed(18).toString(),
+            "wei"
+        );
+        contract_data_formatted["presale_price"] = ethers.utils.parseUnits(
+            contract_data_formatted["presale_price"].toFixed(18).toString(),
+            "wei"
+        );
 
-        return contract_data_formatted
+        return contract_data_formatted;
     }
-    
 
     // @autobind
     // async fetchContractDataFromServer(addr,network) {
@@ -354,114 +357,109 @@ class ClubView extends React.Component {
     @autobind
     toggleRefundModal() {
         this.setState({
-            show_refund_modal : !this.state.show_refund_modal
-        })
+            show_refund_modal: !this.state.show_refund_modal,
+        });
     }
 
     @autobind
     openRefundModal(nft_id) {
         this.setState({
-            'refund_nft_id'     : nft_id,
-            'show_refund_modal' : true
-        })
+            refund_nft_id: nft_id,
+            show_refund_modal: true,
+        });
     }
 
     @autobind
-    getCalendarTitle(time_type = 'whitelist') {
-        const {club} = this.props;
-        const {t} =  this.props.i18n;
-        switch(time_type) {
-            case 'whitelist':
-                return club.get('name') + ' ' + t('allowlist mint begin');
-            case 'public':
-                return club.get('name') + ' ' + t('public mint begin');
+    getCalendarTitle(time_type = "whitelist") {
+        const { club } = this.props;
+        const { t } = this.props.i18n;
+        switch (time_type) {
+            case "whitelist":
+                return club.get("name") + " " + t("allowlist mint begin");
+            case "public":
+                return club.get("name") + " " + t("public mint begin");
             default:
-                return '';
+                return "";
         }
     }
 
     @autobind
     getMintUrl() {
-        const {club} = this.props;
-        if (club.get('unique_name')) {
-            return config.get('WEBSITE') + '/project/' +club.get('unique_name')
-        }else {
-            return config.get('WEBSITE') + '/project/' +club.get('id')
+        const { club } = this.props;
+        if (club.get("unique_name")) {
+            return config.get("WEBSITE") + "/project/" + club.get("unique_name");
+        } else {
+            return config.get("WEBSITE") + "/project/" + club.get("id");
         }
     }
 
     @autobind
     getClubId() {
-        const {club,club_id} = this.props;
+        const { club, club_id } = this.props;
         if (club_id) {
             return club_id;
-        }else if (club) {
-            return club.get('id');
-        }else {
-            return '';  
+        } else if (club) {
+            return club.get("id");
+        } else {
+            return "";
         }
     }
 
     @autobind
     async getMintSignature() {
+        const { wallet } = this.props;
+        const { contract_data, contract_data_from_server, mint_count } = this.state;
 
-        const {wallet} = this.props;
-        const {contract_data,contract_data_from_server,mint_count} = this.state;
-
-
-        let merged_data = Object.assign({},contract_data_from_server,contract_data);
+        let merged_data = Object.assign({}, contract_data_from_server, contract_data);
 
         let can_mint_count = this.getCanMintCount(merged_data);
-        let mcount = (can_mint_count > mint_count) ? mint_count : can_mint_count;
+        let mcount = can_mint_count > mint_count ? mint_count : can_mint_count;
 
         let club_id = this.getClubId();
 
         this.setState({
-            'is_fetching_signature' : true
-        })
+            is_fetching_signature: true,
+        });
 
         let result;
         try {
             result = await httpRequest({
-                'url' : '/v1/club/get_mint_sign',
-                'method' : 'GET',
-                'data'  : {
-                    'id'        : club_id,
-                    'address'   : wallet.address,
-                    'count'     : mcount
-                }
-            })
-
-        }catch(e){
-            console.log('debug-e',e);
-            if (e.status == 'error') {
+                url: "/v1/club/get_mint_sign",
+                method: "GET",
+                data: {
+                    id: club_id,
+                    address: wallet.address,
+                    count: mcount,
+                },
+            });
+        } catch (e) {
+            console.log("debug-e", e);
+            if (e.status == "error") {
                 message.error(e.message);
             }
         }
 
         this.setState({
-            'is_fetching_signature' : false,
-        })
+            is_fetching_signature: false,
+        });
 
         if (!result) {
             return false;
         }
 
-        console.log('debug-01,result',result);
-        if (result.status == 'success') {
-            result.data.sign.r  = '0x'+result.data.sign.r
-            result.data.sign.s  = '0x'+result.data.sign.s
+        console.log("debug-01,result", result);
+        if (result.status == "success") {
+            result.data.sign.r = "0x" + result.data.sign.r;
+            result.data.sign.s = "0x" + result.data.sign.s;
             return result.data;
-        }else {
+        } else {
             message.error(e.message);
             return false;
         }
-
     }
 
     @autobind
     async whiteListMint() {
-
         let sign = await this.getMintSignature();
 
         if (!sign) {
@@ -469,35 +467,32 @@ class ClubView extends React.Component {
         }
 
         if (sign) {
-            console.log('签名是:',sign);
+            console.log("签名是:", sign);
         }
 
-
-        const {deploy_contract_address} = this.state;
-        const {wallet} = this.props;
-        const {t} = this.props.i18n;
+        const { deploy_contract_address } = this.state;
+        const { wallet } = this.props;
+        const { t } = this.props.i18n;
 
         if (!wallet || !wallet.address) {
-            message.error('wallet is not connected');
-            return;
-        }
-        
-        if(!deploy_contract_address) {
-            message.error('Contract address is not found');
+            message.error("wallet is not connected");
             return;
         }
 
+        if (!deploy_contract_address) {
+            message.error("Contract address is not found");
+            return;
+        }
 
         const mint_price_in_wei = ethers.utils.parseEther(sign.wl_price);
-        const total_mint_value = mint_price_in_wei.mul(sign.count)
-
+        const total_mint_value = mint_price_in_wei.mul(sign.count);
 
         let estimate_params_options = {
-            'value' : total_mint_value
-        }
+            value: total_mint_value,
+        };
 
         ///通过合约去预估gas
-        let gas_estimate = await  this.manenft.estimateGasMint(
+        let gas_estimate = await this.manenft.estimateGasMint(
             wallet.address,
             mint_price_in_wei,
             sign.count,
@@ -508,96 +503,105 @@ class ClubView extends React.Component {
             estimate_params_options
         );
 
-        let params_options = {
-            'gasLimit': gas_estimate['gasLimit'].toString(),
-            'value' : total_mint_value
+        if (!gas_estimate) {
+            return;
         }
+
+        let params_options = {
+            gasLimit: gas_estimate["gasLimit"].toString(),
+            value: total_mint_value,
+        };
 
         var that = this;
 
         await this.manenft.request({
-            'text' : {
-                'loading' : t('minting nft'),
-                'sent'    : t('mint tx sent'),
-                'success' : t('mint tx successful'),
+            text: {
+                loading: t("minting nft"),
+                sent: t("mint tx sent"),
+                success: t("mint tx successful"),
             },
-            'func' : {
-                'send_tx' : async () => {
-                    let tx_in = await  this.manenft.contract.mint(wallet.address,mint_price_in_wei,sign.count,sign.deadline,sign.sign.r,sign.sign.s,sign.sign.v,params_options);
-                    console.log('tx is send',tx_in)
+            func: {
+                send_tx: async () => {
+                    let tx_in = await this.manenft.contract.mint(
+                        wallet.address,
+                        mint_price_in_wei,
+                        sign.count,
+                        sign.deadline,
+                        sign.sign.r,
+                        sign.sign.s,
+                        sign.sign.v,
+                        params_options
+                    );
+                    console.log("tx is send", tx_in);
                     return tx_in;
                 },
-                'before_send_tx' : () => {
+                before_send_tx: () => {
                     that.setState({
-                        is_minting : true,
-                    })
+                        is_minting: true,
+                    });
                 },
-                'finish_tx' : () => {
+                finish_tx: () => {
                     that.setState({
-                        is_minting : false,
-                    })
+                        is_minting: false,
+                    });
                 },
-                'after_finish_tx' : () => {
-                    message.success(t('mint NFT success'));
+                after_finish_tx: () => {
+                    message.success(t("mint NFT success"));
                     this.updateBalanceOf();
                     // console.log('after_finish_tx');
                     // this.getUserSafeBox(this.props.login_user.get('wallet_address'));
-                }
-            } 
-        })
+                },
+            },
+        });
     }
 
     @autobind
     async mint() {
+        const { deploy_contract_address, contract_data, contract_data_from_server, mint_count } =
+            this.state;
+        const { wallet } = this.props;
+        const { t } = this.props.i18n;
 
-        const {deploy_contract_address,contract_data,contract_data_from_server,mint_count} = this.state;
-        const {wallet} = this.props;
-        const {t} = this.props.i18n;
-
-
-
-        let merged_data = Object.assign({},contract_data_from_server,contract_data);
+        let merged_data = Object.assign({}, contract_data_from_server, contract_data);
 
         //计算我现在还可以mint几个nft
         let can_mint_count = this.getCanMintCount(merged_data);
-        let mcount = (can_mint_count > mint_count) ? mint_count : can_mint_count;
-
+        let mcount = can_mint_count > mint_count ? mint_count : can_mint_count;
 
         if (!wallet || !wallet.address) {
-            message.error('wallet is not connected');
+            message.error("wallet is not connected");
             return;
         }
-    
+
         // console.log('debug-mint,deploy_contract_address',deploy_contract_address);
         // console.log('debug-mint,mcount',mcount);
 
-        if(!deploy_contract_address) {
-            message.error('Contract address is not found');
+        if (!deploy_contract_address) {
+            message.error("Contract address is not found");
             return;
         }
 
         if (!contract_data) {
-            message.error('Contract data is not found');
+            message.error("Contract data is not found");
             return;
         }
 
+        console.log("NFT公售价格", contract_data["sale_price"]);
+        const mint_price_in_wei = contract_data["sale_price"];
 
-        console.log('NFT公售价格',contract_data['sale_price']);
-        const mint_price_in_wei = contract_data['sale_price'];
-        
-        console.log('NFT公售价格转换wei',mint_price_in_wei);
+        console.log("NFT公售价格转换wei", mint_price_in_wei);
 
         // const deadline = 0
 
-        let empty_bytes_32 = ethers.utils.formatBytes32String("")
-        const total_mint_value = mint_price_in_wei.mul(mcount)
+        let empty_bytes_32 = ethers.utils.formatBytes32String("");
+        const total_mint_value = mint_price_in_wei.mul(mcount);
 
-    
-        console.log('total_mint_value',total_mint_value.toString());
+        console.log("total_mint_value", total_mint_value.toString());
 
         let estimate_params_options = {
-            'value' : total_mint_value
-        }
+            value: total_mint_value,
+        };
+        console.log("before_gas_estimate");
 
         let gas_estimate = await this.manenft.estimateGasMint(
             wallet.address,
@@ -610,171 +614,218 @@ class ClubView extends React.Component {
             estimate_params_options
         );
 
-        let params_options = {
-            'gasLimit'  : gas_estimate['gasLimit'].toString(),
-            'value'     : total_mint_value
+        if (!gas_estimate) {
+            return;
         }
 
+        console.log("gas_estimate", gas_estimate);
+
+        let params_options = {
+            gasLimit: gas_estimate["gasLimit"].toString(),
+            value: total_mint_value,
+        };
 
         var that = this;
 
         await this.manenft.request({
-            'text' : {
-                'loading' : t('minting nft'),
-                'sent'    : t('mint tx sent'),
-                'success' : t('mint tx successful'),
+            text: {
+                loading: t("minting nft"),
+                sent: t("mint tx sent"),
+                success: t("mint tx successful"),
             },
-            'func' : {
-                'send_tx' : async () => {
-                    let tx_in = await  this.manenft.contract.mint(wallet.address,mint_price_in_wei,mcount,0,empty_bytes_32,empty_bytes_32,0,params_options);
-                    console.log('tx is send',tx_in)
+            func: {
+                send_tx: async () => {
+                    let tx_in = await this.manenft.contract.mint(
+                        wallet.address,
+                        mint_price_in_wei,
+                        mcount,
+                        0,
+                        empty_bytes_32,
+                        empty_bytes_32,
+                        0,
+                        params_options
+                    );
+                    console.log("tx is send", tx_in);
                     return tx_in;
                 },
-                'before_send_tx' : () => {
+                before_send_tx: () => {
                     that.setState({
-                        is_minting : true,
-                    })
+                        is_minting: true,
+                    });
                 },
-                'finish_tx' : () => {
+                finish_tx: () => {
                     that.setState({
-                        is_minting : false,
-                    })
+                        is_minting: false,
+                    });
                 },
-                'after_finish_tx' : () => {
-                    message.success(t('mint NFT success'));
+                after_finish_tx: () => {
+                    message.success(t("mint NFT success"));
                     this.updateBalanceOf();
                     // console.log('after_finish_tx');
                     // this.getUserSafeBox(this.props.login_user.get('wallet_address'));
                 },
-                'error_tx' : () => {
+                error_tx: () => {
+                    console.log("mint NFT ERROR");
                     that.setState({
-                        is_minting : false,
-                    })
-                }
-            } 
-        })
+                        is_minting: false,
+                    });
+                },
+            },
+        });
     }
 
     @autobind
-    getBalance(deploy_contract_address,address) {
-        const {balance_map} = this.props;
+    getBalance(deploy_contract_address, address) {
+        const { balance_map } = this.props;
 
         let default_data = {
-            'balance' : 0,
-            'presale_mint_count' : 0,
-            'sale_mint_count' : 0,
+            balance: 0,
+            presale_mint_count: 0,
+            sale_mint_count: 0,
         };
 
         if (!address) {
             return default_data;
         }
 
-        default_data['balance'] = balance_map.getIn([deploy_contract_address,address,'total']) ?? 0;
-        default_data['presale_mint_count'] = balance_map.getIn([deploy_contract_address,address,'presale_mint_count']) ?? 0;
-        default_data['sale_mint_count'] = balance_map.getIn([deploy_contract_address,address,'sale_mint_count']) ?? 0;
+        default_data["balance"] =
+            balance_map.getIn([deploy_contract_address, address, "total"]) ?? 0;
+        default_data["presale_mint_count"] =
+            balance_map.getIn([deploy_contract_address, address, "presale_mint_count"]) ?? 0;
+        default_data["sale_mint_count"] =
+            balance_map.getIn([deploy_contract_address, address, "sale_mint_count"]) ?? 0;
 
         return default_data;
     }
-    
 
     @autobind
     getProjectStage(merged_data) {
+        console.group("debug-stage");
 
-
-        console.group('debug-stage');
-
-        const {club,wallet} = this.props;
-        const {deploy_contract_address,is_paused} = this.state;
+        const { club, wallet } = this.props;
+        const { deploy_contract_address, is_paused } = this.state;
         let now_unixtime = getUnixtime();
 
-        console.log('debug-stage,merged_data',merged_data)
-        console.log('debug-stage,deploy_contract_address',deploy_contract_address)
+        console.log("debug-stage,merged_data", merged_data);
+        console.log("debug-stage,deploy_contract_address", deploy_contract_address);
 
-        let stage = 'unstart';          ///stage状态分为:unstart,in_whitelist,in_public,finished
-        let status = 'disable';         ///status状态分为:disable,enable,connect_wallet,out_of_limit
+        let stage = "unstart"; ///stage状态分为:unstart,in_whitelist,in_public,finished
+        let status = "disable"; ///status状态分为:disable,enable,connect_wallet,out_of_limit
 
         let contract = null;
-        if (club.get('contract_info')) {
-            contract = club.get('contract_info')
-        }else {
-            contract = club.get('contract')
+        if (club.get("contract_info")) {
+            contract = club.get("contract_info");
+        } else {
+            contract = club.get("contract");
         }
 
         if (!deploy_contract_address) {
-            stage = 'unstart';
-        }else {
-            if (contract && contract.getIn(['wl_enable'])
-                &&  merged_data['presale_end_time'] > now_unixtime 
-                && merged_data['presale_start_time'] <= now_unixtime ) {
-                
-                console.log('debug-stage,因为当前处于预售时间内,',now_unixtime,merged_data['presale_start_time'],merged_data['presale_end_time']);
-                stage = 'in_whitelist';
-            }
-            if (contract && contract.getIn(['pb_enable'])
-                && (merged_data['sale_end_time'] > now_unixtime || merged_data['sale_end_time'] == 0)
-                && merged_data['sale_start_time'] <= now_unixtime ) {
-                console.log('debug-stage,因为当前处于销售时间内,',now_unixtime,merged_data['sale_start_time'],merged_data['sale_end_time']);
-                stage = 'in_public';
+            stage = "unstart";
+        } else {
+            if (
+                contract &&
+                contract.getIn(["wl_enable"]) &&
+                merged_data["presale_end_time"] > now_unixtime &&
+                merged_data["presale_start_time"] <= now_unixtime
+            ) {
+                console.log(
+                    "debug-stage,因为当前处于预售时间内,",
+                    now_unixtime,
+                    merged_data["presale_start_time"],
+                    merged_data["presale_end_time"]
+                );
+                stage = "in_whitelist";
             }
             if (
-                contract && contract.getIn(['pb_enable'])
-                && merged_data['sale_end_time'] < now_unixtime 
-                && merged_data['sale_end_time'] != 0
+                contract &&
+                contract.getIn(["pb_enable"]) &&
+                (merged_data["sale_end_time"] > now_unixtime ||
+                    merged_data["sale_end_time"] == 0) &&
+                merged_data["sale_start_time"] <= now_unixtime
             ) {
-                console.log('debug-stage,因为当前处于销售时间外,',now_unixtime,merged_data['sale_end_time']);
-                stage = 'finished';
+                console.log(
+                    "debug-stage,因为当前处于销售时间内,",
+                    now_unixtime,
+                    merged_data["sale_start_time"],
+                    merged_data["sale_end_time"]
+                );
+                stage = "in_public";
+            }
+            if (
+                contract &&
+                contract.getIn(["pb_enable"]) &&
+                merged_data["sale_end_time"] < now_unixtime &&
+                merged_data["sale_end_time"] != 0
+            ) {
+                console.log(
+                    "debug-stage,因为当前处于销售时间外,",
+                    now_unixtime,
+                    merged_data["sale_end_time"]
+                );
+                stage = "finished";
             }
         }
-        
-        let address  = (wallet && wallet.address) ? wallet.address : '';
-        let {balance,presale_mint_count,sale_mint_count} = this.getBalance(deploy_contract_address,address);
 
-        console.log('获得我已经mint的数据',balance,presale_mint_count,sale_mint_count,merged_data);
+        let address = wallet && wallet.address ? wallet.address : "";
+        let { balance, presale_mint_count, sale_mint_count } = this.getBalance(
+            deploy_contract_address,
+            address
+        );
+
+        console.log(
+            "获得我已经mint的数据",
+            balance,
+            presale_mint_count,
+            sale_mint_count,
+            merged_data
+        );
 
         let minted = 0;
         if (!wallet || !wallet.address) {
-            status = 'connect_wallet';
-        }else {
+            status = "connect_wallet";
+        } else {
+            console.log("debug-stage,当前用户持有的NFT数量是", balance, wallet.address);
 
-            console.log('debug-stage,当前用户持有的NFT数量是',balance,wallet.address);
-
-            switch(stage) {
-                case 'in_whitelist':
-                    console.log('debug09:检查是否超过预期',presale_mint_count,merged_data['presale_per_wallet_count'])
-                    if (presale_mint_count >= merged_data['presale_per_wallet_count']) {
-                        status = 'out_of_limit';
-                    }else {
-                        status = 'enable';
+            switch (stage) {
+                case "in_whitelist":
+                    console.log(
+                        "debug09:检查是否超过预期",
+                        presale_mint_count,
+                        merged_data["presale_per_wallet_count"]
+                    );
+                    if (presale_mint_count >= merged_data["presale_per_wallet_count"]) {
+                        status = "out_of_limit";
+                    } else {
+                        status = "enable";
                     }
                     minted = presale_mint_count;
                     break;
-                case 'in_public':
-                    if (sale_mint_count >= merged_data['sale_per_wallet_count']) {
-                        status = 'out_of_limit';
-                    }else {
-                        status = 'enable';
+                case "in_public":
+                    if (sale_mint_count >= merged_data["sale_per_wallet_count"]) {
+                        status = "out_of_limit";
+                    } else {
+                        status = "enable";
                     }
                     minted = sale_mint_count;
                     break;
-                    
             }
         }
 
         console.groupEnd();
 
         return {
-            'stage'         : stage,
-            'stage_status'  : status,
-            'minted'        : minted
-        }
+            stage: stage,
+            stage_status: status,
+            minted: minted,
+        };
     }
 
     @autobind
     handleMintCountChange(count) {
         this.setState({
-            'mint_count' : count
-        })
-    } 
+            mint_count: count,
+        });
+    }
 
     @autobind
     refreshList() {
@@ -782,50 +833,54 @@ class ClubView extends React.Component {
             // console.log('this.nftlistRef.current',this.nftlistRef.current);
             this.nftlistRef.current.refresh();
         }
-        
     }
 
     @autobind
     getWlHtml(merged_data) {
-        const {t} = this.props.i18n;
+        const { t } = this.props.i18n;
         let now_unixtime = getUnixtime();
 
         let mint_url = this.getMintUrl();
 
-        if (now_unixtime > merged_data['presale_end_time']) {
-            return <div className='w-1/2 box-one '>
-                <div className='lb'>{t('allowlist presale')}</div>
-                <div className='ma flex justify-start items-center'>
-                    {t('finished')}
+        if (now_unixtime > merged_data["presale_end_time"]) {
+            return (
+                <div className="w-1/2 box-one ">
+                    <div className="lb">{t("allowlist presale")}</div>
+                    <div className="ma flex justify-start items-center">{t("finished")}</div>
                 </div>
-            </div>
-
+            );
         }
 
-        if (now_unixtime > merged_data['presale_start_time']) {
-            return  <div className='w-1/2 box-one '>
-                <div className='lb'>{t('allowlist presale end in')}</div>
-                <div className='ma flex justify-start items-center'>
-                    <Countdown unixtime={merged_data['presale_end_time']} />
+        if (now_unixtime > merged_data["presale_start_time"]) {
+            return (
+                <div className="w-1/2 box-one ">
+                    <div className="lb">{t("allowlist presale end in")}</div>
+                    <div className="ma flex justify-start items-center">
+                        <Countdown unixtime={merged_data["presale_end_time"]} />
+                    </div>
                 </div>
-            </div>
-        }else {
-            return  <div className='w-1/2 box-one '>
-                <div className='lb'>{t('allowlist presale start in')}</div>
-                <div className='ma flex justify-start items-center'>
-                    <Countdown unixtime={merged_data['presale_start_time']} />
-                    <span className='ml-4 flex-item-center'>
-                        <Cal begin_time={merged_data['presale_start_time']} 
-                            text={this.getCalendarTitle('whitelist')} 
-                            details={'url:'+mint_url} />
-                    </span>
+            );
+        } else {
+            return (
+                <div className="w-1/2 box-one ">
+                    <div className="lb">{t("allowlist presale start in")}</div>
+                    <div className="ma flex justify-start items-center">
+                        <Countdown unixtime={merged_data["presale_start_time"]} />
+                        <span className="ml-4 flex-item-center">
+                            <Cal
+                                begin_time={merged_data["presale_start_time"]}
+                                text={this.getCalendarTitle("whitelist")}
+                                details={"url:" + mint_url}
+                            />
+                        </span>
+                    </div>
                 </div>
-            </div>
+            );
         }
     }
 
-    isAllowRefundable(refund_list,is_force_refundable) {
-        console.log('debug-refundable',refund_list,is_force_refundable);
+    isAllowRefundable(refund_list, is_force_refundable) {
+        console.log("debug-refundable", refund_list, is_force_refundable);
         if (is_force_refundable) {
             return true;
         }
@@ -834,64 +889,69 @@ class ClubView extends React.Component {
         }
         let now_unixtime = getUnixtime();
         let allow_refundable = false;
-        refund_list.map((item,index) => {
-            if (now_unixtime < item.get('end_time')) {
+        refund_list.map((item, index) => {
+            if (now_unixtime < item.get("end_time")) {
                 allow_refundable = true;
             }
-        })
+        });
         return allow_refundable;
     }
 
-
     @autobind
     getPbHtml(merged_data) {
-        const {t} = this.props.i18n;
+        const { t } = this.props.i18n;
         let now_unixtime = getUnixtime();
 
-        if (now_unixtime > merged_data['sale_end_time'] && merged_data['sale_end_time'] > 0) {
-            return <div className='w-1/2 box-one '>
-                <div className='lb'>{t('public sale')}</div>
-                <div className='ma flex justify-start items-center'>
-                    {t('finished')}
+        if (now_unixtime > merged_data["sale_end_time"] && merged_data["sale_end_time"] > 0) {
+            return (
+                <div className="w-1/2 box-one ">
+                    <div className="lb">{t("public sale")}</div>
+                    <div className="ma flex justify-start items-center">{t("finished")}</div>
                 </div>
-            </div>
+            );
         }
 
-        if (now_unixtime > merged_data['sale_start_time']) {
-            return <div className='w-1/2 box-one '>
-                <div className='lb'>{t('public sale end in')}</div>
-                <div className='ma flex justify-start items-center'>
-                    <Countdown unixtime={merged_data['sale_end_time']} />
+        if (now_unixtime > merged_data["sale_start_time"]) {
+            return (
+                <div className="w-1/2 box-one ">
+                    <div className="lb">{t("public sale end in")}</div>
+                    <div className="ma flex justify-start items-center">
+                        <Countdown unixtime={merged_data["sale_end_time"]} />
+                    </div>
                 </div>
-            </div>
-        }else if (now_unixtime > merged_data['sale_end_time']) {
-            return <div className='w-1/2 box-one '>
-                <div className='lb'>{t('public sale start in')}</div>
-                <div className='ma flex justify-start items-center'>
-                    <Countdown unixtime={merged_data['sale_start_time']} />
+            );
+        } else if (now_unixtime > merged_data["sale_end_time"]) {
+            return (
+                <div className="w-1/2 box-one ">
+                    <div className="lb">{t("public sale start in")}</div>
+                    <div className="ma flex justify-start items-center">
+                        <Countdown unixtime={merged_data["sale_start_time"]} />
+                    </div>
                 </div>
-            </div>
-        }else {
-            return <div className='w-1/2 box-one '>
-                <div className='lb'>{t('public sale start in')}</div>
-                <div className='ma flex justify-start items-center'>
-                    <Showtime unixtime={merged_data['sale_start_time']}  />
+            );
+        } else {
+            return (
+                <div className="w-1/2 box-one ">
+                    <div className="lb">{t("public sale start in")}</div>
+                    <div className="ma flex justify-start items-center">
+                        <Showtime unixtime={merged_data["sale_start_time"]} />
+                    </div>
                 </div>
-            </div>
+            );
         }
     }
 
     @autobind
     getCanMintCount(merged_data) {
-        let {stage,stage_status,minted} = this.getProjectStage(merged_data);
+        let { stage, stage_status, minted } = this.getProjectStage(merged_data);
 
-        let can_mint_count = 0
-        if (stage_status == 'enable') {
-            if (stage == 'in_whitelist') {
-                can_mint_count = merged_data['presale_per_wallet_count'] - minted;
-                console.log('can_mint_count',can_mint_count)
-            }else if (stage =='in_public') {
-                can_mint_count = merged_data['sale_per_wallet_count'] - minted;
+        let can_mint_count = 0;
+        if (stage_status == "enable") {
+            if (stage == "in_whitelist") {
+                can_mint_count = merged_data["presale_per_wallet_count"] - minted;
+                console.log("can_mint_count", can_mint_count);
+            } else if (stage == "in_public") {
+                can_mint_count = merged_data["sale_per_wallet_count"] - minted;
             }
         }
         return can_mint_count;
@@ -899,18 +959,27 @@ class ClubView extends React.Component {
 
     @autobind
     setCanMintCount() {
-        const {contract_data_from_server,contract_data} = this.state;
-        let merged_data = Object.assign({},contract_data_from_server,contract_data);
+        const { contract_data_from_server, contract_data } = this.state;
+        let merged_data = Object.assign({}, contract_data_from_server, contract_data);
         let can_mint_count = this.getCanMintCount(merged_data);
         this.setState({
-            'mint_count' : can_mint_count
-        })
+            mint_count: can_mint_count,
+        });
     }
 
     render() {
-        const {t} = this.props.i18n;
-        const {deploy_contract_address,is_fetching_contract_data,contract_data,contract_data_from_server,mint_count,is_fetching,is_paused,contract_version} = this.state;
-        const {club,wallet,network,club_data} = this.props;
+        const { t } = this.props.i18n;
+        const {
+            deploy_contract_address,
+            is_fetching_contract_data,
+            contract_data,
+            contract_data_from_server,
+            mint_count,
+            is_fetching,
+            is_paused,
+            contract_version,
+        } = this.state;
+        const { club, wallet, network, club_data } = this.props;
 
         // console.log('is_paused',is_paused)
         // console.log('contract_data',contract_data)
@@ -918,25 +987,47 @@ class ClubView extends React.Component {
 
         let club_id = this.getClubId();
 
-        if (club_data && club_data.get('is_fetched') && !club) {
-            return  <Error404 />
+        if (club_data && club_data.get("is_fetched") && !club) {
+            return <Error404 />;
         }
 
-        if (!club || !club.get('is_detail') || is_fetching_contract_data || is_fetching || !club_id) {
-            return <PageWrapper>
-                <Head>
-                    <title>{'Drop details'}</title>
-                </Head>
-                <div>
-                    <div className="max-w-screen-xl mx-auto py-12">
-                        <Loading />
+        if (
+            !club ||
+            !club.get("is_detail") ||
+            is_fetching_contract_data ||
+            is_fetching ||
+            !club_id
+        ) {
+            console.group("project-club", club);
+
+            if (club) {
+                console.log("is_detail", club.get("is_detail"));
+            } else {
+                console.log("club_not_exist");
+            }
+
+            console.log("is_fetching_contract_data", is_fetching_contract_data);
+            console.log("is_fetching", is_fetching);
+            console.log("club_id", club_id);
+
+            console.groupEnd();
+
+            return (
+                <PageWrapper>
+                    <Head>
+                        <title>{"Drop details"}</title>
+                    </Head>
+                    <div>
+                        <div className="max-w-screen-xl mx-auto py-12">
+                            <Loading />
+                        </div>
                     </div>
-                </div>
-            </PageWrapper>
+                </PageWrapper>
+            );
         }
 
         let mint_url = this.getMintUrl();
-        let contract = club.get('contract_info') ? club.get('contract_info') : club.get('contract');
+        let contract = club.get("contract_info") ? club.get("contract_info") : club.get("contract");
         let now_unixtime = getUnixtime();
 
         let is_connect_wallet = true;
@@ -944,25 +1035,25 @@ class ClubView extends React.Component {
             is_connect_wallet = false;
         }
 
+        let merged_data = Object.assign({}, contract_data_from_server, contract_data);
 
-        let merged_data = Object.assign({},contract_data_from_server,contract_data);
-
-        if (!merged_data['club_id']) {
-            console.log('debug-003',merged_data,contract_data_from_server,contract_data);
-            return null
+        if (!merged_data["club_id"]) {
+            console.log("debug-003", merged_data, contract_data_from_server, contract_data);
+            return null;
         }
 
-
-        let {stage,stage_status,minted} = this.getProjectStage(merged_data);
-
+        let { stage, stage_status, minted } = this.getProjectStage(merged_data);
 
         //计算我现在还可以mint几个nft
         let can_mint_count = this.getCanMintCount(merged_data);
 
-        let has_whitelist_stage = merged_data['presale_start_time'] > 0 && merged_data['presale_end_time'] > 1;
+        let has_whitelist_stage =
+            merged_data["presale_start_time"] > 0 && merged_data["presale_end_time"] > 1;
 
-
-        let is_allow_refundable = this.isAllowRefundable(contract.get('refund'),merged_data['is_force_refundable']);
+        let is_allow_refundable = this.isAllowRefundable(
+            contract.get("refund"),
+            merged_data["is_force_refundable"]
+        );
         /*
         是否展示mint按钮
         - 1.是否这个contract拥有已经部署的合约？
@@ -973,535 +1064,566 @@ class ClubView extends React.Component {
 
         // console.log('contract-data',contract.toJS())
         // console.log('contract_data',contract_data)
-        console.log('stage_status',stage_status)
-        console.log('can_mint_count',can_mint_count,mint_count);
-        console.log('debug,merged_data',merged_data)
+        console.log("stage_status", stage_status);
+        console.log("can_mint_count", can_mint_count, mint_count);
+        console.log("debug,merged_data", merged_data);
 
-        console.log('debug_contract_data',contract_data);
+        console.log("debug_contract_data", contract_data);
 
-
-        return <PageWrapper>
-            <Head>
-                <title>{'Drop details'}</title>
-            </Head>
-            <div>
-                <div className="max-w-screen-xl mx-auto pb-12 px-2 lg:px-0">
-
-                    <div className='flex justify-start items-center mb-4 hidden lg:show'>
-                        <StatusOnlineIcon className='h-8 w-8 mr-2' /><h2 className='h2'>{t('live now')}</h2>
-                    </div>
-            
-                    <div className='p-6 d-bg-c-1 mb-8 flex justify-start flex-col lg:flex-row border-4 border-black dark:border-[#999]'>
-                        <div className='lg:w-96 lg:h-96 overflow-hidden lg:mr-6'>
-                            <GalleryView gallery={club.get('gallery')} club_id={club_id} />
+        return (
+            <PageWrapper>
+                <Head>
+                    <title>{"Drop details"}</title>
+                </Head>
+                <div>
+                    <div className="max-w-screen-xl mx-auto pb-12 px-2 lg:px-0">
+                        <div className="flex justify-start items-center mb-4 hidden lg:show">
+                            <StatusOnlineIcon className="h-8 w-8 mr-2" />
+                            <h2 className="h2">{t("live now")}</h2>
                         </div>
-                        <div className='flex-grow'>
-                            <div className=''>
-                                <div className='mb-4 py-4 border-b d-border-c-3'>
-                                    <div className='h1'>{club.get('name')}</div>
-                                </div>
-                                {
-                                    (contract && contract.get('wl_enable'))
-                                    ?   <div className='flex justify-between '>
-                                        {
-                                            this.getWlHtml(merged_data)
-                                        }
-                                        
-                                        <div className='w-1/2 box-one'>
-                                            <div className='lb'>{t('allowlist presale price')}</div>
-                                            <div className='ma'>
-                                                {
-                                                    (contract.get('wl_price'))
-                                                    ? <Price price={contract.get('wl_price')} />
-                                                    : t('not set yet')
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                    : null
-                                }
-                                <div className='flex justify-between '>
-                                    <div className='w-1/2 box-one '>
-                                        <div className='lb'>{t('minted / total supply')}</div>
-                                        <div className='ma flex justify-start items-center'>
-                                            <span className='mr-1'>{
-                                                (wallet && wallet.address)
-                                                ? contract_data['total_supply']
-                                                : '(please connect wallet)'
-                                            }</span>
-                                            / {merged_data['max_supply']}
-                                        </div>
-                                    </div>
-                                    <div className='w-1/2 box-one '>
-                                        <div className='lb'>{t('allowlist supply')}</div>
-                                        <div className='ma flex justify-start items-center'>
-                                            {merged_data['presale_max_supply']}
-                                        </div>
-                                    </div>
-                                </div>
-                                {
-                                    (contract && contract.get('pb_enable'))
-                                    ?   <div className='flex justify-between '>
-                                        {
-                                            this.getPbHtml(merged_data)
-                                        }
-                                        <div className='w-1/2 box-one'>
-                                            <div className='lb'>{t('public sale price')}</div>
-                                            <div className='ma'>
-                                                {
-                                                    (merged_data && merged_data.hasOwnProperty('sale_price'))
-                                                    ? <Price price={merged_data['sale_price']} />
-                                                    : 'not set yet'
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                    : <div className='flex justify-between '>
-                                        <div className='w-1/2 box-one '>
-                                            <div className='lb'>{t('public sale starts in')}</div>
-                                            <div className='ma'>
-                                                {t('not set yet')}
-                                            </div>
-                                        </div>
-                                        <div className='w-1/2 box-one'>
-                                            <div className='lb'>{t('mint price')}</div>
-                                            <div className='ma'>
-                                                {t('not set yet')}
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                                
 
-                                <div className='flex justify-center lg:justify-start items-center pt-4 border-t d-border-c-3'>
-                                    {
-                                        (is_paused == true)
-                                        ? <button className='btn btn-primary btn-wide capitalize' disabled={true}>mint</button>
-                                        : <>
-                                            {
-                                                (stage_status == 'disable')
-                                                ? <button className='btn btn-primary btn-wide capitalize' disabled={true}>mint</button>
-                                                : null
-                                            }
-                                            {
-                                                (stage_status == 'enable')
-                                                ? <>
-                                                    {
-                                                        (stage == 'in_whitelist')
-                                                        ? <>
-                                                        <CountBtn max_count={can_mint_count} count={(mint_count>can_mint_count)?can_mint_count:mint_count} handleCountChange={this.handleMintCountChange} />
-                                                        <Button loading={this.state.is_minting} className='btn btn-primary lg:btn-wide capitalize' onClick={this.whiteListMint}>mint</Button>
-                                                        </>
-                                                        : null
-                                                    }
-                                                    {
-                                                        (stage == 'in_public')
-                                                        ? <>
-                                                        <CountBtn max_count={can_mint_count} count={(mint_count>can_mint_count)?can_mint_count:mint_count} handleCountChange={this.handleMintCountChange} />
-                                                        <Button loading={this.state.is_minting} className='btn btn-primary lg:btn-wide capitalize' onClick={this.mint}>mint</Button>
-                                                        </>
-                                                        : null
-                                                    }
-                                                </>
-                                                : null
-                                            }
-                                            {
-                                                (stage_status == 'out_of_limit')
-                                                ? <button className='btn btn-primary btn-wide capitalize' disabled={true}>{t('Maximal Mint Limit Pre Wallet Reached')}</button>
-                                                : null
-                                            }
-                                            {
-                                                (stage_status == 'connect_wallet')
-                                                ? <ConnectWalletButton />
-                                                : null
-                                            }
-                                        </>
-                                    }
-                                    
-                                    
-                                </div>
+                        <div className="p-6 d-bg-c-1 mb-8 flex justify-start flex-col lg:flex-row border-4 border-black dark:border-[#999]">
+                            <div className="lg:w-96 lg:h-96 overflow-hidden lg:mr-6">
+                                <GalleryView gallery={club.get("gallery")} club_id={club_id} />
+                            </div>
+                            <div className="flex-grow">
+                                <div className="">
+                                    <div className="mb-4 py-4 border-b d-border-c-3">
+                                        <div className="h1">{club.get("name")}</div>
+                                    </div>
+                                    {contract && contract.get("wl_enable") ? (
+                                        <div className="flex justify-between ">
+                                            {this.getWlHtml(merged_data)}
 
+                                            <div className="w-1/2 box-one">
+                                                <div className="lb">
+                                                    {t("allowlist presale price")}
+                                                </div>
+                                                <div className="ma">
+                                                    {contract.get("wl_price") ? (
+                                                        <Price price={contract.get("wl_price")} />
+                                                    ) : (
+                                                        t("not set yet")
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : null}
+                                    <div className="flex justify-between ">
+                                        <div className="w-1/2 box-one ">
+                                            <div className="lb">{t("minted / total supply")}</div>
+                                            <div className="ma flex justify-start items-center">
+                                                <span className="mr-1">
+                                                    {wallet && wallet.address
+                                                        ? contract_data["total_supply"]
+                                                        : "(please connect wallet)"}
+                                                </span>
+                                                / {merged_data["max_supply"]}
+                                            </div>
+                                        </div>
+                                        <div className="w-1/2 box-one ">
+                                            <div className="lb">{t("allowlist supply")}</div>
+                                            <div className="ma flex justify-start items-center">
+                                                {merged_data["presale_max_supply"]}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {contract && contract.get("pb_enable") ? (
+                                        <div className="flex justify-between ">
+                                            {this.getPbHtml(merged_data)}
+                                            <div className="w-1/2 box-one">
+                                                <div className="lb">{t("public sale price")}</div>
+                                                <div className="ma">
+                                                    {merged_data &&
+                                                    merged_data.hasOwnProperty("sale_price") ? (
+                                                        <Price price={merged_data["sale_price"]} />
+                                                    ) : (
+                                                        "not set yet"
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex justify-between ">
+                                            <div className="w-1/2 box-one ">
+                                                <div className="lb">
+                                                    {t("public sale starts in")}
+                                                </div>
+                                                <div className="ma">{t("not set yet")}</div>
+                                            </div>
+                                            <div className="w-1/2 box-one">
+                                                <div className="lb">{t("mint price")}</div>
+                                                <div className="ma">{t("not set yet")}</div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="flex justify-center lg:justify-start items-center pt-4 border-t d-border-c-3">
+                                        {is_paused == true ? (
+                                            <button
+                                                className="btn btn-primary btn-wide capitalize"
+                                                disabled={true}
+                                            >
+                                                mint
+                                            </button>
+                                        ) : (
+                                            <>
+                                                {stage_status == "disable" ? (
+                                                    <button
+                                                        className="btn btn-primary btn-wide capitalize"
+                                                        disabled={true}
+                                                    >
+                                                        mint
+                                                    </button>
+                                                ) : null}
+                                                {stage_status == "enable" ? (
+                                                    <>
+                                                        {stage == "in_whitelist" ? (
+                                                            <>
+                                                                <CountBtn
+                                                                    max_count={can_mint_count}
+                                                                    count={
+                                                                        mint_count > can_mint_count
+                                                                            ? can_mint_count
+                                                                            : mint_count
+                                                                    }
+                                                                    handleCountChange={
+                                                                        this.handleMintCountChange
+                                                                    }
+                                                                />
+                                                                <Button
+                                                                    loading={this.state.is_minting}
+                                                                    className="btn btn-primary lg:btn-wide capitalize"
+                                                                    onClick={this.whiteListMint}
+                                                                >
+                                                                    mint
+                                                                </Button>
+                                                            </>
+                                                        ) : null}
+                                                        {stage == "in_public" ? (
+                                                            <>
+                                                                <CountBtn
+                                                                    max_count={can_mint_count}
+                                                                    count={
+                                                                        mint_count > can_mint_count
+                                                                            ? can_mint_count
+                                                                            : mint_count
+                                                                    }
+                                                                    handleCountChange={
+                                                                        this.handleMintCountChange
+                                                                    }
+                                                                />
+                                                                <Button
+                                                                    loading={this.state.is_minting}
+                                                                    className="btn btn-primary lg:btn-wide capitalize"
+                                                                    onClick={this.mint}
+                                                                >
+                                                                    mint
+                                                                </Button>
+                                                            </>
+                                                        ) : null}
+                                                    </>
+                                                ) : null}
+                                                {stage_status == "out_of_limit" ? (
+                                                    <button
+                                                        className="btn btn-primary btn-wide capitalize"
+                                                        disabled={true}
+                                                    >
+                                                        {t("Maximal Mint Limit Pre Wallet Reached")}
+                                                    </button>
+                                                ) : null}
+                                                {stage_status == "connect_wallet" ? (
+                                                    <ConnectWalletButton />
+                                                ) : null}
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {
-                        (has_whitelist_stage)
-                        ?  <div className='mb-8 w-full p-6 d-bg-c-1'>
-                            <div className='block-title'>{t('allowlist eligibility')}</div>
-                            <div className='grid lg:grid-cols-2 lg:gap-8'>
-                                <WhitelistCheckAuto club_id={club_id} wallet={wallet}/>
-                                <WhitelistCheck club_id={club_id}/>
+                        {has_whitelist_stage ? (
+                            <div className="mb-8 w-full p-6 d-bg-c-1">
+                                <div className="block-title">{t("allowlist eligibility")}</div>
+                                <div className="grid lg:grid-cols-2 lg:gap-8">
+                                    <WhitelistCheckAuto club_id={club_id} wallet={wallet} />
+                                    <WhitelistCheck club_id={club_id} />
+                                </div>
                             </div>
-                        </div>
-                        : null
-                    }
-                   
-                    <div className='mb-8 w-full p-6 d-bg-c-1'>
-                        <div className='block-title'>{t('about')}</div>
+                        ) : null}
 
-                        <div className='lg:grid lg:grid-cols-12 gap-8'>
-                            <div className="lg:col-span-6 border-r d-border-c-3">
-                                <table className='info-table'>
-                                    <thead>
-                                        <tr>
-                                            <th colspan={2}>
-                                                {t('basic info')}
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td className='lttd'>
-                                                {t('blockchain')}
-                                            </td>
-                                            <td className='rctd'>
-                                                Ethereum
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className='lttd'>
-                                                {t('contract address')}
-                                            </td>
-                                            <td className='rctd'>
-                                                {contract.get('contract_address')}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className='lttd'>
-                                                {t('collection size')}
-                                            </td>
-                                            <td className='rctd'>
-                                                {contract.get('max_supply')}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className='lttd'>
-                                                1/1 NFTs
-                                            </td>
-                                            <td className='rctd'>
-                                                {club.get('special_supply')}
-                                            </td>
-                                        </tr>
-                                        
-                                        <tr>
-                                            <td className='lttd'>
-                                                <span className='normal-case'>{t('Reserved for Team')}</span>
-                                            </td>
-                                            <td className='rctd'>
-                                                {contract.get('reserve_count')}
-                                            </td>
-                                        </tr>
-                                        {
-                                            (Number(contract.get('reveal_time')) > 0)
-                                            ? <tr>
-                                                <td className='lttd'>
-                                                    {t('reveal time')}
-                                                </td>
-                                                <td className='rctd'>
-                                                    <Showtime unixtime={contract.get('reveal_time')} cale={true} />
-                                                </td>
-                                            </tr>
-                                            : null
-                                        }
+                        <div className="mb-8 w-full p-6 d-bg-c-1">
+                            <div className="block-title">{t("about")}</div>
 
-                                        
-
-                                    </tbody>
-                                </table>
-                                {
-                                    (contract.get('wl_enable'))
-                                    ? <><table className='info-table'>
+                            <div className="lg:grid lg:grid-cols-12 gap-8">
+                                <div className="lg:col-span-6 border-r d-border-c-3">
+                                    <table className="info-table">
                                         <thead>
                                             <tr>
-                                                <th colspan={2}>
-                                                    {t('allowlist')}
-                                                </th>
+                                                <th colspan={2}>{t("basic info")}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td className='lttd'>
-                                                    {t('allowlist presale supply')}
-                                                </td>
-                                                <td className='rctd'>
-                                                    {contract.get('wl_max_supply')}
+                                                <td className="lttd">{t("blockchain")}</td>
+                                                <td className="rctd">Ethereum</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="lttd">{t("contract address")}</td>
+                                                <td className="rctd">
+                                                    {contract.get("contract_address")}
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td className='lttd'>
-                                                    {t('allowlist presale price')}
-                                                </td>
-                                                <td className='rctd'>
-                                                    {removeSuffixZero(contract.get('wl_price'))}
-                                                    <span className='ml-2 text-base'>ETH</span>
+                                                <td className="lttd">{t("collection size")}</td>
+                                                <td className="rctd">
+                                                    {contract.get("max_supply")}
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td className='lttd'>
-                                                    {t('allowlist mint time')}
-                                                </td>
-                                                <td className='rctd flex-col'>
-                                                    <div className='flex justify-start items-center w-full'>
-                                                        <Showtime unixtime={contract.get('wl_start_time')} />
-                                                        <span className='ml-4 flex-item-center'>
-                                                            <Cal begin_time={contract.get('wl_start_time')} 
-                                                                text={this.getCalendarTitle('whitelist')} 
-                                                                details={'url:'+mint_url} />
-                                                        </span>
-                                                    </div>
-                                                    <div className='flex justify-start w-full'>
-                                                        <Showtime unixtime={contract.get('wl_end_time')}  />
-                                                    </div>
+                                                <td className="lttd">1/1 NFTs</td>
+                                                <td className="rctd">
+                                                    {club.get("special_supply")}
                                                 </td>
                                             </tr>
+
+                                            <tr>
+                                                <td className="lttd">
+                                                    <span className="normal-case">
+                                                        {t("Reserved for Team")}
+                                                    </span>
+                                                </td>
+                                                <td className="rctd">
+                                                    {contract.get("reserve_count")}
+                                                </td>
+                                            </tr>
+                                            {Number(contract.get("reveal_time")) > 0 ? (
+                                                <tr>
+                                                    <td className="lttd">{t("reveal time")}</td>
+                                                    <td className="rctd">
+                                                        <Showtime
+                                                            unixtime={contract.get("reveal_time")}
+                                                            cale={true}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            ) : null}
                                         </tbody>
                                     </table>
-                                    </>
-                                    : null
-                                }
-                                {
-                                    (contract.get('pb_enable'))
-                                    ? <><table className='info-table'>
-                                        <thead>
-                                            <tr>
-                                                <th colspan={2}>
-                                                    {t('public sale')}
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td className='lttd'>
-                                                    {t('public sale price')}
-                                                </td>
-                                                <td className='rctd'>
-                                                    {removeSuffixZero(contract.get('pb_price'))}
-                                                    <span className='ml-2'>ETH</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td className='lttd'>
-                                                    {t('public mint time')}
-                                                </td>
-                                                <td className='rctd flex-col'>
-                                                <div className='flex justify-start items-center w-full'>
-                                                        <Showtime unixtime={contract.get('pb_start_time')} cale={true} />
-                                                        <span className='ml-4 flex-item-center'>
-                                                            <Cal begin_time={contract.get('pb_start_time')} 
-                                                                text={this.getCalendarTitle('public')} 
-                                                                details={'url:'+mint_url} />
-                                                        </span>
-                                                    </div>
-                                                    {
-                                                        (formatOverflowUnixtime(contract.get('pb_end_time')))
-                                                        ? <div className='flex justify-start w-full'>
-                                                            <Showtime unixtime={formatOverflowUnixtime(contract.get('pb_end_time'))}  />
-                                                        </div>
-                                                        : <div className='flex justify-start w-full'>
-                                                            {t('(no end time)')}
-                                                        </div>
-                                                    }
-                                                    
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    </>
-                                    : null
-                                }
-                                {
-                                    (contract.get('revenue_share') && contract.get('revenue_share').count() > 0)
-                                    ? <><table className='info-table'>
-                                        <thead>
-                                            <tr>
-                                                <th colspan={2}>
-                                                    {t('spilt earnings')}
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                (contract.get('revenue_share').map((one,index) => {
-                                                    return <tr key={'index-'+index}>
-                                                        <td className='lttd'>
-                                                            {one.get('address')}
+                                    {contract.get("wl_enable") ? (
+                                        <>
+                                            <table className="info-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan={2}>{t("allowlist")}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td className="lttd">
+                                                            {t("allowlist presale supply")}
                                                         </td>
-                                                        <td className='rctd'>
-                                                            {percentDecimal(one.get('rate'))}%
+                                                        <td className="rctd">
+                                                            {contract.get("wl_max_supply")}
                                                         </td>
                                                     </tr>
-                                                }))
-                                            }
-                                        </tbody>
-                                    </table>
-                                    </>
-                                    : null
-                                }
+                                                    <tr>
+                                                        <td className="lttd">
+                                                            {t("allowlist presale price")}
+                                                        </td>
+                                                        <td className="rctd">
+                                                            {removeSuffixZero(
+                                                                contract.get("wl_price")
+                                                            )}
+                                                            <span className="ml-2 text-base">
+                                                                ETH
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className="lttd">
+                                                            {t("allowlist mint time")}
+                                                        </td>
+                                                        <td className="rctd flex-col">
+                                                            <div className="flex justify-start items-center w-full">
+                                                                <Showtime
+                                                                    unixtime={contract.get(
+                                                                        "wl_start_time"
+                                                                    )}
+                                                                />
+                                                                <span className="ml-4 flex-item-center">
+                                                                    <Cal
+                                                                        begin_time={contract.get(
+                                                                            "wl_start_time"
+                                                                        )}
+                                                                        text={this.getCalendarTitle(
+                                                                            "whitelist"
+                                                                        )}
+                                                                        details={"url:" + mint_url}
+                                                                    />
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex justify-start w-full">
+                                                                <Showtime
+                                                                    unixtime={contract.get(
+                                                                        "wl_end_time"
+                                                                    )}
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </>
+                                    ) : null}
+                                    {contract.get("pb_enable") ? (
+                                        <>
+                                            <table className="info-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan={2}>{t("public sale")}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td className="lttd">
+                                                            {t("public sale price")}
+                                                        </td>
+                                                        <td className="rctd">
+                                                            {removeSuffixZero(
+                                                                contract.get("pb_price")
+                                                            )}
+                                                            <span className="ml-2">ETH</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className="lttd">
+                                                            {t("public mint time")}
+                                                        </td>
+                                                        <td className="rctd flex-col">
+                                                            <div className="flex justify-start items-center w-full">
+                                                                <Showtime
+                                                                    unixtime={contract.get(
+                                                                        "pb_start_time"
+                                                                    )}
+                                                                    cale={true}
+                                                                />
+                                                                <span className="ml-4 flex-item-center">
+                                                                    <Cal
+                                                                        begin_time={contract.get(
+                                                                            "pb_start_time"
+                                                                        )}
+                                                                        text={this.getCalendarTitle(
+                                                                            "public"
+                                                                        )}
+                                                                        details={"url:" + mint_url}
+                                                                    />
+                                                                </span>
+                                                            </div>
+                                                            {formatOverflowUnixtime(
+                                                                contract.get("pb_end_time")
+                                                            ) ? (
+                                                                <div className="flex justify-start w-full">
+                                                                    <Showtime
+                                                                        unixtime={formatOverflowUnixtime(
+                                                                            contract.get(
+                                                                                "pb_end_time"
+                                                                            )
+                                                                        )}
+                                                                    />
+                                                                </div>
+                                                            ) : (
+                                                                <div className="flex justify-start w-full">
+                                                                    {t("(no end time)")}
+                                                                </div>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </>
+                                    ) : null}
+                                    {contract.get("revenue_share") &&
+                                    contract.get("revenue_share").count() > 0 ? (
+                                        <>
+                                            <table className="info-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan={2}>{t("spilt earnings")}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {contract
+                                                        .get("revenue_share")
+                                                        .map((one, index) => {
+                                                            return (
+                                                                <tr key={"index-" + index}>
+                                                                    <td className="lttd">
+                                                                        {one.get("address")}
+                                                                    </td>
+                                                                    <td className="rctd">
+                                                                        {percentDecimal(
+                                                                            one.get("rate")
+                                                                        )}
+                                                                        %
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                </tbody>
+                                            </table>
+                                        </>
+                                    ) : null}
 
-                                {
-                                    (contract_version == 'v2')
-                                    ? <div className='flex justify-start items-center'>
-                                        <div className='mr-4'>
-                                            {t('Opensea Creator Fee Support')}
-                                        </div>
-                                        <div>
-                                        
-                                            {
-                                                (merged_data['is_opensea_enforcement'])
-                                                ? <span className='badge badge-success'>{t('supported')}</span>
-                                                : <span className='badge'>{t('not support')}</span>
-                                            }
-                                        </div>
-                                    </div>
-                                    : null
-                                }
-
-                                
-
-
-                            </div>
-                            <div className="col-span-6">
-                                <EditorView content={club.get('introduction')} />
-                            </div>
-                        </div>
-
-                    </div>
-
-                    {
-                        (club.get('creator').count() > 0)
-                        ? <div className='p-6 pt-4 d-bg-c-1 mb-8'>
-                            <div className='block-title'>{t('creator')}</div>
-                            <div className='grid lg:grid-cols-2 gap-16'>
-                                {club.get('creator').map((one,index) => {
-                                    return <CreatorOne 
-                                        key={one.get('id')} 
-                                        id={index}
-                                        club={club}
-                                        creator={one}
-                                    />
-                                })}
-                            </div>
-                        </div>
-                        : null
-                    }
-                    
-                    {
-                        (club.get('roadmap').count() > 0)
-                        ? <div className='p-6 pt-4 d-bg-c-1 mb-8'>
-                            <div className='block-title'>{t('roadmap')}</div>
-                            <div>
-                                {club.get('roadmap').map((one,index) => <RoadmapOne 
-                                    key={one.get('id')} 
-                                    id={index}
-                                    roadmap={one}
-                                />)}
-                            </div>
-                        </div>
-                        : null
-                    }
-
-                    {
-                        (contract.get('refund').count() > 0)
-                        ?   <div className='p-6 pt-4 d-bg-c-1 mb-8'>
-                            <div className='block-title'>{t('refund')}</div>
-
-                            <div className='grid lg:grid-cols-2 gap-8'>
-                                
-                                <div>
-                                {contract.get('refund').map((one,index) => {
-                                    return <div className='flex justify-start' key={one.get('end_time')}>
-                                        <div className='py-4 pr-8'>
-                                            <label>{t('Refundable Period Until')}</label>
-                                            <div className='text-xl font-bold'>
-                                            <Showtime unixtime={one.get('end_time')} cale={true} />
+                                    {contract_version == "v2" ? (
+                                        <div className="flex justify-start items-center">
+                                            <div className="mr-4">
+                                                {t("Opensea Creator Fee Support")}
+                                            </div>
+                                            <div>
+                                                {merged_data["is_opensea_enforcement"] ? (
+                                                    <span className="badge badge-success">
+                                                        {t("supported")}
+                                                    </span>
+                                                ) : (
+                                                    <span className="badge">
+                                                        {t("not support")}
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
-                                        <div className='py-4'>
-                                            <label>{t('Refundable Rate')}</label>
-                                            <div className='text-xl font-bold'>
-                                                {percentDecimal(one.get('refund_rate'))}%
-                                            </div>
+                                    ) : null}
+                                </div>
+                                <div className="col-span-6">
+                                    <EditorView content={club.get("introduction")} />
+                                </div>
+                            </div>
+                        </div>
+
+                        {club.get("creator").count() > 0 ? (
+                            <div className="p-6 pt-4 d-bg-c-1 mb-8">
+                                <div className="block-title">{t("creator")}</div>
+                                <div className="grid lg:grid-cols-2 gap-16">
+                                    {club.get("creator").map((one, index) => {
+                                        return (
+                                            <CreatorOne
+                                                key={one.get("id")}
+                                                id={index}
+                                                club={club}
+                                                creator={one}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ) : null}
+
+                        {club.get("roadmap").count() > 0 ? (
+                            <div className="p-6 pt-4 d-bg-c-1 mb-8">
+                                <div className="block-title">{t("roadmap")}</div>
+                                <div>
+                                    {club.get("roadmap").map((one, index) => (
+                                        <RoadmapOne key={one.get("id")} id={index} roadmap={one} />
+                                    ))}
+                                </div>
+                            </div>
+                        ) : null}
+
+                        {contract.get("refund").count() > 0 ? (
+                            <div className="p-6 pt-4 d-bg-c-1 mb-8">
+                                <div className="block-title">{t("refund")}</div>
+
+                                <div className="grid lg:grid-cols-2 gap-8">
+                                    <div>
+                                        {contract.get("refund").map((one, index) => {
+                                            return (
+                                                <div
+                                                    className="flex justify-start"
+                                                    key={one.get("end_time")}
+                                                >
+                                                    <div className="py-4 pr-8">
+                                                        <label>
+                                                            {t("Refundable Period Until")}
+                                                        </label>
+                                                        <div className="text-xl font-bold">
+                                                            <Showtime
+                                                                unixtime={one.get("end_time")}
+                                                                cale={true}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="py-4">
+                                                        <label>{t("Refundable Rate")}</label>
+                                                        <div className="text-xl font-bold">
+                                                            {percentDecimal(one.get("refund_rate"))}
+                                                            %
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                    <div>
+                                        <h3 className="h3 mb-2">{t("About Refund")}</h3>
+                                        <div className="text-gray-500">
+                                            <p>{t("refund-intro")}</p>
                                         </div>
                                     </div>
-                                })}
                                 </div>
-                                <div>
-                                    <h3 className='h3 mb-2'>
-                                        {t('About Refund')}
-                                    </h3>
-                                    <div className='text-gray-500'>
-                                        <p>
-                                            {t('refund-intro')}
-                                        </p>
-                                    </div>
-                                </div>
-
                             </div>
+                        ) : null}
 
-                        </div>
-                        : null
-                    }
-
-                    {
-                        (deploy_contract_address && wallet && wallet.address)
-                        ? <NftList 
-                            ref={this.nftlistRef}
-                            contract_address={deploy_contract_address} 
-                            address={wallet.address}
-                            network={network}
-                            is_allow_refundable={is_allow_refundable}
-                            openRefundModal={this.openRefundModal}
+                        {deploy_contract_address && wallet && wallet.address ? (
+                            <NftList
+                                ref={this.nftlistRef}
+                                contract_address={deploy_contract_address}
+                                address={wallet.address}
+                                network={network}
+                                is_allow_refundable={is_allow_refundable}
+                                openRefundModal={this.openRefundModal}
                             />
-                        : null
-                    }
+                        ) : null}
 
-                    <RefundModal 
-                        contract_address={deploy_contract_address} 
-                        address={wallet ? wallet.address : ''}
-                        visible={this.state.show_refund_modal} 
-                        nft_id={this.state.refund_nft_id} 
-                        closeModal={this.toggleRefundModal}
-                        refreshList={this.refreshList}
+                        <RefundModal
+                            contract_address={deploy_contract_address}
+                            address={wallet ? wallet.address : ""}
+                            visible={this.state.show_refund_modal}
+                            nft_id={this.state.refund_nft_id}
+                            closeModal={this.toggleRefundModal}
+                            refreshList={this.refreshList}
                         />
-
-                </div> 
-            </div>
-    </PageWrapper>
+                    </div>
+                </div>
+            </PageWrapper>
+        );
     }
-    
 }
 
-
-
-
-ClubView.getInitialProps =  wrapper.getInitialPageProps((store) => async ({pathname, req, res,query}) => {
-    let network = config.get('ETH_NETWORK');
-    let is_number = myIsNaN(query.id);
-    return {
-        club_id : (is_number) ? query.id : '',
-        club_name : (is_number) ? '' : query.id,
-        preview_key : (query.key) ? query.key : '',
-        network : network
-    };
-});
-
-
+ClubView.getInitialProps = wrapper.getInitialPageProps(
+    (store) =>
+        async ({ pathname, req, res, query }) => {
+            let network = config.get("ETH_NETWORK");
+            let is_number = myIsNaN(query.id);
+            return {
+                club_id: is_number ? query.id : "",
+                club_name: is_number ? "" : query.id,
+                preview_key: query.key ? query.key : "",
+                network: network,
+            };
+        }
+);
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setNftBalance : (data) => {
-            return dispatch(setNftBalance(data))
-        }
-    }
+        setNftBalance: (data) => {
+            return dispatch(setNftBalance(data));
+        },
+    };
+};
+function mapStateToProps(state, ownProps) {
+    return {
+        balance_map: state.getIn(["nft", "list"]),
+    };
 }
-function mapStateToProps(state,ownProps) {
-   return {
-        'balance_map' : state.getIn(['nft','list']),
-   }
-}
 
-export default connect(mapStateToProps,mapDispatchToProps)(ClubView)
-
-
-
+export default connect(mapStateToProps, mapDispatchToProps)(ClubView);

@@ -1,10 +1,9 @@
 {
+    "FORBIDDEN_CHINA": true,
+    "NAME": "ManeSpace",
+    "ALCHEMY_ID": "VK5mTMja6f-FEbW6cRJEXr2bi6iMTy6T",
 
-    "FORBIDDEN_CHINA"   : true,
-    "NAME"              : "ManeSpace",
-    "ALCHEMY_ID"        : "JPWQi3ZfcRsCPerhWtcVYtJeWmYfUC-a",
-
-    "GAS"               : {
-        "MINT"      :   190000
+    "GAS": {
+        "MINT": 190000
     }
 }

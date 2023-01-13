@@ -1,35 +1,34 @@
 {
+    "ENV": "local",
 
-    "ENV"               : "local",
+    "DEBUG": true,
 
-    "DEBUG"             : true,
-    
-    "WEBSITE"           : "http://127.0.0.1:3000",
-    
-    "API"               : "https://api.manestudio.xyz",
+    "WEBSITE": "http://127.0.0.1:3000",
 
-    "META"              : "https://api.manestudio.com",
+    "API": "https://api.manestudio.xyz",
 
-    "MANASTUDIO_WEBSITE"    : "http://127.0.0.1:3001",
+    "META": "https://api.manestudio.xyz",
 
-    "LOGO"              : "test",
-    
-    "GA_TRACKING_ID"    : "G-J31M4Y36XH",
+    "MANASTUDIO_WEBSITE": "http://127.0.0.1:3001",
 
-    "ETHERSCAN_BASE"    : "https://testnet.bscscan.com",
+    "LOGO": "test",
 
-    "NEXTID_ENV"        : "develop",
+    "GA_TRACKING_ID": "G-J31M4Y36XH",
 
-    "ETH_NETWORK"       :   "mainnet",
+    "ETHERSCAN_BASE": "https://testnet.bscscan.com",
 
-    "MANE_CONTRACT"     : {
-        "goerli"        :   "0xa1e8b24ebee5d1ddd8e5cd4085deddb45f9329b2",
-        "homestead"     :   "0x5Baf93D823328EdDca6C3020B9105363A5b26B1A"
+    "NEXTID_ENV": "develop",
+
+    "ETH_NETWORK": "mainnet",
+
+    "MANE_CONTRACT": {
+        "goerli": "0xa1e8b24ebee5d1ddd8e5cd4085deddb45f9329b2",
+        "homestead": "0x5Baf93D823328EdDca6C3020B9105363A5b26B1A"
     },
 
-    "MANE_CONTRACT_V2"  : {
-        "homestead"     :   "0x82bde11f8E556C8bBfaff7267B181674F4eFe188",
-        "goerli"        :   "0x9927a443105d01743B1F74f233E16cDf839e282b",
-        "begin_club_id" :   100
+    "MANE_CONTRACT_V2": {
+        "homestead": "0x82bde11f8E556C8bBfaff7267B181674F4eFe188",
+        "goerli": "0x9927a443105d01743B1F74f233E16cDf839e282b",
+        "begin_club_id": 100
     }
 }
