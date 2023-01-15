@@ -247,7 +247,7 @@ class ClubView extends React.Component {
 
             let isForceRefundable = await this.manenft.contract.isForceRefundable();
 
-            // console.log('debug01,contract_data',contract_data)
+            console.log("debug01,contract_data", contract_data);
             let formated_data = this.deformatContractData(contract_data);
             // console.log('debug01,formated_data',formated_data)
             formated_data["is_force_refundable"] = isForceRefundable == 1 ? true : false;
@@ -264,6 +264,7 @@ class ClubView extends React.Component {
                 is_opensea_enforcement = is_opensea_enforcement.toNumber();
             }
             formated_data["is_opensea_enforcement"] = is_opensea_enforcement;
+            console.log("debug01,contract_data,formated", formated_data);
 
             this.setState({
                 contract_data: formated_data,
@@ -967,6 +968,17 @@ class ClubView extends React.Component {
         });
     }
 
+    @autobind
+    getMergedValue(merged_data, contract, merged_data_key, contract_key) {
+        let value = 0;
+        if (merged_data && merged_data[merged_data_key]) {
+            return merged_data[merged_data_key];
+        } else if (contract && contract.get(contract_key)) {
+            return contract.get(contract_key);
+        }
+        return value;
+    }
+
     render() {
         const { t } = this.props.i18n;
         const {
@@ -1069,6 +1081,7 @@ class ClubView extends React.Component {
         console.log("debug,merged_data", merged_data);
 
         console.log("debug_contract_data", contract_data);
+        console.log("debug_contract_data2", contract.toJS());
 
         return (
             <PageWrapper>
@@ -1403,7 +1416,10 @@ class ClubView extends React.Component {
                                                         <td className="rctd flex-col">
                                                             <div className="flex justify-start items-center w-full">
                                                                 <Showtime
-                                                                    unixtime={contract.get(
+                                                                    unixtime={this.getMergedValue(
+                                                                        merged_data,
+                                                                        contract,
+                                                                        "sale_start_time",
                                                                         "pb_start_time"
                                                                     )}
                                                                     cale={true}
@@ -1425,10 +1441,11 @@ class ClubView extends React.Component {
                                                             ) ? (
                                                                 <div className="flex justify-start w-full">
                                                                     <Showtime
-                                                                        unixtime={formatOverflowUnixtime(
-                                                                            contract.get(
-                                                                                "pb_end_time"
-                                                                            )
+                                                                        unixtime={this.getMergedValue(
+                                                                            merged_data,
+                                                                            contract,
+                                                                            "sale_end_time",
+                                                                            "pb_end_time"
                                                                         )}
                                                                     />
                                                                 </div>
