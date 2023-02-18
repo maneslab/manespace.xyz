@@ -205,6 +205,9 @@ class clubOne extends React.Component {
         let has_whitelist_stage = club.getIn(["contract_info", "wl_enable"]);
 
         // is_whitelist = true;
+
+        console.log("total_supply", total_supply);
+
         return (
             <div>
                 <Link href={"/project/" + club.get("id")}>
@@ -251,7 +254,7 @@ class clubOne extends React.Component {
                                         ) : (
                                             <div className="lb">{t("minted")}</div>
                                         )}
-                                        {has_whitelist_stage ? (
+                                        {has_whitelist_stage && wallet ? (
                                             <div className="ma flex justify-start items-center">
                                                 {total_supply} / {contract.get("wl_max_supply")}
                                             </div>
@@ -260,7 +263,11 @@ class clubOne extends React.Component {
                                                 {wallet && wallet.address ? (
                                                     <span>{total_supply}</span>
                                                 ) : (
-                                                    "(connect wallet)"
+                                                    <>
+                                                        <span>(connect wallet)</span>
+                                                        <span className="mx-2">/</span>
+                                                        <span>{contract.get("wl_max_supply")}</span>
+                                                    </>
                                                 )}
                                             </div>
                                         )}
