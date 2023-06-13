@@ -8,7 +8,6 @@ export default function Footer(props) {
 				<a href="https://www.manestudio.xyz" target="_blank" className="hover:text-gray-400">ManeSTUDIO</a>
 				<a href="https://www.maneslab.xyz" target="_blank" 	className="hover:text-gray-400">ManesLAB</a>
 				<a href="https://twitter.com/manestudioxyz" target="_blank" className="hover:text-gray-400"><TwitterIcon className="icon-xs"/></a>
-				<a href="https://discord.gg/EnCUugtfVn" target="_blank" className="hover:text-gray-400"><DiscordIcon className="icon-xs"/></a>
 			</div>
 		</div>
     )
